@@ -6,3 +6,76 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id                  Int             @id @default(autoincrement())
+  email               String          @unique
+  password            String
+  nickname            String
+  profileImage        String?
+  createdAt           DateTime        @default(now())
+  marketListings      MarketListing[]
+  notifications       Notification[]
+  photoCards          PhotoCard[]
+  tradeOffersAsBuyer  TradeOffer[]    @relation("Buyer")
+  tradeOffersAsSeller TradeOffer[]    @relation("Seller")
+  userPoints          UserPoint[]
+}
+
+model UserPoint {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  points      Int       @default(0)
+  lastClaimed DateTime?
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+model PhotoCard {
+  id             Int             @id @default(autoincrement())
+  ownerId        Int
+  name           String
+  imageUrl       String
+  grade          String?
+  genre          String?
+  totalSupply    Int
+  description    String?
+  createdAt      DateTime        @default(now())
+  marketListings MarketListing[]
+  owner          User            @relation(fields: [ownerId], references: [id])
+  tradeOffers    TradeOffer[]
+}
+
+model MarketListing {
+  id          Int          @id @default(autoincrement())
+  sellerId    Int
+  photoCardId Int
+  price       Int
+  status      String       @default("available")
+  createdAt   DateTime     @default(now())
+  photoCard   PhotoCard    @relation(fields: [photoCardId], references: [id])
+  seller      User         @relation(fields: [sellerId], references: [id])
+  tradeOffers TradeOffer[] @relation("RequestedCard")
+}
+
+model TradeOffer {
+  id              Int           @id @default(autoincrement())
+  buyerId         Int
+  sellerId        Int
+  offeredCardId   Int
+  requestedCardId Int
+  status          String        @default("pending")
+  createdAt       DateTime      @default(now())
+  buyer           User          @relation("Buyer", fields: [buyerId], references: [id])
+  offeredCard     PhotoCard     @relation(fields: [offeredCardId], references: [id])
+  requestedCard   MarketListing @relation("RequestedCard", fields: [requestedCardId], references: [id])
+  seller          User          @relation("Seller", fields: [sellerId], references: [id])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  message   String
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+}
