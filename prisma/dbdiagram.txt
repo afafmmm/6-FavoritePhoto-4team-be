@@ -1,0 +1,72 @@
+Table User {
+  id            Int [pk, increment]
+  email         String [unique]
+  googleId      String [unique, null]
+  password      String [null]
+  nickname      String
+  profileImage  String [null]
+  createdAt     DateTime [default: `now()`]
+}
+
+Table UserPoint {
+  id          Int [pk, increment]
+  userId      Int
+  points      Int [default: 0]
+  lastClaimed DateTime [null]
+}
+
+Table PhotoCard {
+  id            Int [pk, increment]
+  name          String
+  imageUrl      String
+  grade         String
+  genre         String
+  description   String [null]
+  totalQuantity Int
+  createdAt     DateTime [default: `now()`]
+  ownerId       Int [null]
+}
+
+Table UserCard {
+  id          Int [pk, increment]
+  photoCardId Int
+  ownerId     Int [null]
+  status      String [default: `ACTIVE`]
+  createdAt   DateTime [default: `now()`]
+}
+
+Table Notification {
+  id        Int [pk, increment]
+  userId    Int
+  message   String
+  createdAt DateTime [default: `now()`]
+  read      Boolean [default: false]
+}
+
+Table TradeRequest {
+  id              Int [pk, increment]
+  listedCardId    Int
+  applicantCardId Int
+  description     String [null]
+  tradeStatus     String [default: `PENDING`]
+  createdAt       DateTime [default: `now()`]
+}
+
+Table Sale {
+  id         Int [pk, increment]
+  userCardId Int
+  sellerId   Int
+  price      Int
+  status     String [default: `AVAILABLE`]
+  createdAt  DateTime [default: `now()`]
+}
+
+Ref: UserPoint.userId > User.id
+Ref: PhotoCard.ownerId > User.id
+Ref: UserCard.photoCardId > PhotoCard.id
+Ref: UserCard.ownerId > User.id
+Ref: Notification.userId > User.id
+Ref: TradeRequest.listedCardId > UserCard.id
+Ref: TradeRequest.applicantCardId > UserCard.id
+Ref: Sale.userCardId > UserCard.id
+Ref: Sale.sellerId > User.id
