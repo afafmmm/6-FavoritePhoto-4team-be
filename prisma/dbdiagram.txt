@@ -1,16 +1,16 @@
 Table User {
-  id            Int [pk, increment]
+  id            Int [pk, increment] // Primary key, auto-increment
   email         String [unique]
   googleId      String [unique, null]
   password      String [null]
   nickname      String
   profileImage  String [null]
-  createdAt     DateTime [default: `now()`]
+  createdAt     DateTime [default: now()]
 }
 
 Table UserPoint {
   id          Int [pk, increment]
-  userId      Int
+  userId      Int [ref: > User.id]
   points      Int [default: 0]
   lastClaimed DateTime [null]
 }
@@ -19,54 +19,44 @@ Table PhotoCard {
   id            Int [pk, increment]
   name          String
   imageUrl      String
-  grade         String
-  genre         String
+  grade         String // Enum: COMMON, RARE, SUPER_RARE, LEGENDARY
+  genre         String // Enum: TRAVEL, LANDSCAPE, PORTRAIT, OBJECT
   description   String [null]
   totalQuantity Int
-  createdAt     DateTime [default: `now()`]
-  ownerId       Int [null]
+  createdAt     DateTime [default: now()]
 }
 
 Table UserCard {
-  id          Int [pk, increment]
-  photoCardId Int
-  ownerId     Int [null]
-  status      String [default: `ACTIVE`]
-  createdAt   DateTime [default: `now()`]
+  id                     Int [pk, increment]
+  photoCardId            Int [ref: > PhotoCard.id]
+  ownerId                Int [ref: > User.id, null]
+  price                  Int [null]
+  status                 String [default: ACTIVE] // Enum: ACTIVE, TRADED, INACTIVE, AVAILABLE, PENDING, COMPLETED, SOLD, CANCELLED
+  createdAt              DateTime [default: now()]
 }
 
 Table Notification {
   id        Int [pk, increment]
-  userId    Int
+  userId    Int [ref: > User.id]
   message   String
-  createdAt DateTime [default: `now()`]
+  createdAt DateTime [default: now()]
   read      Boolean [default: false]
 }
 
 Table TradeRequest {
   id              Int [pk, increment]
-  listedCardId    Int
-  applicantCardId Int
+  listedCardId    Int [ref: > UserCard.id]
+  applicantCardId Int [ref: > UserCard.id]
   description     String [null]
-  tradeStatus     String [default: `PENDING`]
-  createdAt       DateTime [default: `now()`]
+  tradeStatus     String [default: PENDING] // Enum: PENDING, ACTIVE, TRADED, INACTIVE, AVAILABLE, COMPLETED, SOLD, CANCELLED
+  createdAt       DateTime [default: now()]
 }
 
 Table Sale {
   id         Int [pk, increment]
-  userCardId Int
-  sellerId   Int
+  userCardId Int [ref: > UserCard.id]
+  sellerId   Int [ref: > User.id]
   price      Int
-  status     String [default: `AVAILABLE`]
-  createdAt  DateTime [default: `now()`]
+  status     String [default: AVAILABLE] // Enum: AVAILABLE, SOLD, CANCELLED
+  createdAt  DateTime [default: now()]
 }
-
-Ref: UserPoint.userId > User.id
-Ref: PhotoCard.ownerId > User.id
-Ref: UserCard.photoCardId > PhotoCard.id
-Ref: UserCard.ownerId > User.id
-Ref: Notification.userId > User.id
-Ref: TradeRequest.listedCardId > UserCard.id
-Ref: TradeRequest.applicantCardId > UserCard.id
-Ref: Sale.userCardId > UserCard.id
-Ref: Sale.sellerId > User.id

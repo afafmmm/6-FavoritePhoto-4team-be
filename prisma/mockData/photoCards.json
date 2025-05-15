@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "name": "노을의 축복",
+    "imageUrl": "https://example.com/images/sunset_bliss.png",
+    "grade": "COMMON",
+    "genre": "LANDSCAPE",
+    "description": "산 위로 펼쳐진 아름다운 노을.",
+    "totalQuantity": 5,
+    "initialPrice": 10,
+    "createdAt": "2025-05-01T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "도시의 불빛",
+    "imageUrl": "https://example.com/images/city_lights.png",
+    "grade": "RARE",
+    "genre": "TRAVEL",
+    "description": "밤하늘 아래 빛나는 도시의 스카이라인.",
+    "totalQuantity": 5,
+    "initialPrice": 20,
+    "createdAt": "2025-05-02T10:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "우아함의 초상",
+    "imageUrl": "https://example.com/images/portrait_grace.png",
+    "grade": "SUPER_RARE",
+    "genre": "PORTRAIT",
+    "description": "우아함이 돋보이는 멋진 초상화.",
+    "totalQuantity": 5,
+    "initialPrice": 50,
+    "createdAt": "2025-05-03T10:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "바다의 고요함",
+    "imageUrl": "https://example.com/images/ocean_serenity.png",
+    "grade": "LEGENDARY",
+    "genre": "LANDSCAPE",
+    "description": "고요하고 평화로운 바다 풍경.",
+    "totalQuantity": 5,
+    "initialPrice": 100,
+    "createdAt": "2025-05-04T10:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "빈티지 자동차",
+    "imageUrl": "https://example.com/images/vintage_car.png",
+    "grade": "COMMON",
+    "genre": "OBJECT",
+    "description": "완벽한 상태의 클래식 빈티지 자동차.",
+    "totalQuantity": 5,
+    "initialPrice": 10,
+    "createdAt": "2025-05-05T10:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "산의 위엄",
+    "imageUrl": "https://example.com/images/mountain_majesty.png",
+    "grade": "RARE",
+    "genre": "LANDSCAPE",
+    "description": "맑은 하늘 아래 눈 덮인 산.",
+    "totalQuantity": 5,
+    "initialPrice": 20,
+    "createdAt": "2025-05-06T10:00:00Z"
+  },
+  {
+    "id": 7,
+    "name": "여행자의 꿈",
+    "imageUrl": "https://example.com/images/travelers_dream.png",
+    "grade": "SUPER_RARE",
+    "genre": "TRAVEL",
+    "description": "여행자의 천국 같은 그림 같은 풍경.",
+    "totalQuantity": 5,
+    "initialPrice": 50,
+    "createdAt": "2025-05-07T10:00:00Z"
+  },
+  {
+    "id": 8,
+    "name": "황금 시간",
+    "imageUrl": "https://example.com/images/golden_hour.png",
+    "grade": "LEGENDARY",
+    "genre": "PORTRAIT",
+    "description": "황금 시간대에 촬영된 초상화.",
+    "totalQuantity": 5,
+    "initialPrice": 100,
+    "createdAt": "2025-05-08T10:00:00Z"
+  },
+  {
+    "id": 9,
+    "name": "숲의 속삭임",
+    "imageUrl": "https://example.com/images/forest_whisper.png",
+    "grade": "COMMON",
+    "genre": "LANDSCAPE",
+    "description": "고요한 숲의 장면.",
+    "totalQuantity": 5,
+    "initialPrice": 10,
+    "createdAt": "2025-05-09T10:00:00Z"
+  },
+  {
+    "id": 10,
+    "name": "도시 탐험가",
+    "imageUrl": "https://example.com/images/urban_explorer.png",
+    "grade": "RARE",
+    "genre": "TRAVEL",
+    "description": "모험적인 도시 탐험.",
+    "totalQuantity": 5,
+    "initialPrice": 20,
+    "createdAt": "2025-05-10T10:00:00Z"
+  }
+]

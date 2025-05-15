@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "points": 100,
+    "lastClaimed": "2025-05-10T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "userId": 2,
+    "points": 200,
+    "lastClaimed": "2025-05-11T10:00:00Z"
+  },
+  {
+    "id": 3,
+    "userId": 3,
+    "points": 300,
+    "lastClaimed": "2025-05-12T10:00:00Z"
+  },
+  {
+    "id": 4,
+    "userId": 4,
+    "points": 400,
+    "lastClaimed": "2025-05-13T10:00:00Z"
+  },
+  {
+    "id": 5,
+    "userId": 5,
+    "points": 500,
+    "lastClaimed": "2025-05-14T10:00:00Z"
+  },
+  {
+    "id": 6,
+    "userId": 6,
+    "points": 600,
+    "lastClaimed": "2025-05-15T10:00:00Z"
+  },
+  {
+    "id": 7,
+    "userId": 7,
+    "points": 700,
+    "lastClaimed": "2025-05-10T10:00:00Z"
+  },
+  {
+    "id": 8,
+    "userId": 8,
+    "points": 800,
+    "lastClaimed": "2025-05-11T10:00:00Z"
+  },
+  {
+    "id": 9,
+    "userId": 9,
+    "points": 900,
+    "lastClaimed": "2025-05-12T10:00:00Z"
+  },
+  {
+    "id": 10,
+    "userId": 10,
+    "points": 1000,
+    "lastClaimed": "2025-05-13T10:00:00Z"
+  },
+  {
+    "id": 11,
+    "userId": 11,
+    "points": 1100,
+    "lastClaimed": "2025-05-14T10:00:00Z"
+  },
+  {
+    "id": 12,
+    "userId": 12,
+    "points": 1200,
+    "lastClaimed": "2025-05-15T10:00:00Z"
+  },
+  {
+    "id": 13,
+    "userId": 13,
+    "points": 1300,
+    "lastClaimed": "2025-05-10T10:00:00Z"
+  },
+  {
+    "id": 14,
+    "userId": 14,
+    "points": 1400,
+    "lastClaimed": "2025-05-11T10:00:00Z"
+  },
+  {
+    "id": 15,
+    "userId": 15,
+    "points": 1500,
+    "lastClaimed": "2025-05-12T10:00:00Z"
+  },
+  {
+    "id": 16,
+    "userId": 16,
+    "points": 1600,
+    "lastClaimed": "2025-05-13T10:00:00Z"
+  },
+  {
+    "id": 17,
+    "userId": 17,
+    "points": 1700,
+    "lastClaimed": "2025-05-14T10:00:00Z"
+  },
+  {
+    "id": 18,
+    "userId": 18,
+    "points": 1800,
+    "lastClaimed": "2025-05-15T10:00:00Z"
+  },
+  {
+    "id": 19,
+    "userId": 19,
+    "points": 1900,
+    "lastClaimed": "2025-05-10T10:00:00Z"
+  },
+  {
+    "id": 20,
+    "userId": 20,
+    "points": 2000,
+    "lastClaimed": "2025-05-11T10:00:00Z"
+  }
+]
