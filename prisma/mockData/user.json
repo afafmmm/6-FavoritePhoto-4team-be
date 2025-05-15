@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "email": "user1@example.com",
+    "googleId": "google1",
+    "password": "password1",
+    "nickname": "UserOne",
+    "profileImage": "https://example.com/images/user1.png",
+    "createdAt": "2025-05-01T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "email": "user2@example.com",
+    "googleId": "google2",
+    "password": "password2",
+    "nickname": "UserTwo",
+    "profileImage": "https://example.com/images/user2.png",
+    "createdAt": "2025-05-02T10:00:00Z"
+  },
+  {
+    "id": 3,
+    "email": "user3@example.com",
+    "googleId": "google3",
+    "password": "password3",
+    "nickname": "UserThree",
+    "profileImage": "https://example.com/images/user3.png",
+    "createdAt": "2025-05-03T10:00:00Z"
+  },
+  {
+    "id": 4,
+    "email": "user4@example.com",
+    "googleId": "google4",
+    "password": "password4",
+    "nickname": "UserFour",
+    "profileImage": "https://example.com/images/user4.png",
+    "createdAt": "2025-05-04T10:00:00Z"
+  },
+  {
+    "id": 5,
+    "email": "user5@example.com",
+    "googleId": "google5",
+    "password": "password5",
+    "nickname": "UserFive",
+    "profileImage": "https://example.com/images/user5.png",
+    "createdAt": "2025-05-05T10:00:00Z"
+  },
+  {
+    "id": 6,
+    "email": "user6@example.com",
+    "googleId": "google6",
+    "password": "password6",
+    "nickname": "UserSix",
+    "profileImage": "https://example.com/images/user6.png",
+    "createdAt": "2025-05-06T10:00:00Z"
+  },
+  {
+    "id": 7,
+    "email": "user7@example.com",
+    "googleId": "google7",
+    "password": "password7",
+    "nickname": "UserSeven",
+    "profileImage": "https://example.com/images/user7.png",
+    "createdAt": "2025-05-07T10:00:00Z"
+  },
+  {
+    "id": 8,
+    "email": "user8@example.com",
+    "googleId": "google8",
+    "password": "password8",
+    "nickname": "UserEight",
+    "profileImage": "https://example.com/images/user8.png",
+    "createdAt": "2025-05-08T10:00:00Z"
+  },
+  {
+    "id": 9,
+    "email": "user9@example.com",
+    "googleId": "google9",
+    "password": "password9",
+    "nickname": "UserNine",
+    "profileImage": "https://example.com/images/user9.png",
+    "createdAt": "2025-05-09T10:00:00Z"
+  },
+  {
+    "id": 10,
+    "email": "user10@example.com",
+    "googleId": "google10",
+    "password": "password10",
+    "nickname": "UserTen",
+    "profileImage": "https://example.com/images/user10.png",
+    "createdAt": "2025-05-10T10:00:00Z"
+  },
+  {
+    "id": 11,
+    "email": "user11@example.com",
+    "googleId": "google11",
+    "password": "password11",
+    "nickname": "UserEleven",
+    "profileImage": "https://example.com/images/user11.png",
+    "createdAt": "2025-05-11T10:00:00Z"
+  },
+  {
+    "id": 12,
+    "email": "user12@example.com",
+    "googleId": "google12",
+    "password": "password12",
+    "nickname": "UserTwelve",
+    "profileImage": "https://example.com/images/user12.png",
+    "createdAt": "2025-05-12T10:00:00Z"
+  },
+  {
+    "id": 13,
+    "email": "user13@example.com",
+    "googleId": "google13",
+    "password": "password13",
+    "nickname": "UserThirteen",
+    "profileImage": "https://example.com/images/user13.png",
+    "createdAt": "2025-05-13T10:00:00Z"
+  },
+  {
+    "id": 14,
+    "email": "user14@example.com",
+    "googleId": "google14",
+    "password": "password14",
+    "nickname": "UserFourteen",
+    "profileImage": "https://example.com/images/user14.png",
+    "createdAt": "2025-05-14T10:00:00Z"
+  },
+  {
+    "id": 15,
+    "email": "user15@example.com",
+    "googleId": "google15",
+    "password": "password15",
+    "nickname": "UserFifteen",
+    "profileImage": "https://example.com/images/user15.png",
+    "createdAt": "2025-05-15T10:00:00Z"
+  },
+  {
+    "id": 16,
+    "email": "user16@example.com",
+    "googleId": "google16",
+    "password": "password16",
+    "nickname": "UserSixteen",
+    "profileImage": "https://example.com/images/user16.png",
+    "createdAt": "2025-05-16T10:00:00Z"
+  },
+  {
+    "id": 17,
+    "email": "user17@example.com",
+    "googleId": "google17",
+    "password": "password17",
+    "nickname": "UserSeventeen",
+    "profileImage": "https://example.com/images/user17.png",
+    "createdAt": "2025-05-17T10:00:00Z"
+  },
+  {
+    "id": 18,
+    "email": "user18@example.com",
+    "googleId": "google18",
+    "password": "password18",
+    "nickname": "UserEighteen",
+    "profileImage": "https://example.com/images/user18.png",
+    "createdAt": "2025-05-18T10:00:00Z"
+  },
+  {
+    "id": 19,
+    "email": "user19@example.com",
+    "googleId": "google19",
+    "password": "password19",
+    "nickname": "UserNineteen",
+    "profileImage": "https://example.com/images/user19.png",
+    "createdAt": "2025-05-19T10:00:00Z"
+  },
+  {
+    "id": 20,
+    "email": "user20@example.com",
+    "googleId": "google20",
+    "password": "password20",
+    "nickname": "UserTwenty",
+    "profileImage": "https://example.com/images/user20.png",
+    "createdAt": "2025-05-20T10:00:00Z"
+  }
+]

@@ -41,7 +41,6 @@ model User {
   profileImage  String?
   createdAt     DateTime       @default(now())
   notifications Notification[]
-  photoCards    PhotoCard[]    @relation("UserPhotoCards")
   userPoints    UserPoint[]
   userCards     UserCard[] // Relation to UserCard
   sales         Sale[] // 사용자가 판매자로 등록된 판매 정보
@@ -56,17 +55,16 @@ model UserPoint {
 }
 
 model PhotoCard {
-  id            Int        @id @default(autoincrement())
-  name          String
-  imageUrl      String
+  id            Int        @id @default(autoincrement()) // 고유 식별자, 자동 증가
+  name          String // 포토카드의 이름
+  imageUrl      String // 포토카드 이미지의 URL
   grade         CardGrade // 카드 등급 (예: COMMON, RARE, SUPER_RARE, LEGENDARY)
   genre         CardGenre // 카드 장르 (예: TRAVEL, LANDSCAPE, PORTRAIT, OBJECT)
-  description   String?
-  totalQuantity Int // 필수 필드로 변경
-  createdAt     DateTime   @default(now())
-  userCards     UserCard[] @relation("PhotoCardUserCards")
-  owner         User?      @relation("UserPhotoCards", fields: [ownerId], references: [id])
-  ownerId       Int?
+  description   String? // 포토카드에 대한 설명 (선택적)
+  totalQuantity Int // 포토카드의 총 발행 수량 (필수)
+  initialPrice  Int // 포토카드의 초기 가격 (필수)
+  createdAt     DateTime   @default(now()) // 포토카드 생성 날짜 및 시간
+  userCards     UserCard[] // 이 포토카드와 연결된 UserCard 목록
 }
 
 model UserCard {
@@ -76,7 +74,7 @@ model UserCard {
   price                  Int? // 카드 가격
   status                 Status         @default(ACTIVE) // 카드 상태 (예: active, traded 등)
   createdAt              DateTime       @default(now())
-  photoCard              PhotoCard      @relation("PhotoCardUserCards", fields: [photoCardId], references: [id])
+  photoCard              PhotoCard      @relation(fields: [photoCardId], references: [id])
   owner                  User?          @relation(fields: [ownerId], references: [id])
   listedTradeRequests    TradeRequest[] @relation("ListedCard") // 이 카드가 교환 요청의 대상인 경우
   applicantTradeRequests TradeRequest[] @relation("ApplicantCard") // 이 카드가 교환 요청에 사용된 경우
