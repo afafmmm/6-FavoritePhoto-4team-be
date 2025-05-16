@@ -14,6 +14,12 @@ async function main() {
   const photoCards = JSON.parse(
     fs.readFileSync("./prisma/mockData/photoCards.json", "utf-8")
   );
+  const cardGrades = JSON.parse(
+    fs.readFileSync("./prisma/mockData/cardGrade.json", "utf-8")
+  );
+  const cardGenres = JSON.parse(
+    fs.readFileSync("./prisma/mockData/cradGenre.json", "utf-8")
+  );
 
   // 사용자 데이터 삽입
   for (const user of users) {
@@ -44,6 +50,26 @@ async function main() {
     });
   }
 
+  // 카드 등급 데이터 삽입
+  for (const cardGrade of cardGrades) {
+    await prisma.cardGrade.create({
+      data: {
+        id: cardGrade.id,
+        name: cardGrade.name,
+      },
+    });
+  }
+
+  // 카드 장르 데이터 삽입
+  for (const cardGenre of cardGenres) {
+    await prisma.cardGenre.create({
+      data: {
+        id: cardGenre.id,
+        name: cardGenre.name,
+      },
+    });
+  }
+
   // 포토카드 및 사용자 카드 데이터 삽입
   for (const photoCard of photoCards) {
     await prisma.photoCard.create({
@@ -51,12 +77,12 @@ async function main() {
         id: photoCard.id,
         name: photoCard.name,
         imageUrl: photoCard.imageUrl,
-        grade: photoCard.grade,
-        genre: photoCard.genre,
+        gradeId: photoCard.gradeId,
+        genreId: photoCard.genreId,
         description: photoCard.description,
         totalQuantity: photoCard.totalQuantity,
         initialPrice: photoCard.initialPrice,
-        creatorId: photoCard.creatorId, // 추가: 생성자 ID
+        creatorId: photoCard.creatorId,
         createdAt: new Date(photoCard.createdAt),
       },
     });
