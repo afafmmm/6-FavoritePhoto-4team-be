@@ -56,6 +56,7 @@ async function main() {
         description: photoCard.description,
         totalQuantity: photoCard.totalQuantity,
         initialPrice: photoCard.initialPrice,
+        creatorId: photoCard.creatorId, // 추가: 생성자 ID
         createdAt: new Date(photoCard.createdAt),
       },
     });
@@ -65,7 +66,7 @@ async function main() {
       await prisma.userCard.create({
         data: {
           photoCardId: photoCard.id,
-          ownerId: photoCard.id, // 생성자를 첫 소유자로 지정
+          ownerId: photoCard.creatorId, // 생성자를 첫 소유자로 지정 (photoCard.id → photoCard.creatorId)
           price: photoCard.initialPrice,
           status: "ACTIVE",
           createdAt: new Date(),

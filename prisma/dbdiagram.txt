@@ -1,62 +1,99 @@
 Table User {
-  id            Int [pk, increment] // Primary key, auto-increment
-  email         String [unique]
-  googleId      String [unique, null]
-  password      String [null]
-  nickname      String
-  profileImage  String [null]
-  createdAt     DateTime [default: now()]
+  id int [pk, increment]
+  email varchar [unique]
+  googleId varchar [unique, null]
+  password varchar [null]
+  nickname varchar
+  profileImage varchar [null]
+  createdAt datetime
+  updatedAt datetime
 }
 
 Table UserPoint {
-  id          Int [pk, increment]
-  userId      Int [ref: > User.id]
-  points      Int [default: 0]
-  lastClaimed DateTime [null]
+  id int [pk, increment]
+  userId int
+  points int
+  lastClaimed datetime [null]
+  todayClaimCount int
 }
 
 Table PhotoCard {
-  id            Int [pk, increment]
-  name          String
-  imageUrl      String
-  grade         String // Enum: COMMON, RARE, SUPER_RARE, LEGENDARY
-  genre         String // Enum: TRAVEL, LANDSCAPE, PORTRAIT, OBJECT
-  description   String [null]
-  totalQuantity Int
-  createdAt     DateTime [default: now()]
+  id int [pk, increment]
+  name varchar
+  imageUrl varchar
+  grade varchar
+  genre varchar
+  description varchar [null]
+  totalQuantity int
+  initialPrice int
+  creatorId int
+  createdAt datetime
 }
 
 Table UserCard {
-  id                     Int [pk, increment]
-  photoCardId            Int [ref: > PhotoCard.id]
-  ownerId                Int [ref: > User.id, null]
-  price                  Int [null]
-  status                 String [default: ACTIVE] // Enum: ACTIVE, TRADED, INACTIVE, AVAILABLE, PENDING, COMPLETED, SOLD, CANCELLED
-  createdAt              DateTime [default: now()]
+  id int [pk, increment]
+  photoCardId int
+  ownerId int [null]
+  price int [null]
+  status varchar
+  createdAt datetime
 }
 
 Table Notification {
-  id        Int [pk, increment]
-  userId    Int [ref: > User.id]
-  message   String
-  createdAt DateTime [default: now()]
-  read      Boolean [default: false]
+  id int [pk, increment]
+  userId int
+  message varchar
+  createdAt datetime
+  read boolean
 }
 
 Table TradeRequest {
-  id              Int [pk, increment]
-  listedCardId    Int [ref: > UserCard.id]
-  applicantCardId Int [ref: > UserCard.id]
-  description     String [null]
-  tradeStatus     String [default: PENDING] // Enum: PENDING, ACTIVE, TRADED, INACTIVE, AVAILABLE, COMPLETED, SOLD, CANCELLED
-  createdAt       DateTime [default: now()]
+  id int [pk, increment]
+  photoCardId int
+  offeredPhotoCardId int
+  ownerId int
+  applicantId int
+  description varchar [null]
+  tradeStatus varchar
+  createdAt datetime
+}
+
+Table TradeRequestUserCard {
+  id int [pk, increment]
+  tradeRequestId int
+  userCardId int
 }
 
 Table Sale {
-  id         Int [pk, increment]
-  userCardId Int [ref: > UserCard.id]
-  sellerId   Int [ref: > User.id]
-  price      Int
-  status     String [default: AVAILABLE] // Enum: AVAILABLE, SOLD, CANCELLED
-  createdAt  DateTime [default: now()]
+  id int [pk, increment]
+  photoCardId int
+  sellerId int
+  price int
+  saleQuantity int
+  status varchar
+  desiredGrade varchar [null]
+  desiredGenre varchar [null]
+  desiredDescription varchar [null]
+  createdAt datetime
 }
+
+Table SaleUserCard {
+  id int [pk, increment]
+  saleId int
+  userCardId int
+}
+
+Ref: UserPoint.userId > User.id
+Ref: UserCard.photoCardId > PhotoCard.id
+Ref: UserCard.ownerId > User.id
+Ref: Notification.userId > User.id
+Ref: TradeRequest.ownerId > User.id
+Ref: TradeRequest.applicantId > User.id
+Ref: TradeRequest.photoCardId > PhotoCard.id
+Ref: TradeRequest.offeredPhotoCardId > PhotoCard.id
+Ref: TradeRequestUserCard.tradeRequestId > TradeRequest.id
+Ref: TradeRequestUserCard.userCardId > UserCard.id
+Ref: Sale.photoCardId > PhotoCard.id
+Ref: Sale.sellerId > User.id
+Ref: SaleUserCard.saleId > Sale.id
+Ref: SaleUserCard.userCardId > UserCard.id

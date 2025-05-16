@@ -7,80 +7,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Status {
-  ACTIVE // 카드 활성 상태
-  TRADED // 거래 완료 상태
-  INACTIVE // 비활성 상태
-  AVAILABLE // 거래 가능 상태
-  PENDING // 거래 대기 상태
-  COMPLETED // 거래 완료 상태
-  SOLD // 판매 완료 상태
-  CANCELLED // 거래 취소 상태
-}
-
-enum CardGrade {
-  COMMON
-  RARE
-  SUPER_RARE
-  LEGENDARY
-}
-
-enum CardGenre {
-  TRAVEL
-  LANDSCAPE
-  PORTRAIT
-  OBJECT
-}
-
+// 사용자 정보 및 계정 관련 데이터
 model User {
-  id            Int            @id @default(autoincrement())
-  email         String         @unique
-  googleId      String?        @unique
-  password      String?
-  nickname      String
-  profileImage  String?
-  createdAt     DateTime       @default(now())
-  notifications Notification[]
-  userPoints    UserPoint[]
-  userCards     UserCard[] // Relation to UserCard
-  sales         Sale[] // 사용자가 판매자로 등록된 판매 정보
+  id                   Int            @id @default(autoincrement())
+  email                String         @unique
+  googleId             String?        @unique
+  password             String?
+  nickname             String
+  profileImage         String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  notifications        Notification[]
+  userPoints           UserPoint[]
+  userCards            UserCard[]
+  sales                Sale[] // 사용자가 판매자로 등록된 판매 정보
+  tradeRequestsOwned   TradeRequest[] @relation("Owner")
+  tradeRequestsApplied TradeRequest[] @relation("Applicant")
 }
 
+// 사용자 포인트 적립 및 사용 내역
 model UserPoint {
-  id          Int       @id @default(autoincrement())
-  userId      Int
-  points      Int       @default(0)
-  lastClaimed DateTime?
-  user        User      @relation(fields: [userId], references: [id])
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  points          Int       @default(0)
+  lastClaimed     DateTime?
+  todayClaimCount Int       @default(0) // 오늘 포인트 클레임 횟수
+  user            User      @relation(fields: [userId], references: [id])
 }
 
+// 포토카드(상품) 정보
 model PhotoCard {
-  id            Int        @id @default(autoincrement()) // 고유 식별자, 자동 증가
-  name          String // 포토카드의 이름
-  imageUrl      String // 포토카드 이미지의 URL
-  grade         CardGrade // 카드 등급 (예: COMMON, RARE, SUPER_RARE, LEGENDARY)
-  genre         CardGenre // 카드 장르 (예: TRAVEL, LANDSCAPE, PORTRAIT, OBJECT)
-  description   String? // 포토카드에 대한 설명 (선택적)
-  totalQuantity Int // 포토카드의 총 발행 수량 (필수)
-  initialPrice  Int // 포토카드의 초기 가격 (필수)
-  createdAt     DateTime   @default(now()) // 포토카드 생성 날짜 및 시간
-  userCards     UserCard[] // 이 포토카드와 연결된 UserCard 목록
+  id                   Int            @id @default(autoincrement()) // 고유 식별자, 자동 증가
+  name                 String // 포토카드의 이름
+  imageUrl             String // 포토카드 이미지의 URL
+  grade                String // 카드 등급 (예: COMMON, RARE, SUPER_RARE, LEGENDARY) 
+  genre                String // 카드 장르 (예: TRAVEL, LANDSCAPE, PORTRAIT, OBJECT) 
+  description          String? // 포토카드에 대한 설명 (선택적)
+  totalQuantity        Int // 포토카드의 총 발행 수량 (필수)
+  initialPrice         Int // 포토카드의 초기 가격 (필수)
+  creatorId            Int // 포토카드를 생성한 사용자의 ID
+  createdAt            DateTime       @default(now()) // 포토카드 생성 날짜 및 시간
+  userCards            UserCard[] // 이 포토카드와 연결된 UserCard 목록
+  sales                Sale[]
+  // 교환의 대상이 되는 트레이드 요청들 (소유자 카드)
+  targetTradeRequests  TradeRequest[] @relation("TargetPhotoCard")
+  // 교환 제안에 사용되는 트레이드 요청들 (신청자 카드)
+  offeredTradeRequests TradeRequest[] @relation("OfferedPhotoCard")
 }
 
+// 실제 유저가 소유한 포토카드(인스턴스)
 model UserCard {
-  id                     Int            @id @default(autoincrement())
-  photoCardId            Int // PhotoCard를 참조하는 필드
-  ownerId                Int? // User를 참조하는 필드 (선택적)
-  price                  Int? // 카드 가격
-  status                 Status         @default(ACTIVE) // 카드 상태 (예: active, traded 등)
-  createdAt              DateTime       @default(now())
-  photoCard              PhotoCard      @relation(fields: [photoCardId], references: [id])
-  owner                  User?          @relation(fields: [ownerId], references: [id])
-  listedTradeRequests    TradeRequest[] @relation("ListedCard") // 이 카드가 교환 요청의 대상인 경우
-  applicantTradeRequests TradeRequest[] @relation("ApplicantCard") // 이 카드가 교환 요청에 사용된 경우
-  sales                  Sale[] // 이 카드가 판매 등록된 경우의 판매 정보
+  id                    Int                    @id @default(autoincrement())
+  photoCardId           Int // PhotoCard를 참조하는 필드
+  ownerId               Int? // User를 참조하는 필드 (선택적)
+  price                 Int? // 카드 가격
+  status                String                 @default("ACTIVE") // 카드 상태 (예: active, traded 등)
+  createdAt             DateTime               @default(now())
+  photoCard             PhotoCard              @relation(fields: [photoCardId], references: [id])
+  owner                 User?                  @relation(fields: [ownerId], references: [id])
+  saleUserCards         SaleUserCard[] // 이 카드가 판매에 포함된 경우
+  tradeRequestUserCards TradeRequestUserCard[] // 이 카드가 교환에 포함된 경우
 }
 
+// 알림 내역 (유저별)
 model Notification {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -90,24 +79,54 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id])
 }
 
+// 포토카드 교환 신청 내역
 model TradeRequest {
-  id              Int      @id @default(autoincrement())
-  listedCardId    Int // 판매 등록된 카드의 ID
-  applicantCardId Int // 신청자가 선택한 카드의 ID
-  description     String? // 교환 신청 설명
-  tradeStatus     Status   @default(PENDING) // 교환 상태 (예: pending, accepted, rejected)
-  createdAt       DateTime @default(now())
-  listedCard      UserCard @relation("ListedCard", fields: [listedCardId], references: [id])
-  applicantCard   UserCard @relation("ApplicantCard", fields: [applicantCardId], references: [id])
+  id                    Int                    @id @default(autoincrement())
+  photoCardId           Int // 교환 대상 PhotoCard의 ID (소유자 카드)
+  offeredPhotoCardId    Int // 교환 제안 PhotoCard의 ID (신청자 카드)
+  ownerId               Int // 교환 대상 카드 소유자 ID
+  applicantId           Int // 신청자(교환 희망자) ID
+  description           String? // 교환 신청 설명
+  tradeStatus           String                 @default("PENDING") // 교환 상태
+  createdAt             DateTime               @default(now())
+  owner                 User                   @relation("Owner", fields: [ownerId], references: [id])
+  applicant             User                   @relation("Applicant", fields: [applicantId], references: [id])
+  photoCard             PhotoCard              @relation("TargetPhotoCard", fields: [photoCardId], references: [id])
+  offeredPhotoCard      PhotoCard              @relation("OfferedPhotoCard", fields: [offeredPhotoCardId], references: [id])
+  tradeRequestUserCards TradeRequestUserCard[] // 실제 교환에 포함된 UserCard들
 }
 
+// 교환에 포함된 UserCard(교환 상세)
+model TradeRequestUserCard {
+  id             Int          @id @default(autoincrement())
+  tradeRequestId Int
+  userCardId     Int
+  tradeRequest   TradeRequest @relation(fields: [tradeRequestId], references: [id])
+  userCard       UserCard     @relation(fields: [userCardId], references: [id])
+}
+
+// 포토카드 판매 등록 내역
 model Sale {
+  id                 Int            @id @default(autoincrement())
+  photoCardId        Int // 판매 등록된 PhotoCard의 ID (묶음 거래 지원)
+  sellerId           Int // 판매자의 ID
+  price              Int // 판매 가격
+  saleQuantity       Int // 판매 수량
+  status             String         @default("AVAILABLE") // 판매 상태
+  desiredGrade       String? // 교환 희망 등급 (선택적)
+  desiredGenre       String? // 교환 희망 장르 (선택적)
+  desiredDescription String? // 교환 희망 설명 (선택적)
+  createdAt          DateTime       @default(now())
+  seller             User           @relation(fields: [sellerId], references: [id])
+  photoCard          PhotoCard      @relation(fields: [photoCardId], references: [id])
+  saleUserCards      SaleUserCard[] // 실제 판매에 포함된 UserCard들
+}
+
+// 판매에 포함된 UserCard(판매 상세)
+model SaleUserCard {
   id         Int      @id @default(autoincrement())
-  userCardId Int // 판매 등록된 UserCard의 ID
-  sellerId   Int // 판매자의 ID
-  price      Int // 판매 가격
-  status     Status   @default(AVAILABLE) // 판매 상태 (예: available, sold, cancelled)
-  createdAt  DateTime @default(now())
+  saleId     Int
+  userCardId Int
+  sale       Sale     @relation(fields: [saleId], references: [id])
   userCard   UserCard @relation(fields: [userCardId], references: [id])
-  seller     User     @relation(fields: [sellerId], references: [id])
 }
