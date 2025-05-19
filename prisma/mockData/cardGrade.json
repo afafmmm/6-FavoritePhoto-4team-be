@@ -1,0 +1,6 @@
+[
+  { "id": 1, "name": "COMMON" },
+  { "id": 2, "name": "RARE" },
+  { "id": 3, "name": "SUPER_RARE" },
+  { "id": 4, "name": "LEGENDARY" }
+]
