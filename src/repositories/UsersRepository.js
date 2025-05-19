@@ -16,24 +16,29 @@ async function findGrade() {
 
 // POST
 async function create(query) {
-  const {
-    name,
-    grade,
-    genre,
-    description,
-    volumn,
-    price,
-    imageFile,
-    creatorId,
-  } = query;
+  const { name, grade, genre, description, volumn, price, image, creatorId } =
+    query;
 
-  const imageUrl = `/uploads/${imageFile.filename}`;
+  const imageUrl = `/uploads/${image.filename}`;
   const gradeRecord = await prisma.cardGrade.findUnique({
     where: { name: grade },
   });
   const genreRecord = await prisma.cardGenre.findUnique({
     where: { name: genre },
   });
+
+  if (!gradeRecord) {
+    throw new Error(`해당 등급(${grade})이 존재하지 않습니다.`);
+  }
+  if (!genreRecord) {
+    throw new Error(`해당 장르(${genre})가 존재하지 않습니다.`);
+  }
+
+  await prisma.$executeRawUnsafe(`
+  SELECT setval(pg_get_serial_sequence('"PhotoCard"', 'id'), (
+    SELECT MAX(id) FROM "PhotoCard"
+  ) + 1);
+  `);
 
   const photoCard = await prisma.photoCard.create({
     data: {

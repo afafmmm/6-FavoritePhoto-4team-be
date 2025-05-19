@@ -16,29 +16,34 @@ usersController.get("/card-meta", async (req, res, next) => {
 });
 
 // POST
-usersController.post("/post", upload.single("card"), async (req, res, next) => {
-  try {
-    const { name, grade, genre, description, volumn, price } = req.body;
+usersController.post(
+  "/post",
+  upload.single("image"),
+  async (req, res, next) => {
+    try {
+      const { name, grade, genre, description, volumn, price } = req.body;
 
-    const creatorId = 1;
-    // const creatorId = req.user.id; // 나중에 id 이름 확인할 것
-    const imageFile = req.file;
+      const creatorId = 1;
+      // const creatorId = req.user.id; // 나중에 id 이름 확인할 것
+      const image = req.file;
 
-    const result = await usersService.create({
-      name,
-      grade,
-      genre,
-      description,
-      volumn,
-      price,
-      imageFile,
-      creatorId,
-    });
+      const result = await usersService.create({
+        name,
+        grade,
+        genre,
+        description,
+        volumn,
+        price,
+        image,
+        creatorId,
+      });
 
-    res.status(201).json(result);
-  } catch (err) {
-    next(err);
+      res.status(201).json(result);
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
   }
-});
+);
 
 export default usersController;
