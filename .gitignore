@@ -140,3 +140,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# 추가
+.http
