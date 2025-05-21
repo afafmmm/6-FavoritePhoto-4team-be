@@ -1,6 +1,7 @@
 import express from "express";
 import usersService from "../services/UsersService.js";
 import upload from "../middlewares/upload.js";
+import { validatePostCard } from "../utils/validators.js";
 
 const usersController = express.Router();
 
@@ -21,13 +22,18 @@ usersController.post(
   upload.single("image"),
   async (req, res, next) => {
     try {
-      const { name, grade, genre, description, volumn, price } = req.body;
-
       const creatorId = 1;
       // const creatorId = req.user.id; // 나중에 id 이름 확인할 것
       const image = req.file;
+      const { name, grade, genre, description, volumn, price } = req.body;
 
-      const result = await usersService.create({
+      if (!creatorId) {
+        const error = new Error("미로그인 상태입니다.");
+        error.code = 401;
+        throw error;
+      }
+
+      const query = {
         name,
         grade,
         genre,
@@ -36,7 +42,18 @@ usersController.post(
         price,
         image,
         creatorId,
-      });
+      }; // 내용 묶음 간단하게
+
+      const errors = validatePostCard(query);
+
+      if (Object.keys(errors).length > 0) {
+        const error = new Error("유효성 검사 실패");
+        error.code = 400;
+        error.details = errors;
+        throw error;
+      }
+
+      const result = await usersService.create(query);
 
       res.status(201).json(result);
     } catch (err) {

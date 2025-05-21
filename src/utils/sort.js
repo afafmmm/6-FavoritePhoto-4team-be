@@ -10,12 +10,12 @@ async function getAll(query = {}) {
 
 export default function getSort(model, order = "낮은 가격순") {
   const modelType = {
-    photoCard: {
+    initialCard: {
       "낮은 가격순": { initialPrice: "asc" },
       "높은 가격순": { initialPrice: "desc" },
       최신순: { createdAt: "desc" },
     },
-    userCard: {
+    card: {
       "낮은 가격순": { price: "asc" },
       "높은 가격순": { price: "desc" },
       최신순: { createdAt: "desc" },

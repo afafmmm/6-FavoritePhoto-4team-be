@@ -27,11 +27,8 @@ async function create(query) {
     where: { name: genre },
   });
 
-  if (!gradeRecord) {
-    throw new Error(`해당 등급(${grade})이 존재하지 않습니다.`);
-  }
-  if (!genreRecord) {
-    throw new Error(`해당 장르(${genre})가 존재하지 않습니다.`);
+  if (!gradeRecord || !genreRecord) {
+    throw new Error("존재하지 않는 등급 또는 장르입니다.");
   }
 
   await prisma.$executeRawUnsafe(`
