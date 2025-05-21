@@ -45,7 +45,6 @@ usersController.post(
       }; // 내용 묶음 간단하게
 
       const errors = validatePostCard(query);
-
       if (Object.keys(errors).length > 0) {
         const error = new Error("유효성 검사 실패");
         error.code = 400;
@@ -62,5 +61,31 @@ usersController.post(
     }
   }
 );
+
+// ----------- //
+
+// GET: My Gallery
+usersController.get("/", async (req, res, next) => {
+  try {
+    const userId = 1; //req.user.id;
+    const result = await usersService.getMyGallery(userId, req.query);
+
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET: 내 판매 카드
+usersController.get("/cards-on-sale", async (req, res, next) => {
+  try {
+    const userId = 1; //req.user.id;
+    const result = await usersService.getMySales(userId, req.query);
+
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default usersController;
