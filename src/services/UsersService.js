@@ -9,28 +9,19 @@ async function getCardMetaData() {
 
 // POST
 async function create(query) {
-  const { name, grade, genre, description, volumn, price, image, creatorId } =
-    query;
-
-  if (!name || !grade || !genre || !volumn || !price || !image || !creatorId) {
-    const error = new Error("카드 정보가 빠졌습니다.");
-    error.code = 400;
-
-    throw error;
-  }
-
-  return await usersRepository.create({
-    name,
-    grade,
-    genre,
-    description,
-    volumn,
-    price,
-    image,
-    creatorId,
-  });
+  return await usersRepository.create(query);
 }
 
-const usersService = { getCardMetaData, create };
+// GET: My Gallery
+async function getMyGallery(userId, query) {
+  return await usersRepository.findMyGallery(userId, query);
+}
+
+// GET: 내 판매 카드
+async function getMySales(userId, query) {
+  return await usersRepository.findMySales(userId, query);
+}
+
+const usersService = { getCardMetaData, create, getMyGallery, getMySales };
 
 export default usersService;
