@@ -5,5 +5,6 @@ export default function errorHandler(err, req, res, next) {
     method: req.method,
     message: err.message || "서버 오류",
     data: err.data,
+    errors: err.details || null, // FE에서 쓰라고 오류 전달
   });
 }
