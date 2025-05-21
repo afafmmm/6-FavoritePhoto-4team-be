@@ -12,6 +12,16 @@ async function create(query) {
   return await usersRepository.create(query);
 }
 
-const usersService = { getCardMetaData, create };
+// GET: My Gallery
+async function getMyGallery(userId, query) {
+  return await usersRepository.findMyGallery(userId, query);
+}
+
+// GET: 내 판매 카드
+async function getMySales(userId, query) {
+  return await usersRepository.findMySales(userId, query);
+}
+
+const usersService = { getCardMetaData, create, getMyGallery, getMySales };
 
 export default usersService;
