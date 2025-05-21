@@ -48,11 +48,25 @@ authController.post(
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       path: "/",
-      sameSite: "lax",
-      secure: false,
+      sameSite: "None",
+      secure: true,
     });
 
     res.json({ accessToken, user });
+  })
+);
+
+// POST /auth/logout - 로그아웃
+authController.post(
+  "/logout",
+  asyncHandler(async (req, res) => {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      path: "/",
+      sameSite: "None",
+      secure: true,
+    });
+    res.status(200).json({ message: "성공적으로 로그아웃되었습니다." });
   })
 );
 

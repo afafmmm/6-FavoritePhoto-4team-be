@@ -1,25 +1,25 @@
 ### 회원가입 테스트
-POST http://localhost:5000/api/auth/signup
+POST https://six-favoritephoto-4team-be.onrender.com/api/auth/signup
 Content-Type: application/json
 
 {
-  "nickname": "테스트닉네임",
-  "email": "test@example.com",
+  "nickname": "테스트닉네임2",
+  "email": "test2@example.com",
   "password": "password123",
   "passwordConfirmation": "password123"
 }
 
 ### 로그인 테스트 (회원가입 성공 후 사용)
- POST http://localhost:5000/api/auth/login
+ POST https://six-favoritephoto-4team-be.onrender.com/api/auth/login
  Content-Type: application/json
 
 {
-   "email": "test@example.com",
+   "email": "test1@example.com",
    "password": "password123"
  }
 
 ### 액세스 토큰 재발급 테스트 (로그인 성공 후, refreshToken을 쿠키로 받은 상태에서 사용)
- POST http://localhost:5000/api/auth/refresh-token
+ POST https://six-favoritephoto-4team-be.onrender.com/api/auth/refresh-token
  Content-Type: application/json
 
  {
