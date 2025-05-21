@@ -1,0 +1,29 @@
+### 회원가입 테스트
+POST http://localhost:5000/api/auth/signup
+Content-Type: application/json
+
+{
+  "nickname": "테스트닉네임",
+  "email": "test@example.com",
+  "password": "password123",
+  "passwordConfirmation": "password123"
+}
+
+### 로그인 테스트 (회원가입 성공 후 사용)
+ POST http://localhost:5000/api/auth/login
+ Content-Type: application/json
+
+{
+   "email": "test@example.com",
+   "password": "password123"
+ }
+
+### 액세스 토큰 재발급 테스트 (로그인 성공 후, refreshToken을 쿠키로 받은 상태에서 사용)
+ POST http://localhost:5000/api/auth/refresh-token
+ Content-Type: application/json
+
+ {
+   // 이 요청은 본문이 필요 없고, 쿠키에 있는 refreshToken을 사용합니다.
+   // Passport.js의 refresh-token 전략이 쿠키에서 토큰을 읽어 처리합니다.
+ }
+
