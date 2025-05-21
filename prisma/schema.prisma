@@ -42,6 +42,7 @@ model CardGenre {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   photoCards PhotoCard[]
+  Sale       Sale[]
 }
 
 // 카드 등급 정보 테이블
@@ -51,6 +52,7 @@ model CardGrade {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   photoCards PhotoCard[]
+  Sale       Sale[]
 }
 
 // 포토카드(상품) 정보
@@ -132,14 +134,16 @@ model Sale {
   sellerId           Int // 판매자의 ID
   price              Int // 판매 가격
   saleQuantity       Int // 판매 수량
+  cardGradeId        Int?
+  cardGenreId        Int?
   status             String         @default("AVAILABLE") // 판매 상태
-  desiredGrade       String? // 교환 희망 등급 (선택적)
-  desiredGenre       String? // 교환 희망 장르 (선택적)
   desiredDescription String? // 교환 희망 설명 (선택적)
   createdAt          DateTime       @default(now())
   seller             User           @relation(fields: [sellerId], references: [id])
   photoCard          PhotoCard      @relation(fields: [photoCardId], references: [id])
   saleUserCards      SaleUserCard[] // 실제 판매에 포함된 UserCard들
+  cardGrade          CardGrade?     @relation(fields: [cardGradeId], references: [id]) // 교환 희망 등급 (선택적)
+  cardGenre          CardGenre?     @relation(fields: [cardGenreId], references: [id]) // 교환 희망 장르 (선택적)
 }
 
 // 판매에 포함된 UserCard(판매 상세)
