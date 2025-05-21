@@ -9,7 +9,7 @@ datasource db {
 
 // 사용자 정보 및 계정 관련 데이터
 model User {
-  id                   Int            @id @default(autoincrement())
+  id                   String         @id @default(uuid())
   email                String         @unique
   googleId             String?        @unique
   password             String?
@@ -23,12 +23,13 @@ model User {
   sales                Sale[] // 사용자가 판매자로 등록된 판매 정보
   tradeRequestsOwned   TradeRequest[] @relation("Owner")
   tradeRequestsApplied TradeRequest[] @relation("Applicant")
+  createdPhotoCards    PhotoCard[]    @relation("UserToPhotoCardCreator")
 }
 
 // 사용자 포인트 적립 및 사용 내역
 model UserPoint {
   id              Int       @id @default(autoincrement())
-  userId          Int
+  userId          String
   points          Int       @default(0)
   lastClaimed     DateTime?
   todayClaimCount Int       @default(0) // 오늘 포인트 클레임 횟수
@@ -65,7 +66,7 @@ model PhotoCard {
   description          String? // 포토카드에 대한 설명 (선택적)
   totalQuantity        Int // 포토카드의 총 발행 수량 (필수)
   initialPrice         Int // 포토카드의 초기 가격 (필수)
-  creatorId            Int // 포토카드를 생성한 사용자의 ID
+  creatorId            String // 포토카드를 생성한 사용자의 ID
   createdAt            DateTime       @default(now()) // 포토카드 생성 날짜 및 시간
   userCards            UserCard[] // 이 포토카드와 연결된 UserCard 목록
   sales                Sale[]
@@ -75,13 +76,14 @@ model PhotoCard {
   offeredTradeRequests TradeRequest[] @relation("OfferedPhotoCard")
   grade                CardGrade      @relation(fields: [gradeId], references: [id])
   genre                CardGenre      @relation(fields: [genreId], references: [id])
+  creator              User           @relation("UserToPhotoCardCreator", fields: [creatorId], references: [id])
 }
 
 // 실제 유저가 소유한 포토카드(인스턴스)
 model UserCard {
   id                    Int                    @id @default(autoincrement())
   photoCardId           Int // PhotoCard를 참조하는 필드
-  ownerId               Int? // User를 참조하는 필드 (선택적)
+  ownerId               String? // User를 참조하는 필드 (선택적)
   price                 Int? // 카드 가격
   status                String                 @default("ACTIVE") // 카드 상태 (예: active, traded 등)
   createdAt             DateTime               @default(now())
@@ -94,7 +96,7 @@ model UserCard {
 // 알림 내역 (유저별)
 model Notification {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  userId    String
   message   String
   createdAt DateTime @default(now())
   read      Boolean  @default(false)
@@ -106,8 +108,8 @@ model TradeRequest {
   id                    Int                    @id @default(autoincrement())
   photoCardId           Int // 교환 대상 PhotoCard의 ID (소유자 카드)
   offeredPhotoCardId    Int // 교환 제안 PhotoCard의 ID (신청자 카드)
-  ownerId               Int // 교환 대상 카드 소유자 ID
-  applicantId           Int // 신청자(교환 희망자) ID
+  ownerId               String // 교환 대상 카드 소유자 ID
+  applicantId           String // 신청자(교환 희망자) ID
   description           String? // 교환 신청 설명
   tradeStatus           String                 @default("PENDING") // 교환 상태
   createdAt             DateTime               @default(now())
@@ -131,7 +133,7 @@ model TradeRequestUserCard {
 model Sale {
   id                 Int            @id @default(autoincrement())
   photoCardId        Int // 판매 등록된 PhotoCard의 ID (묶음 거래 지원)
-  sellerId           Int // 판매자의 ID
+  sellerId           String // 판매자의 ID
   price              Int // 판매 가격
   saleQuantity       Int // 판매 수량
   cardGradeId        Int?
