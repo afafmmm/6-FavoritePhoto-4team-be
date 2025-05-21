@@ -68,6 +68,16 @@ async function logInUser(email, password) {
   return { accessToken, refreshToken, user: userWithoutPassword };
 }
 
+async function getUserById(id) {
+  const user = await userRepository.findById(id);
+
+  if (user) {
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+  return null;
+}
+
 function generateNewAccessToken(user) {
   if (!user || !user.id) {
     throw new Error(
@@ -90,5 +100,6 @@ function generateNewAccessToken(user) {
 export default {
   signUpUser,
   logInUser,
+  getUserById,
   generateNewAccessToken,
 };
