@@ -1,5 +1,20 @@
 import prisma from "../config/prisma.js";
 
+// 사용자 id 찾기
+async function findById(id) {
+  return await prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      email: true,
+      nickname: true,
+      profileImage: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
 // 카드 장르 찾기
 async function findGenre() {
   return await prisma.cardGenre.findMany({
@@ -157,6 +172,7 @@ async function findMySales(
 }
 
 const usersRepository = {
+  findById,
   findGenre,
   findGrade,
   create,
