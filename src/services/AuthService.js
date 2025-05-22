@@ -69,7 +69,7 @@ async function logInUser(email, password) {
 }
 
 async function getUserById(id) {
-  const user = await userRepository.findById(id);
+  const user = await authRepository.findById(id);
 
   if (user) {
     const { password, ...userWithoutPassword } = user;

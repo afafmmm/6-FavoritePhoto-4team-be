@@ -1,6 +1,7 @@
 import express from "express";
 import usersService from "../services/UsersService.js";
 import upload from "../middlewares/upload.js";
+import passport from "../config/passport.js";
 
 const usersController = express.Router();
 
@@ -18,12 +19,16 @@ usersController.get("/card-meta", async (req, res, next) => {
 // POST
 usersController.post(
   "/post",
+  passport.authenticate("access-token", {
+    session: false,
+    failWithError: true,
+  }),
   upload.single("image"),
   async (req, res, next) => {
     try {
       const { name, grade, genre, description, volumn, price } = req.body;
 
-      const creatorId = 1;
+      const creatorId = req.user.id;
       // const creatorId = req.user.id; // 나중에 id 이름 확인할 것
       const image = req.file;
 
