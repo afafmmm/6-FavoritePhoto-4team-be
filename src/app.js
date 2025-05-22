@@ -6,7 +6,7 @@ import cors from "cors";
 import errorHandler from "./middlewares/ErrorHandler.js";
 import usersController from "./controllers/UsersController.js";
 import authController from "./controllers/AuthController.js";
-// import storeController from "./controllers/StoreController.js";
+import storeController from "./controllers/StoreController.js";
 // import notificationsController from "./controllers/NotificationsController.js";
 // import pointsController from "./controllers/PointsController.js";
 
@@ -14,7 +14,8 @@ const app = express();
 app.use(
   cors({
     origin:
-      "https://6-favorite-photo-4team-fe-git-dev-lee-ji-sus-projects.vercel.app", // 프론트엔드 주소
+      // "https://6-favorite-photo-4team-fe.vercel.app", // 프론트엔드 주소
+      "http://localhost:3000",
     credentials: true,
   })
 );
@@ -25,7 +26,7 @@ app.use("/uploads", express.static("src/uploads"));
 
 app.use("/api/auth", authController);
 app.use("/api/users", usersController);
-// app.use("/api/store", storeController);
+app.use("/api/store", storeController);
 // app.use("/api/notifications", notificationsController);
 // app.use("/api/points", pointsController);
 
