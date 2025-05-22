@@ -4,7 +4,6 @@ import upload from "../middlewares/upload.js";
 import passport from "../config/passport.js";
 import { validatePostCard } from "../utils/validators.js";
 
-
 const usersController = express.Router();
 
 // 등급 + 장르 소환
@@ -70,27 +69,41 @@ usersController.post(
 // ----------- //
 
 // GET: My Gallery
-usersController.get("/", async (req, res, next) => {
-  try {
-    const userId = 1; //req.user.id;
-    const result = await usersService.getMyGallery(userId, req.query);
+usersController.get(
+  "/",
+  passport.authenticate("access-token", {
+    session: false,
+    failWithError: true,
+  }),
+  async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const result = await usersService.getMyGallery(userId, req.query);
 
-    res.json(result);
-  } catch (err) {
-    next(err);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 // GET: 내 판매 카드
-usersController.get("/cards-on-sale", async (req, res, next) => {
-  try {
-    const userId = 1; //req.user.id;
-    const result = await usersService.getMySales(userId, req.query);
+usersController.get(
+  "/cards-on-sale",
+  passport.authenticate("access-token", {
+    session: false,
+    failWithError: true,
+  }),
+  async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const result = await usersService.getMySales(userId, req.query);
 
-    res.json(result);
-  } catch (err) {
-    next(err);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 export default usersController;
