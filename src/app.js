@@ -13,9 +13,12 @@ import storeController from "./controllers/StoreController.js";
 const app = express();
 app.use(
   cors({
-    origin:
-      // "https://6-favorite-photo-4team-fe.vercel.app", // 프론트엔드 주소
-      "http://localhost:3000",
+
+    origin: [
+      "https://6-favorite-photo-4team-fe-git-dev-lee-ji-sus-projects.vercel.app", // 프론트엔드 주소
+      // "http://localhost:3000", // 로컬 개발 환경 주소
+    ],
+
     credentials: true,
   })
 );

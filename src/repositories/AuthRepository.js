@@ -41,7 +41,7 @@ async function findByEmail(email) {
 }
 
 async function findByNickname(nickname) {
-  return prisma.user.findFirst({
+  return prisma.user.findUnique({
     where: { nickname },
     select: {
       id: true,
