@@ -1,6 +1,6 @@
 import express from 'express';
 import storeService from '../services/StoreService.js';
-
+import passport from '../config/passport.js';
 const storeController = express.Router();
 
 // 카드 목록 조회
