@@ -31,7 +31,7 @@ app.use('/api/users', usersController);
 app.use('/api/store', storeController);
 // app.use("/api/notifications", notificationsController);
 app.use('/api/points', pointsController);
-app.use('/api/store', salesController);
+// app.use('/api/store', salesController);
 
 app.use(errorHandler);
 
