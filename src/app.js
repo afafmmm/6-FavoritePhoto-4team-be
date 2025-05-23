@@ -1,13 +1,13 @@
-import "dotenv/config";
-import express from "express";
-import cookieParser from "cookie-parser";
-import passport from "./config/passport.js";
-import cors from "cors";
-import errorHandler from "./middlewares/ErrorHandler.js";
-import usersController from "./controllers/UsersController.js";
-import authController from "./controllers/AuthController.js";
-import salesController from "./controllers/SalesController.js";
-import storeController from "./controllers/StoreController.js";
+import 'dotenv/config';
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import passport from './config/passport.js';
+import cors from 'cors';
+import errorHandler from './middlewares/ErrorHandler.js';
+import usersController from './controllers/UsersController.js';
+import authController from './controllers/AuthController.js';
+import salesController from './controllers/SalesController.js';
+import storeController from './controllers/StoreController.js';
 import pointsController from './controllers/PointsController.js';
 // import notificationsController from "./controllers/NotificationsController.js";
 
@@ -15,8 +15,8 @@ const app = express();
 app.use(
   cors({
     origin: [
-      // "https://6-favorite-photo-4team-fe.vercel.app", // 프론트엔드 주소
-      "http://localhost:3000", // 로컬 개발 환경 주소
+      'https://6-favorite-photo-4team-fe.vercel.app', // 프론트엔드 주소
+      'http://localhost:3000' // 로컬 개발 환경 주소
     ],
     credentials: true
   })
@@ -31,7 +31,7 @@ app.use('/api/users', usersController);
 app.use('/api/store', storeController);
 // app.use("/api/notifications", notificationsController);
 app.use('/api/points', pointsController);
-app.use("/api/store", salesController);
+app.use('/api/store', salesController);
 
 app.use(errorHandler);
 
