@@ -29,12 +29,6 @@ usersController.get(
       const userId = req.user.id;
       const count = await usersService.getCardCreationCount(userId);
 
-      if (count >= 3) {
-        const error = new Error("이번달 모든 생성 기회를 소진했어요");
-        error.code = 400;
-        throw error;
-      }
-
       res.json({ count });
     } catch (err) {
       next(err);
@@ -55,6 +49,7 @@ usersController.post(
       const creatorId = req.user.id;
       const image = req.file;
       const { name, grade, genre, description, volumn, price } = req.body;
+      const count = await usersService.getCardCreationCount(creatorId);
 
       if (!creatorId) {
         const error = new Error("미로그인 상태입니다.");
@@ -78,6 +73,13 @@ usersController.post(
         const error = new Error("유효성 검사 실패");
         error.code = 400;
         error.details = errors;
+        throw error;
+      }
+
+      // 생성 횟수 초과 여부도 같이 검사
+      if (count >= 3) {
+        const error = new Error("한 달 생성 횟수를 초과했습니다.");
+        error.code = 403;
         throw error;
       }
 
