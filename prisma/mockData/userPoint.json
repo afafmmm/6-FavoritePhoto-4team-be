@@ -1,121 +1,121 @@
 [
   {
     "id": 1,
-    "userId": 1,
+    "userId": "a1b2c3d4-e1f2-4a5b-8c6d-1e2f3a4b5c6d",
     "points": 100,
     "lastClaimed": "2025-05-10T10:00:00Z"
   },
   {
     "id": 2,
-    "userId": 2,
+    "userId": "b2c3d4e5-f2a1-5b6c-7d8e-2f3a4b5c6d7e",
     "points": 200,
     "lastClaimed": "2025-05-11T10:00:00Z"
   },
   {
     "id": 3,
-    "userId": 3,
+    "userId": "c3d4e5f6-a1b2-6c7d-8e9f-3a4b5c6d7e8f",
     "points": 300,
     "lastClaimed": "2025-05-12T10:00:00Z"
   },
   {
     "id": 4,
-    "userId": 4,
+    "userId": "d4e5f6a7-b2c3-7d8e-9f0a-4b5c6d7e8f9a",
     "points": 400,
     "lastClaimed": "2025-05-13T10:00:00Z"
   },
   {
     "id": 5,
-    "userId": 5,
+    "userId": "e5f6a7b8-c3d4-8e9f-0a1b-5c6d7e8f9a0b",
     "points": 500,
     "lastClaimed": "2025-05-14T10:00:00Z"
   },
   {
     "id": 6,
-    "userId": 6,
+    "userId": "f6a7b8c9-d4e5-9f0a-1b2c-6d7e8f9a0b1c",
     "points": 600,
     "lastClaimed": "2025-05-15T10:00:00Z"
   },
   {
     "id": 7,
-    "userId": 7,
+    "userId": "a7b8c9d0-e5f6-0a1b-2c3d-7e8f9a0b1c2d",
     "points": 700,
     "lastClaimed": "2025-05-10T10:00:00Z"
   },
   {
     "id": 8,
-    "userId": 8,
+    "userId": "b8c9d0e1-f6a7-1b2c-3d4e-8f9a0b1c2d3e",
     "points": 800,
     "lastClaimed": "2025-05-11T10:00:00Z"
   },
   {
     "id": 9,
-    "userId": 9,
+    "userId": "c9d0e1f2-a7b8-2c3d-4e5f-9a0b1c2d3e4f",
     "points": 900,
     "lastClaimed": "2025-05-12T10:00:00Z"
   },
   {
     "id": 10,
-    "userId": 10,
+    "userId": "d0e1f2a3-b8c9-3d4e-5f6a-0b1c2d3e4f5a",
     "points": 1000,
     "lastClaimed": "2025-05-13T10:00:00Z"
   },
   {
     "id": 11,
-    "userId": 11,
+    "userId": "e1f2a3b4-c9d0-4e5f-6a7b-1c2d3e4f5a6b",
     "points": 1100,
     "lastClaimed": "2025-05-14T10:00:00Z"
   },
   {
     "id": 12,
-    "userId": 12,
+    "userId": "f2a3b4c5-d0e1-5f6a-7b8c-2d3e4f5a6b7c",
     "points": 1200,
     "lastClaimed": "2025-05-15T10:00:00Z"
   },
   {
     "id": 13,
-    "userId": 13,
+    "userId": "a3b4c5d6-e1f2-6a7b-8c9d-3e4f5a6b7c8d",
     "points": 1300,
     "lastClaimed": "2025-05-10T10:00:00Z"
   },
   {
     "id": 14,
-    "userId": 14,
+    "userId": "b4c5d6e7-f2a3-7b8c-9d0e-4f5a6b7c8d9e",
     "points": 1400,
     "lastClaimed": "2025-05-11T10:00:00Z"
   },
   {
     "id": 15,
-    "userId": 15,
+    "userId": "c5d6e7f8-a3b4-8c9d-0e1f-5a6b7c8d9e0f",
     "points": 1500,
     "lastClaimed": "2025-05-12T10:00:00Z"
   },
   {
     "id": 16,
-    "userId": 16,
+    "userId": "d6e7f8a9-b4c5-9d0e-1f2a-6b7c8d9e0f1a",
     "points": 1600,
     "lastClaimed": "2025-05-13T10:00:00Z"
   },
   {
     "id": 17,
-    "userId": 17,
+    "userId": "e7f8a9b0-c5d6-0e1f-2a3b-7c8d9e0f1a2b",
     "points": 1700,
     "lastClaimed": "2025-05-14T10:00:00Z"
   },
   {
     "id": 18,
-    "userId": 18,
+    "userId": "f8a9b0c1-d6e7-1f2a-3b4c-8d9e0f1a2b3c",
     "points": 1800,
     "lastClaimed": "2025-05-15T10:00:00Z"
   },
   {
     "id": 19,
-    "userId": 19,
+    "userId": "a9b0c1d2-e7f8-2a3b-4c5d-9e0f1a2b3c4d",
     "points": 1900,
     "lastClaimed": "2025-05-10T10:00:00Z"
   },
   {
     "id": 20,
-    "userId": 20,
+    "userId": "b0c1d2e3-f8a9-3b4c-5d6e-0f1a2b3c4d5e",
     "points": 2000,
     "lastClaimed": "2025-05-11T10:00:00Z"
   }

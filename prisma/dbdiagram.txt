@@ -1,99 +1,120 @@
 Table User {
-  id int [pk, increment]
-  email varchar [unique]
-  googleId varchar [unique, null]
-  password varchar [null]
-  nickname varchar
-  profileImage varchar [null]
-  createdAt datetime
-  updatedAt datetime
+  id                   varchar [pk, unique]
+  email                varchar [unique]
+  googleId             varchar [unique, null]
+  password             varchar [null]
+  nickname             varchar [unique]
+  profileImage         varchar [null]
+  createdAt            datetime
+  updatedAt            datetime
 }
 
 Table UserPoint {
-  id int [pk, increment]
-  userId int
-  points int
-  lastClaimed datetime [null]
+  id              int [pk, increment]
+  userId          varchar
+  points          int
+  lastClaimed     datetime [null]
   todayClaimCount int
 }
 
+Table CardGenre {
+  id         int [pk, increment]
+  name       varchar [unique]
+  createdAt  datetime
+  updatedAt  datetime
+}
+
+Table CardGrade {
+  id         int [pk, increment]
+  name       varchar [unique]
+  createdAt  datetime
+  updatedAt  datetime
+}
+
 Table PhotoCard {
-  id int [pk, increment]
-  name varchar
-  imageUrl varchar
-  grade varchar
-  genre varchar
-  description varchar [null]
-  totalQuantity int
-  initialPrice int
-  creatorId int
-  createdAt datetime
+  id                   int [pk, increment]
+  name                 varchar
+  imageUrl             varchar
+  gradeId              int
+  genreId              int
+  description          varchar [null]
+  totalQuantity        int
+  initialPrice         int
+  creatorId            varchar
+  createdAt            datetime
 }
 
 Table UserCard {
-  id int [pk, increment]
-  photoCardId int
-  ownerId int [null]
-  price int [null]
-  status varchar
-  createdAt datetime
+  id                    int [pk, increment]
+  photoCardId           int
+  ownerId               varchar [null]
+  price                 int [null]
+  status                varchar
+  createdAt             datetime
 }
 
 Table Notification {
-  id int [pk, increment]
-  userId int
-  message varchar
+  id        int [pk, increment]
+  userId    varchar
+  message   varchar
   createdAt datetime
-  read boolean
+  read      boolean
 }
 
 Table TradeRequest {
-  id int [pk, increment]
-  photoCardId int
-  offeredPhotoCardId int
-  ownerId int
-  applicantId int
-  description varchar [null]
-  tradeStatus varchar
-  createdAt datetime
+  id                    int [pk, increment]
+  photoCardId           int
+  offeredPhotoCardId    int
+  ownerId               varchar
+  applicantId           varchar
+  description           varchar [null]
+  tradeStatus           varchar
+  createdAt             datetime
 }
 
 Table TradeRequestUserCard {
-  id int [pk, increment]
+  id             int [pk, increment]
   tradeRequestId int
-  userCardId int
+  userCardId     int
 }
 
 Table Sale {
-  id int [pk, increment]
-  photoCardId int
-  sellerId int
-  price int
-  saleQuantity int
-  status varchar
-  desiredGrade varchar [null]
-  desiredGenre varchar [null]
+  id                 int [pk, increment]
+  photoCardId        int
+  sellerId           varchar
+  price              int
+  saleQuantity       int
+  cardGradeId        int [null]
+  cardGenreId        int [null]
+  status             varchar
   desiredDescription varchar [null]
-  createdAt datetime
+  createdAt          datetime
 }
 
 Table SaleUserCard {
-  id int [pk, increment]
-  saleId int
+  id         int [pk, increment]
+  saleId     int
   userCardId int
 }
 
+// Relations
+
 Ref: UserPoint.userId > User.id
+Ref: Notification.userId > User.id
+Ref: PhotoCard.gradeId > CardGrade.id
+Ref: PhotoCard.genreId > CardGenre.id
+Ref: PhotoCard.creatorId > User.id
 Ref: UserCard.photoCardId > PhotoCard.id
 Ref: UserCard.ownerId > User.id
-Ref: Notification.userId > User.id
-Ref: TradeRequest.ownerId > User.id
-Ref: TradeRequest.applicantId > User.id
 Ref: TradeRequest.photoCardId > PhotoCard.id
 Ref: TradeRequest.offeredPhotoCardId > PhotoCard.id
+Ref: TradeRequest.ownerId > User.id
+Ref: TradeRequest.applicantId > User.id
 Ref: TradeRequestUserCard.tradeRequestId > TradeRequest.id
 Ref: TradeRequestUserCard.userCardId > UserCard.id
 Ref: Sale.photoCardId > PhotoCard.id
 Ref: Sale.sellerId > User.id
+Ref: Sale.cardGradeId > CardGrade.id
+Ref: Sale.cardGenreId > CardGenre.id
 Ref: SaleUserCard.saleId > Sale.id
 Ref: SaleUserCard.userCardId > UserCard.id
