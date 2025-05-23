@@ -8,7 +8,7 @@
     "description": "아름다운 바닷가의 노을.",
     "totalQuantity": 1,
     "initialPrice": 1000,
-    "creatorId": 1,
+    "creatorId": "a1b2c3d4-e1f2-4a5b-8c6d-1e2f3a4b5c6d",
     "createdAt": "2025-05-01T10:00:00Z"
   },
   {
@@ -20,7 +20,7 @@
     "description": "산 정상에서 바라본 숨막히는 풍경.",
     "totalQuantity": 2,
     "initialPrice": 2000,
-    "creatorId": 2,
+    "creatorId": "b2c3d4e5-f2a1-5b6c-7d8e-2f3a4b5c6d7e",
     "createdAt": "2025-05-02T11:00:00Z"
   },
   {
@@ -32,7 +32,7 @@
     "description": "도시 스카이라인의 야경.",
     "totalQuantity": 3,
     "initialPrice": 3000,
-    "creatorId": 3,
+    "creatorId": "c3d4e5f6-a1b2-6c7d-8e9f-3a4b5c6d7e8f",
     "createdAt": "2025-05-03T12:00:00Z"
   },
   {
@@ -44,7 +44,7 @@
     "description": "조용한 숲길을 걷는 모습.",
     "totalQuantity": 4,
     "initialPrice": 900,
-    "creatorId": 4,
+    "creatorId": "d4e5f6a7-b2c3-7d8e-9f0a-4b5c6d7e8f9a",
     "createdAt": "2025-05-04T13:00:00Z"
   },
   {
@@ -56,7 +56,7 @@
     "description": "밝게 미소 짓는 인물의 순간.",
     "totalQuantity": 5,
     "initialPrice": 1800,
-    "creatorId": 5,
+    "creatorId": "e5f6a7b8-c3d4-8e9f-0a1b-5c6d7e8f9a0b",
     "createdAt": "2025-05-05T14:00:00Z"
   },
   {
@@ -68,7 +68,7 @@
     "description": "태양 아래 황금빛 모래언덕.",
     "totalQuantity": 1,
     "initialPrice": 10000,
-    "creatorId": 1,
+    "creatorId": "a1b2c3d4-e1f2-4a5b-8c6d-1e2f3a4b5c6d",
     "createdAt": "2025-05-06T15:00:00Z"
   },
   {
@@ -80,7 +80,7 @@
     "description": "아늑한 분위기의 오래된 서점 한 켠.",
     "totalQuantity": 2,
     "initialPrice": 1200,
-    "creatorId": 2,
+    "creatorId": "b2c3d4e5-f2a1-5b6c-7d8e-2f3a4b5c6d7e",
     "createdAt": "2025-05-07T16:00:00Z"
   },
   {
@@ -92,7 +92,7 @@
     "description": "눈으로 둘러싸인 오두막.",
     "totalQuantity": 3,
     "initialPrice": 2500,
-    "creatorId": 3,
+    "creatorId": "c3d4e5f6-a1b2-6c7d-8e9f-3a4b5c6d7e8f",
     "createdAt": "2025-05-08T17:00:00Z"
   },
   {
@@ -104,7 +104,7 @@
     "description": "작업 중인 거리의 예술가.",
     "totalQuantity": 4,
     "initialPrice": 3500,
-    "creatorId": 4,
+    "creatorId": "d4e5f6a7-b2c3-7d8e-9f0a-4b5c6d7e8f9a",
     "createdAt": "2025-05-09T18:00:00Z"
   },
   {
@@ -116,7 +116,7 @@
     "description": "만개한 벚꽃의 풍경.",
     "totalQuantity": 5,
     "initialPrice": 950,
-    "creatorId": 5,
+    "creatorId": "e5f6a7b8-c3d4-8e9f-0a1b-5c6d7e8f9a0b",
     "createdAt": "2025-05-10T19:00:00Z"
   },
   {
@@ -128,7 +128,7 @@
     "description": "창문에 맺힌 빗방울.",
     "totalQuantity": 1,
     "initialPrice": 1700,
-    "creatorId": 1,
+    "creatorId": "a1b2c3d4-e1f2-4a5b-8c6d-1e2f3a4b5c6d",
     "createdAt": "2025-05-11T20:00:00Z"
   },
   {
@@ -140,7 +140,7 @@
     "description": "밤에 열리는 활기찬 축제.",
     "totalQuantity": 2,
     "initialPrice": 3200,
-    "creatorId": 2,
+    "creatorId": "b2c3d4e5-f2a1-5b6c-7d8e-2f3a4b5c6d7e",
     "createdAt": "2025-05-12T21:00:00Z"
   },
   {
@@ -152,7 +152,7 @@
     "description": "노을이 지는 상징적인 다리.",
     "totalQuantity": 3,
     "initialPrice": 15000,
-    "creatorId": 3,
+    "creatorId": "c3d4e5f6-a1b2-6c7d-8e9f-3a4b5c6d7e8f",
     "createdAt": "2025-05-13T22:00:00Z"
   },
   {
@@ -164,7 +164,7 @@
     "description": "알록달록한 가을 낙엽.",
     "totalQuantity": 4,
     "initialPrice": 850,
-    "creatorId": 4,
+    "creatorId": "d4e5f6a7-b2c3-7d8e-9f0a-4b5c6d7e8f9a",
     "createdAt": "2025-05-14T23:00:00Z"
   },
   {
@@ -176,7 +176,7 @@
     "description": "아침 햇살 속 커피 한 잔.",
     "totalQuantity": 5,
     "initialPrice": 1600,
-    "creatorId": 5,
+    "creatorId": "e5f6a7b8-c3d4-8e9f-0a1b-5c6d7e8f9a0b",
     "createdAt": "2025-05-15T08:00:00Z"
   },
   {
@@ -188,7 +188,7 @@
     "description": "별이 가득한 밤하늘.",
     "totalQuantity": 1,
     "initialPrice": 4000,
-    "creatorId": 1,
+    "creatorId": "a1b2c3d4-e1f2-4a5b-8c6d-1e2f3a4b5c6d",
     "createdAt": "2025-05-16T09:00:00Z"
   },
   {
@@ -200,7 +200,7 @@
     "description": "분주한 현지 시장의 모습.",
     "totalQuantity": 2,
     "initialPrice": 1100,
-    "creatorId": 2,
+    "creatorId": "b2c3d4e5-f2a1-5b6c-7d8e-2f3a4b5c6d7e",
     "createdAt": "2025-05-16T10:00:00Z"
   },
   {
@@ -212,7 +212,7 @@
     "description": "거리 위의 클래식 자동차.",
     "totalQuantity": 3,
     "initialPrice": 2100,
-    "creatorId": 3,
+    "creatorId": "c3d4e5f6-a1b2-6c7d-8e9f-3a4b5c6d7e8f",
     "createdAt": "2025-05-16T11:00:00Z"
   },
   {
@@ -224,7 +224,7 @@
     "description": "해바라기가 가득한 들판.",
     "totalQuantity": 4,
     "initialPrice": 3700,
-    "creatorId": 4,
+    "creatorId": "d4e5f6a7-b2c3-7d8e-9f0a-4b5c6d7e8f9a",
     "createdAt": "2025-05-16T12:00:00Z"
   },
   {
@@ -236,7 +236,7 @@
     "description": "평화로운 저녁 산책길.",
     "totalQuantity": 5,
     "initialPrice": 20000,
-    "creatorId": 5,
+    "creatorId": "e5f6a7b8-c3d4-8e9f-0a1b-5c6d7e8f9a0b",
     "createdAt": "2025-05-16T13:00:00Z"
   }
 ]
