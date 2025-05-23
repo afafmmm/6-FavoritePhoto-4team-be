@@ -50,14 +50,28 @@ async function create(query) {
     },
   });
 
-  // 제작한 photoCard는 만든 이에게 귀속됨
-  await prisma.userCard.create({
-    data: {
-      photoCardId: photoCard.id,
-      ownerId: creatorId,
-      price: parseInt(price, 10),
-    },
-  });
+  // 김다은이 수정한 부분 (같은 photocard를 id 별로 분리)
+  const volumnInt = parseInt(volumn, 10);
+  const priceInt = parseInt(price, 10);
+
+  const userCards = Array.from({ length: volumnInt }).map(() => ({
+    photoCardId: photoCard.id,
+    ownerId: creatorId,
+    price: priceInt,
+  }));
+
+  await prisma.userCard.createMany({ data: userCards });
+
+  // 성경님 부분: 여러개 등록해도 단일 id로 생성
+
+  // // 제작한 photoCard는 만든 이에게 귀속됨
+  // await prisma.userCard.create({
+  //   data: {
+  //     photoCardId: photoCard.id,
+  //     ownerId: creatorId,
+  //     price: parseInt(price, 10),
+  //   },
+  // });
 
   return photoCard;
 }
@@ -78,6 +92,7 @@ async function findMyGallery(
   };
 
   // { } 안은 query string 부분
+
   return await prisma.userCard.findMany({
     // 불러올 내용: userCard 전체 + 등급과 장르
     include: {
@@ -89,7 +104,7 @@ async function findMyGallery(
     // 필터링 조건
     where: {
       ownerId: userId, // 조건1: 로그인한 userId
-      status: "ACTIVE", // 조건2: 카드 상태
+      status: "ACTIVE", // 조건2: 카드 상태, 판매 혹은 교화중이 아닌 카드만
       photoCard: photoCardFilter,
     },
 

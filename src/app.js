@@ -6,6 +6,7 @@ import cors from "cors";
 import errorHandler from "./middlewares/ErrorHandler.js";
 import usersController from "./controllers/UsersController.js";
 import authController from "./controllers/AuthController.js";
+import salesController from "./controllers/SalesController.js";
 // import storeController from "./controllers/StoreController.js";
 // import notificationsController from "./controllers/NotificationsController.js";
 // import pointsController from "./controllers/PointsController.js";
@@ -28,6 +29,7 @@ app.use("/api/users", usersController);
 // app.use("/api/store", storeController);
 // app.use("/api/notifications", notificationsController);
 // app.use("/api/points", pointsController);
+app.use("/api/store", salesController);
 
 app.use(errorHandler);
 
