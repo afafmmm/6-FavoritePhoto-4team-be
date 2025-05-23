@@ -65,13 +65,15 @@ async function create(query) {
     },
   });
 
-  // 제작한 photoCard는 만든 이에게 귀속됨
-  await prisma.userCard.create({
-    data: {
-      photoCardId: photoCard.id,
-      ownerId: creatorId,
-      price: parseInt(price, 10),
-    },
+  // 제작한 photoCard는 만든 이에게 귀속됨 -- 발행량만큼 생성되어야 함
+  const userCards = Array.from({ length: parseInt(volumn, 10) }).map(() => ({
+    photoCardId: photoCard.id,
+    ownerId: creatorId,
+    price: parseInt(price, 10),
+  }));
+
+  await prisma.userCard.createMany({
+    data: userCards,
   });
 
   return photoCard;
