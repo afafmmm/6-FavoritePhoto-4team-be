@@ -64,7 +64,7 @@ async function create(query) {
       creatorId,
     },
   });
-
+  
   // 제작한 photoCard는 만든 이에게 귀속됨 -- 발행량만큼 생성되어야 함
   const userCards = Array.from({ length: parseInt(volumn, 10) }).map(() => ({
     photoCardId: photoCard.id,
@@ -95,6 +95,7 @@ async function findMyGallery(
   };
 
   // { } 안은 query string 부분
+
   return await prisma.userCard.findMany({
     // 불러올 내용: userCard 전체 + 등급과 장르
     include: {
@@ -106,7 +107,7 @@ async function findMyGallery(
     // 필터링 조건
     where: {
       ownerId: userId, // 조건1: 로그인한 userId
-      status: "ACTIVE", // 조건2: 카드 상태
+      status: "ACTIVE", // 조건2: 카드 상태, 판매 혹은 교화중이 아닌 카드만
       photoCard: photoCardFilter,
     },
 
