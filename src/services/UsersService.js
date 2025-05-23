@@ -7,6 +7,11 @@ async function getCardMetaData() {
   return { genres, grades };
 }
 
+// 카드 생성 횟수 불러오기
+async function getCardCreationCount(userId) {
+  return await usersRepository.getMonthlyCardCount(userId);
+}
+
 // POST
 async function create(query) {
   return await usersRepository.create(query);
@@ -41,6 +46,7 @@ const usersService = {
   getMyGallery,
   getMySales,
   getUser,
+  getCardCreationCount,
 };
 
 export default usersService;
