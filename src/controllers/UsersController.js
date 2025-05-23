@@ -17,6 +17,31 @@ usersController.get("/card-meta", async (req, res, next) => {
   }
 });
 
+// GET: 월별 생성 횟수
+usersController.get(
+  "/monthly-post-count",
+  passport.authenticate("access-token", {
+    session: false,
+    failWithError: true,
+  }),
+  async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const count = await usersService.getCardCreationCount(userId);
+
+      if (count >= 3) {
+        const error = new Error("이번달 모든 생성 기회를 소진했어요");
+        error.code = 400;
+        throw error;
+      }
+
+      res.json({ count });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 // POST
 usersController.post(
   "/post",

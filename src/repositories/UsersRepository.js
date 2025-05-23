@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import { startOfMonth, endOfMonth } from "date-fns";
 
 // 사용자 id 찾기
 async function findById(id) {
@@ -77,6 +78,18 @@ async function create(query) {
   });
 
   return photoCard;
+}
+
+// 카드 생성 횟수 (월별)
+async function getMonthlyCardCount(userId) {
+  const now = new Date();
+
+  return await prisma.photoCard.count({
+    where: {
+      creatorId: userId,
+      createdAt: { gte: startOfMonth(now), lte: endOfMonth(now) }, // 프리즈마 조건부 필터 문법
+    },
+  });
 }
 
 // ----------- //
@@ -181,6 +194,7 @@ const usersRepository = {
   create,
   findMyGallery,
   findMySales,
+  getMonthlyCardCount,
 };
 
 export default usersRepository;
