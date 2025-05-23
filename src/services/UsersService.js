@@ -22,6 +22,25 @@ async function getMySales(userId, query) {
   return await usersRepository.findMySales(userId, query);
 }
 
-const usersService = { getCardMetaData, create, getMyGallery, getMySales };
+// GET: 사용자 1人
+async function getUser(id) {
+  const user = await usersRepository.findById(id);
+
+  if (!user) {
+    const error = new Error("해당 사용자를 찾을 수 없습니다.");
+    error.code = 404;
+    throw error;
+  }
+
+  return user;
+}
+
+const usersService = {
+  getCardMetaData,
+  create,
+  getMyGallery,
+  getMySales,
+  getUser,
+};
 
 export default usersService;

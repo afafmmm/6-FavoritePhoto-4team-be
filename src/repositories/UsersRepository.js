@@ -1,5 +1,20 @@
 import prisma from "../config/prisma.js";
 
+// 사용자 id 찾기
+async function findById(id) {
+  return await prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      email: true,
+      nickname: true,
+      profileImage: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
 // 카드 장르 찾기
 async function findGenre() {
   return await prisma.cardGenre.findMany({
@@ -49,29 +64,17 @@ async function create(query) {
       creatorId,
     },
   });
-
-  // 김다은이 수정한 부분 (같은 photocard를 id 별로 분리)
-  const volumnInt = parseInt(volumn, 10);
-  const priceInt = parseInt(price, 10);
-
-  const userCards = Array.from({ length: volumnInt }).map(() => ({
+  
+  // 제작한 photoCard는 만든 이에게 귀속됨 -- 발행량만큼 생성되어야 함
+  const userCards = Array.from({ length: parseInt(volumn, 10) }).map(() => ({
     photoCardId: photoCard.id,
     ownerId: creatorId,
-    price: priceInt,
+    price: parseInt(price, 10),
   }));
 
-  await prisma.userCard.createMany({ data: userCards });
-
-  // 성경님 부분: 여러개 등록해도 단일 id로 생성
-
-  // // 제작한 photoCard는 만든 이에게 귀속됨
-  // await prisma.userCard.create({
-  //   data: {
-  //     photoCardId: photoCard.id,
-  //     ownerId: creatorId,
-  //     price: parseInt(price, 10),
-  //   },
-  // });
+  await prisma.userCard.createMany({
+    data: userCards,
+  });
 
   return photoCard;
 }
@@ -172,6 +175,7 @@ async function findMySales(
 }
 
 const usersRepository = {
+  findById,
   findGenre,
   findGrade,
   create,

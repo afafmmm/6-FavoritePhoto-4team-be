@@ -70,7 +70,7 @@ usersController.post(
 
 // GET: My Gallery
 usersController.get(
-  "/",
+  "/gallery",
   passport.authenticate("access-token", {
     session: false,
     failWithError: true,
@@ -100,6 +100,27 @@ usersController.get(
       const result = await usersService.getMySales(userId, req.query);
 
       res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// ----------- //
+
+// GET: 사용자 1人
+usersController.get(
+  "/",
+  passport.authenticate("access-token", {
+    session: false,
+    failWithError: true,
+  }),
+  async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const userInfo = await usersService.getUser(userId);
+
+      res.json(userInfo);
     } catch (err) {
       next(err);
     }
