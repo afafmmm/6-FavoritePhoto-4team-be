@@ -6,12 +6,13 @@ const storeController = express.Router();
 // 카드 목록 조회
 storeController.get('/', async (req, res, next) => {
   try {
-    const cards = await storeService.getAllCards();
-    res.json(cards);
+    const data = await storeService.getAllCardsWithCounts();
+    res.json(data);
   } catch (err) {
     next(err);
   }
 });
+
 
 // 카드 상세 조회
 storeController.get(
