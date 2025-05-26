@@ -1,5 +1,5 @@
-import prisma from "../config/prisma.js";
-import { startOfMonth, endOfMonth } from "date-fns";
+import prisma from '../config/prisma.js';
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 // 사용자 id 찾기
 async function findById(id) {
@@ -11,40 +11,39 @@ async function findById(id) {
       nickname: true,
       profileImage: true,
       createdAt: true,
-      updatedAt: true,
-    },
+      updatedAt: true
+    }
   });
 }
 
 // 카드 장르 찾기
 async function findGenre() {
   return await prisma.cardGenre.findMany({
-    select: { id: true, name: true },
+    select: { id: true, name: true }
   });
 }
 
 // 카드 등급 찾기
 async function findGrade() {
   return await prisma.cardGrade.findMany({
-    select: { id: true, name: true },
+    select: { id: true, name: true }
   });
 }
 
 // POST
 async function create(query) {
-  const { name, grade, genre, description, volumn, price, image, creatorId } =
-    query;
+  const { name, grade, genre, description, volumn, price, image, creatorId } = query;
 
   const imageUrl = `/uploads/${image.filename}`;
   const gradeRecord = await prisma.cardGrade.findUnique({
-    where: { name: grade },
+    where: { name: grade }
   });
   const genreRecord = await prisma.cardGenre.findUnique({
-    where: { name: genre },
+    where: { name: genre }
   });
 
   if (!gradeRecord || !genreRecord) {
-    throw new Error("존재하지 않는 등급 또는 장르입니다.");
+    throw new Error('존재하지 않는 등급 또는 장르입니다.');
   }
 
   await prisma.$executeRawUnsafe(`
@@ -62,19 +61,19 @@ async function create(query) {
       description,
       totalQuantity: parseInt(volumn, 10),
       initialPrice: parseInt(price, 10),
-      creatorId,
-    },
+      creatorId
+    }
   });
-  
+
   // 제작한 photoCard는 만든 이에게 귀속됨 -- 발행량만큼 생성되어야 함
   const userCards = Array.from({ length: parseInt(volumn, 10) }).map(() => ({
     photoCardId: photoCard.id,
     ownerId: creatorId,
-    price: parseInt(price, 10),
+    price: parseInt(price, 10)
   }));
 
   await prisma.userCard.createMany({
-    data: userCards,
+    data: userCards
   });
 
   return photoCard;
@@ -87,46 +86,42 @@ async function getMonthlyCardCount(userId) {
   return await prisma.photoCard.count({
     where: {
       creatorId: userId,
-      createdAt: { gte: startOfMonth(now), lte: endOfMonth(now) }, // 프리즈마 조건부 필터 문법
-    },
+      createdAt: { gte: startOfMonth(now), lte: endOfMonth(now) } // 프리즈마 조건부 필터 문법
+    }
   });
 }
 
 // ----------- //
 
 // GET: 소유한 카드(거래·교환x)
-async function findMyGallery(
-  userId,
-  { genreId, gradeId, search, offset = 0, limit = 10 }
-) {
+async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, limit = 10 }) {
   // query string 조건 정리 (밑의 where절로)
   const photoCardFilter = {
     // 카드 관련 조건: &&로 유무를 검사하고, 있으면 조건으로 넣어라(spread 문법)
     ...(genreId && { genreId: Number(genreId) }), // 조건3: 카드 장르
     ...(gradeId && { gradeId: Number(gradeId) }), // 조건4: 카드 등급
-    ...(search && { name: { contains: search, mode: "insensitive" } }), // 조건5: 검색어 = 카드 이름
+    ...(search && { name: { contains: search, mode: 'insensitive' } }) // 조건5: 검색어 = 카드 이름
   };
 
   // { } 안은 query string 부분
-
   return await prisma.userCard.findMany({
     // 불러올 내용: userCard 전체 + 등급과 장르
     include: {
       photoCard: {
-        include: { grade: true, genre: true },
-      },
+        include: { grade: true, genre: true }
+      }
     },
 
     // 필터링 조건
     where: {
       ownerId: userId, // 조건1: 로그인한 userId
-      status: "ACTIVE", // 조건2: 카드 상태, 판매 혹은 교화중이 아닌 카드만
-      photoCard: photoCardFilter,
+      status: 'ACTIVE', // 조건2: 카드 상태, 판매 혹은 교화중이 아닌 카드만
+      photoCard: photoCardFilter
     },
 
     skip: Number(offset),
     take: Number(limit),
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' }
   });
 }
 
@@ -140,15 +135,14 @@ async function findMySales(
     saleType, // 판매 중, 교환 요청됨, undefined(품절된 것?)
     soldOut = false, // true(품절됨), false(그 외 = 판매or교환 중) -- FE에서 보냄
     offset = 0,
-    limit = 10,
+    limit = 10
   }
 ) {
   // 상태: ABAILABLE(판매 중), PENDING(교환 중), SOLDOUT(품절)
-  const statusList =
-    soldOut === "true" ? ["SOLDOUT"] : ["AVAILABLE", "PENDING"];
+  const statusList = soldOut === 'true' ? ['SOLDOUT'] : ['AVAILABLE', 'PENDING'];
 
   // saleType 정의
-  const allowedSaleTypes = ["판매", "교환"];
+  const allowedSaleTypes = ['판매', '교환'];
   if (saleType && !allowedSaleTypes.includes(saleType)) {
     const error = new Error("판매 유형은 '판매', '교환' 중 택1");
     error.code = 400;
@@ -159,15 +153,15 @@ async function findMySales(
   const photoCardFilter = {
     ...(genreId && { genreId: Number(genreId) }),
     ...(gradeId && { gradeId: Number(gradeId) }),
-    ...(search && { name: { contains: search, mode: "insensitive" } }),
+    ...(search && { name: { contains: search, mode: 'insensitive' } })
   };
 
   // 실제 DB에서 불러올 조건, 반환 처리
   return await prisma.userCard.findMany({
     include: {
       photoCard: {
-        include: { grade: true, genre: true },
-      },
+        include: { grade: true, genre: true }
+      }
     },
 
     // 필터링 조건
@@ -177,13 +171,13 @@ async function findMySales(
       photoCard: photoCardFilter,
 
       // 판매 방법: 일반 판매 or 교환 제시 -- FE에서 받아와서 적용
-      ...(saleType === "판매" && { saleUserCards: { some: {} } }), // 유형: 판매면 saleUserCards 다 가져와
-      ...(saleType === "교환" && { tradeRequestUserCards: { some: {} } }), // 유형: 교환이면 tradeRequestUserCards 다 가져와
+      ...(saleType === '판매' && { saleUserCards: { some: {} } }), // 유형: 판매면 saleUserCards 다 가져와
+      ...(saleType === '교환' && { tradeRequestUserCards: { some: {} } }) // 유형: 교환이면 tradeRequestUserCards 다 가져와
     },
 
     skip: Number(offset),
     take: Number(limit),
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' }
   });
 }
 
@@ -194,7 +188,7 @@ const usersRepository = {
   create,
   findMyGallery,
   findMySales,
-  getMonthlyCardCount,
+  getMonthlyCardCount
 };
 
 export default usersRepository;
