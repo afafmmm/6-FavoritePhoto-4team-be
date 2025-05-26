@@ -1,13 +1,14 @@
-import express from "express";
-import usersService from "../services/UsersService.js";
-import upload from "../middlewares/upload.js";
-import passport from "../config/passport.js";
-import { validatePostCard } from "../utils/validators.js";
+import express from 'express';
+import usersService from '../services/UsersService.js';
+import upload from '../middlewares/upload.js';
+import passport from '../config/passport.js';
+import { validatePostCard } from '../utils/validators.js';
+import fs from 'fs/promises'; // 업로드 실패했을 때 이미지 삭제
 
 const usersController = express.Router();
 
 // 등급 + 장르 소환
-usersController.get("/card-meta", async (req, res, next) => {
+usersController.get('/card-meta', async (req, res, next) => {
   try {
     const metaData = await usersService.getCardMetaData();
 
@@ -19,10 +20,10 @@ usersController.get("/card-meta", async (req, res, next) => {
 
 // GET: 월별 생성 횟수
 usersController.get(
-  "/monthly-post-count",
-  passport.authenticate("access-token", {
+  '/monthly-post-count',
+  passport.authenticate('access-token', {
     session: false,
-    failWithError: true,
+    failWithError: true
   }),
   async (req, res, next) => {
     try {
@@ -38,12 +39,12 @@ usersController.get(
 
 // POST
 usersController.post(
-  "/post",
-  passport.authenticate("access-token", {
+  '/post',
+  passport.authenticate('access-token', {
     session: false,
-    failWithError: true,
+    failWithError: true
   }),
-  upload.single("image"),
+  upload.single('image'),
   async (req, res, next) => {
     try {
       const creatorId = req.user.id;
@@ -52,7 +53,7 @@ usersController.post(
       const count = await usersService.getCardCreationCount(creatorId);
 
       if (!creatorId) {
-        const error = new Error("미로그인 상태입니다.");
+        const error = new Error('미로그인 상태입니다.');
         error.code = 401;
         throw error;
       }
@@ -65,12 +66,12 @@ usersController.post(
         volumn,
         price,
         image,
-        creatorId,
+        creatorId
       }; // 내용 묶음 간단하게
 
       const errors = validatePostCard(query);
       if (Object.keys(errors).length > 0) {
-        const error = new Error("유효성 검사 실패");
+        const error = new Error('유효성 검사 실패');
         error.code = 400;
         error.details = errors;
         throw error;
@@ -78,7 +79,10 @@ usersController.post(
 
       // 생성 횟수 초과 여부도 같이 검사
       if (count >= 3) {
-        const error = new Error("한 달 생성 횟수를 초과했습니다.");
+        if (image?.path) {
+          await fs.unlink(image.path).catch(() => {}); // 생성 실패하면 이미지 삭제
+        }
+        const error = new Error('한 달 생성 횟수를 초과했습니다.');
         error.code = 403;
         throw error;
       }
@@ -87,6 +91,9 @@ usersController.post(
 
       res.status(201).json(result);
     } catch (err) {
+      if (image?.path) {
+        await fs.unlink(image.path).catch(() => {}); // 생성 실패하면 이미지 삭제22
+      }
       console.error(err);
       next(err);
     }
@@ -97,10 +104,10 @@ usersController.post(
 
 // GET: My Gallery
 usersController.get(
-  "/gallery",
-  passport.authenticate("access-token", {
+  '/gallery',
+  passport.authenticate('access-token', {
     session: false,
-    failWithError: true,
+    failWithError: true
   }),
   async (req, res, next) => {
     try {
@@ -116,10 +123,10 @@ usersController.get(
 
 // GET: 내 판매 카드
 usersController.get(
-  "/cards-on-sale",
-  passport.authenticate("access-token", {
+  '/cards-on-sale',
+  passport.authenticate('access-token', {
     session: false,
-    failWithError: true,
+    failWithError: true
   }),
   async (req, res, next) => {
     try {
@@ -137,10 +144,10 @@ usersController.get(
 
 // GET: 사용자 1人
 usersController.get(
-  "/",
-  passport.authenticate("access-token", {
+  '/',
+  passport.authenticate('access-token', {
     session: false,
-    failWithError: true,
+    failWithError: true
   }),
   async (req, res, next) => {
     try {
