@@ -10,10 +10,14 @@ notificationsController.post(
   '/',
   passport.authenticate('access-token', { session: false }),
   asyncHandler(async (req, res) => {
-    const { message } = req.body;
-    const userId = req.user.id;
+    const { message, userId: targetUserId } = req.body;
+    const senderUserId = req.user.id;
     const io = req.app.get('io');
-    const notification = await NotificationsService.createNotification({ userId, message }, io);
+    // 알림 생성 (타겟 유저 지정 가능, 없으면 본인)
+    const notification = await NotificationsService.createNotification(
+      { userId: targetUserId || senderUserId, message },
+      io
+    );
     res.status(201).json(notification);
   })
 );
