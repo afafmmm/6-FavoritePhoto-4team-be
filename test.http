@@ -19,12 +19,12 @@ Content-Type: application/json
 }
 ### 랜덤 상자 뽑기 (포인트 획득)
 POST http://localhost:3002/api/points/random-box
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxZjU3NzlhZi00NmU3LTQ0NjgtODg5NS1lNTRlYTkyOGIwYTEiLCJlbWFpbCI6InRlc3R1c2VyMkBleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMiIsImlhdCI6MTc0Nzk4MjA3NiwiZXhwIjoxNzQ3OTgyOTc2fQ.wDpR2EWicbiR_3RMpjUQ3-WEQDwQG6xhykt6IMyUKqM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODIzNjU4NywiZXhwIjoxNzQ4MjM3NDg3fQ.ZWbs0tolQnh7mlLPFW_5bICQ3wGkVzZJUnnWypK-fIE
 Content-Type: application/json
 
 ### 내 포인트 조회
 GET http://localhost:3002/api/points/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0Nzk4ODIwOCwiZXhwIjoxNzQ3OTg5MTA4fQ.OI7ukWS1_lsEaBD9-2XNT8UCH-mvcZqPAE9IoPQ4HHA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODIzNTU5NCwiZXhwIjoxNzQ4MjM2NDk0fQ.JYfjcut7Jaj8QsxV2FEr1N_4YFBeGnVAXRguJcxNTCA
 
 ### 
 GET https://six-favoritephoto-4team-be.onrender.com/api/store
@@ -37,5 +37,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZ
 
 {
   "message": "테스트 5"
+}
+
+### 포인트 증가
+POST http://localhost:3002/api/points/update
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODIzNjU4NywiZXhwIjoxNzQ4MjM3NDg3fQ.ZWbs0tolQnh7mlLPFW_5bICQ3wGkVzZJUnnWypK-fIE
+
+{
+  "amount": 100
 }
 
