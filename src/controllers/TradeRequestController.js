@@ -1,20 +1,30 @@
-import * as tradeRequestService from '../services/TradeRequestService.js'
+import express from "express";
+import passport from "passport";
+import tradeRequestService from "../services/TradeRequestService.js";
 
-export const createTradeRequest = async (req, res, next) => {
-  try {
-    const { photoCardId, offeredPhotoCardId, description } = req.body
-    const userId = req.user.id  
+const tradeRequestController = express.Router();
 
-    const newTradeRequest = await tradeRequestService.createTradeRequest({
-      photoCardId,
-      offeredPhotoCardId,
-      ownerId: null,  
-      applicantId: userId,
-      description,
-    })
+tradeRequestController.post(
+  "/cards/:listedCardId/exchange",
+  passport.authenticate("access-token", { session: false }),
+  async (req, res, next) => {
+    try {
+      const { listedCardId } = req.params;  
+      const applicantId = req.user.id;     
+      const { offeredUserCardIds, description } = req.body; 
 
-    res.status(201).json(newTradeRequest)
-  } catch (err) {
-    next(err)
+      const result = await tradeRequestService.createTradeRequest({
+        listedCardId: Number(listedCardId),
+        applicantId,
+        offeredUserCardIds,
+        description,
+      });
+
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
   }
-}
+);
+
+export default tradeRequestController;
