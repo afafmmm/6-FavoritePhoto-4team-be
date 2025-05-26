@@ -37,6 +37,25 @@ usersController.get(
   }
 );
 
+// GET: 카드 개수 (전체 + 등급)
+usersController.get(
+  '/cards-count',
+  passport.authenticate('access-token', {
+    session: false,
+    failWithError: true
+  }),
+  async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const data = await usersService.getCardsCount(userId);
+
+      res.json(data);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 // POST
 usersController.post(
   '/post',
