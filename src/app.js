@@ -9,7 +9,7 @@ import authController from './controllers/AuthController.js';
 import salesController from './controllers/SalesController.js';
 import storeController from './controllers/StoreController.js';
 import pointsController from './controllers/PointsController.js';
-// import notificationsController from "./controllers/NotificationsController.js";
+import notificationsController from './controllers/NotificationsController.js';
 
 const app = express();
 app.use(
@@ -29,7 +29,7 @@ app.use('/uploads', express.static('src/uploads'));
 app.use('/api/auth', authController);
 app.use('/api/users', usersController);
 app.use('/api/store', storeController);
-// app.use("/api/notifications", notificationsController);
+app.use('/api/notifications', notificationsController);
 app.use('/api/points', pointsController);
 // app.use('/api/store', salesController);
 
