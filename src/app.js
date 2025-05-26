@@ -33,7 +33,7 @@ app.use('/api/users', usersController);
 app.use('/api/store', storeController);
 app.use('/api/notifications', notificationsController);
 app.use('/api/points', pointsController);
-// app.use('/api/store', salesController);
+app.use('/api/store', salesController); // 계속 사용하고 있으니 주석하지 말아주세요
 
 app.use(errorHandler);
 
