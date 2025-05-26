@@ -1,0 +1,41 @@
+### 회원가입
+POST http://localhost:3002/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "testuser3@example.com",
+  "password": "testpassword",
+  "passwordConfirmation": "testpassword",
+  "nickname": "테스트유저3"
+}
+
+### 로그인
+POST http://localhost:3002/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser3@example.com",
+  "password": "testpassword"
+}
+### 랜덤 상자 뽑기 (포인트 획득)
+POST http://localhost:3002/api/points/random-box
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxZjU3NzlhZi00NmU3LTQ0NjgtODg5NS1lNTRlYTkyOGIwYTEiLCJlbWFpbCI6InRlc3R1c2VyMkBleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMiIsImlhdCI6MTc0Nzk4MjA3NiwiZXhwIjoxNzQ3OTgyOTc2fQ.wDpR2EWicbiR_3RMpjUQ3-WEQDwQG6xhykt6IMyUKqM
+Content-Type: application/json
+
+### 내 포인트 조회
+GET http://localhost:3002/api/points/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0Nzk4ODIwOCwiZXhwIjoxNzQ3OTg5MTA4fQ.OI7ukWS1_lsEaBD9-2XNT8UCH-mvcZqPAE9IoPQ4HHA
+
+### 
+GET https://six-favoritephoto-4team-be.onrender.com/api/store
+Content-Type: application/json
+
+### 알림 1
+POST http://localhost:3002/api/notifications
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODIzMzc2NywiZXhwIjoxNzQ4MjM0NjY3fQ.5_436L3Emek269g8Zs4md5I5bUTK6zd8cecc9GBwaxs
+
+{
+  "message": "테스트 5"
+}
+

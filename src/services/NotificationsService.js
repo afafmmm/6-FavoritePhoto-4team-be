@@ -2,8 +2,13 @@ import NotificationsRepository from '../repositories/NotificationsRepository.js'
 
 const NotificationsService = {
   // 알림 생성
-  async createNotification({ userId, message }) {
-    return NotificationsRepository.createNotification({ userId, message });
+  async createNotification({ userId, message }, io = null) {
+    const notification = await NotificationsRepository.createNotification({ userId, message });
+    // 실시간 알림 전송
+    if (io) {
+      io.to(userId).emit('notification', notification);
+    }
+    return notification;
   },
   // 알림 전체 조회 (유저별)
   async getNotificationsByUser(userId) {

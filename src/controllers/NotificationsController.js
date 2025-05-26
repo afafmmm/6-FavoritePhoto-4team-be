@@ -12,7 +12,8 @@ notificationsController.post(
   asyncHandler(async (req, res) => {
     const { message } = req.body;
     const userId = req.user.id;
-    const notification = await NotificationsService.createNotification({ userId, message });
+    const io = req.app.get('io');
+    const notification = await NotificationsService.createNotification({ userId, message }, io);
     res.status(201).json(notification);
   })
 );

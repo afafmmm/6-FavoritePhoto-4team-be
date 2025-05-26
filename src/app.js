@@ -10,6 +10,8 @@ import salesController from './controllers/SalesController.js';
 import storeController from './controllers/StoreController.js';
 import pointsController from './controllers/PointsController.js';
 import notificationsController from './controllers/NotificationsController.js';
+import { Server } from 'socket.io';
+import http from 'http';
 
 const app = express();
 app.use(
@@ -35,8 +37,27 @@ app.use('/api/points', pointsController);
 
 app.use(errorHandler);
 
+// 기존 app.listen 대신 http 서버 생성
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: ['https://6-favorite-photo-4team-fe.vercel.app', 'http://localhost:3000'],
+    credentials: true
+  }
+});
+
+// 소켓 연결 이벤트
+io.on('connection', (socket) => {
+  // 유저 식별(예: 토큰/유저ID 등)
+  socket.on('join', (userId) => {
+    socket.join(userId); // 유저별 방 입장
+  });
+});
+
+app.set('io', io); // app에서 io 객체 사용 가능하게 등록
+
 // 서버 실행
 const port = process.env.PORT ?? 3002;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
