@@ -10,6 +10,7 @@ import salesController from './controllers/SalesController.js';
 import storeController from './controllers/StoreController.js';
 import pointsController from './controllers/PointsController.js';
 import notificationsController from './controllers/NotificationsController.js';
+import tradeRequestController from './controllers/TradeRequestController.js';
 import { Server } from 'socket.io';
 import http from 'http';
 import tradeRequestController from './controllers/TradeRequestController.js';

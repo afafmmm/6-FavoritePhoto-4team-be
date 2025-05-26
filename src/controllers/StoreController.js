@@ -4,10 +4,14 @@ import storeService from '../services/StoreService.js';
 
 const storeController = express.Router();
 
-storeController.get('/', async (req, res, next) => {
+
+storeController.get("/", async (req, res, next) => {
   try {
-    const data = await storeService.getAllSalesWithDetails();
-    res.json(data);
+    const { grade, genre, sale } = req.query;
+
+    const result = await storeService.getFilteredSalesWithCounts({ grade, genre, sale });
+
+    res.json(result);
   } catch (err) {
     next(err);
   }

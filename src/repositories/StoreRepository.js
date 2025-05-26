@@ -1,4 +1,87 @@
-import prisma from "../config/prisma.js";
+import prisma from '../config/prisma.js';
+
+// 필터 파싱 함수 (grade, genre는 배열 또는 콤마 구분 문자열로 전달됨 가정)
+function parseFilterArray(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value.map(Number);
+  return value.split(',').map(Number);
+}
+
+const findSalesByFilters = async ({ grade, genre, sale }) => {
+  // prisma에서 조건 객체 생성
+  const where = {};
+
+  if (grade.length) {
+    where.cardGradeId = { in: grade.map(Number) };
+  }
+
+  if (genre.length) {
+    where.cardGenreId = { in: genre.map(Number) };
+  }
+
+  if (sale.length) {
+    where.status = { in: sale };
+  }
+
+  // 실제 DB 조회 (관련된 cardGrade, cardGenre 포함)
+  return await prisma.sale.findMany({
+    where,
+    include: {
+     photoCard: {
+        include: {
+          genre: true,
+          grade: true,
+          creator: {
+            select: { id: true, nickname: true, profileImage: true }
+          }
+        }
+      },
+      seller: {
+        select: { id: true, nickname: true, profileImage: true }
+      },
+      cardGrade: true,
+      cardGenre: true
+    }
+  });
+};
+
+async function countFilters() {
+  const [gradeCounts, genreCounts, saleCounts] = await Promise.all([
+    prisma.sale.groupBy({
+      by: ['cardGradeId'],
+      _count: true,
+      where: {
+        status: 'AVAILABLE'
+      }
+    }),
+    prisma.sale.groupBy({
+      by: ['cardGenreId'],
+      _count: true,
+      where: {
+        status: 'AVAILABLE'
+      }
+    }),
+    prisma.sale.groupBy({
+      by: ['status'],
+      _count: true
+    })
+  ]);
+
+  return {
+    grade: gradeCounts.map((item) => ({
+      gradeId: item.cardGradeId,
+      count: item._count
+    })),
+    genre: genreCounts.map((item) => ({
+      genreId: item.cardGenreId,
+      count: item._count
+    })),
+    sale: saleCounts.map((item) => ({
+      status: item.status,
+      count: item._count
+    }))
+  };
+}
 
 async function findSaleCardById(id) {
   return await prisma.sale.findUnique({
@@ -9,87 +92,23 @@ async function findSaleCardById(id) {
           genre: true,
           grade: true,
           creator: {
-            select: { id: true, nickname: true, profileImage: true },
-          },
-        },
+            select: { id: true, nickname: true, profileImage: true }
+          }
+        }
       },
       seller: {
-        select: { id: true, nickname: true, profileImage: true },
+        select: { id: true, nickname: true, profileImage: true }
       },
-      // cardGrade: true,
-      // cardGenre: true,
-    },
+      cardGrade: true,
+      cardGenre: true
+    }
   });
 }
 
-  // 카드 목록 조회
-async function findAllSalesWithCounts() {
 
-  const sales = await prisma.sale.findMany({
-    include: {
-      photoCard: {
-        include: {
-          grade: true,
-          genre: true,
-        },
-      },
-      seller: {
-        select: {
-          id: true,
-          nickname: true,
-          profileImage: true,
-        },
-      },
-      // cardGrade: true,
-      // cardGenre: true,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
-
-  // 필터 카운트 조회 (판매 중 카드만 카운트)
-  const [gradeCounts, genreCounts, saleCounts] = await Promise.all([
-    prisma.sale.groupBy({
-      by: ['cardGradeId'],
-      _count: true,
-      where: {
-        status: 'AVAILABLE',
-      },
-    }),
-    prisma.sale.groupBy({
-      by: ['cardGenreId'],
-      _count: true,
-      where: {
-        status: 'AVAILABLE',
-      },
-    }),
-    prisma.sale.groupBy({
-      by: ['status'],
-      _count: true,
-    }),
-  ]);
-
-  return {
-    sales,
-    counts: {
-      grade: gradeCounts.map(item => ({
-        gradeId: item.cardGradeId,
-        count: item._count,
-      })),
-      genre: genreCounts.map(item => ({
-        genreId: item.cardGenreId,
-        count: item._count,
-      })),
-      sale: saleCounts.map(item => ({
-        status: item.status,
-        count: item._count,
-      })),
-    },
-  };
-}
 
 export default {
   findSaleCardById,
-  findAllSalesWithCounts,
+  countFilters,
+  findSalesByFilters
 };
