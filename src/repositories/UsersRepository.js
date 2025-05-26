@@ -109,16 +109,19 @@ async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, lim
     include: {
       photoCard: {
         include: { grade: true, genre: true }
-      }
+      },
+      // 소유자 정보
+      owner: { select: { nickname: true } }
     },
 
     // 필터링 조건
     where: {
       ownerId: userId, // 조건1: 로그인한 userId
-      status: 'ACTIVE', // 조건2: 카드 상태, 판매 혹은 교화중이 아닌 카드만
+      status: 'ACTIVE', // 조건2: 카드 상태, 판매 혹은 교환 중이 아닌 카드만
       photoCard: photoCardFilter
     },
 
+    // 페이지, 정렬
     skip: Number(offset),
     take: Number(limit),
     orderBy: { createdAt: 'desc' }
