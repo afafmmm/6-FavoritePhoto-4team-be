@@ -1,5 +1,6 @@
 import prisma from '../config/prisma.js';
 import { startOfMonth, endOfMonth } from 'date-fns';
+import countCardsByGrade from '../utils/countByGrade.js';
 
 // 사용자 id 찾기
 async function findById(id) {
@@ -28,6 +29,28 @@ async function findGrade() {
   return await prisma.cardGrade.findMany({
     select: { id: true, name: true }
   });
+}
+
+// 사용자별 카드 개수 세기
+async function getCardsCount(userId) {
+  const allCards = await prisma.userCard.findMany({
+    where: {
+      ownerId: userId
+    },
+    include: {
+      photoCard: { select: { gradeId: true } }
+    }
+  }); // 일단 전체 카드 개수를 가져옴
+
+  // 그리고 카드 상태를 active와 그 외로 나눔
+  const active = allCards.filter((card) => card.status === 'ACTIVE');
+  const inactive = allCards.filter((card) => card.status !== 'ACTIVE');
+
+  // 그리고 등급별로 반환함
+  return {
+    active: countCardsByGrade(active),
+    inactive: countCardsByGrade(inactive)
+  };
 }
 
 // POST
@@ -106,12 +129,22 @@ async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, lim
   // { } 안은 query string 부분
   return await prisma.userCard.findMany({
     // 불러올 내용: userCard 전체 + 등급과 장르
-    include: {
-      photoCard: {
-        include: { grade: true, genre: true }
-      },
+    select: {
+      id: true,
+      price: true,
       // 소유자 정보
-      owner: { select: { nickname: true } }
+      owner: { select: { id: true, nickname: true } },
+      photoCard: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+          description: true,
+          totalQuantity: true,
+          grade: { select: { name: true } },
+          genre: { select: { name: true } }
+        }
+      }
     },
 
     // 필터링 조건
@@ -191,7 +224,8 @@ const usersRepository = {
   create,
   findMyGallery,
   findMySales,
-  getMonthlyCardCount
+  getMonthlyCardCount,
+  getCardsCount
 };
 
 export default usersRepository;

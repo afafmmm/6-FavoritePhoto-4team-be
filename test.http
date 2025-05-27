@@ -45,7 +45,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODI0OTM2MiwiZXhwIjoxNzQ4MjUwMjYyfQ.gDDsAITQm_iHbOSxb-cEz0lHfaYz74amhrMOYmgYfQs
 
 {
-  "amount": 100
+  "amount": 10000
 }
 
 ### 내 알림 전체 조회
