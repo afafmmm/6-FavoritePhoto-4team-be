@@ -2,13 +2,13 @@ import storeRepository from '../repositories/StoreRepository.js';
 
 const parseFilterValue = (value) => {
   if (!value) return [];
-  if (value.includes(",")) {
-    return value.split(",").map((v) => v.trim());
+  if (value.includes(',')) {
+    return value.split(',').map((v) => v.trim());
   }
   return [value.trim()];
 };
 
-const getFilteredSalesWithCounts = async ({ grade, genre, sale }) => {
+const getFilteredSalesWithCounts = async ({ grade, genre, sale, orderBy }) => {
   // 필터 쿼리를 배열로 파싱
   const gradeFilter = parseFilterValue(grade);
   const genreFilter = parseFilterValue(genre);
@@ -19,13 +19,14 @@ const getFilteredSalesWithCounts = async ({ grade, genre, sale }) => {
     grade: gradeFilter,
     genre: genreFilter,
     sale: saleFilter,
+    orderBy: orderBy
   });
 
   // 필터 별 counts 집계 (필터링된 sales 기준)
   const counts = {
     grade: [],
     genre: [],
-    sale: [],
+    sale: []
   };
 
   // grade 카운트 집계
@@ -36,7 +37,7 @@ const getFilteredSalesWithCounts = async ({ grade, genre, sale }) => {
   });
   counts.grade = Object.entries(gradeCountMap).map(([gradeId, count]) => ({
     gradeId: Number(gradeId),
-    count,
+    count
   }));
 
   // genre 카운트 집계
@@ -47,7 +48,7 @@ const getFilteredSalesWithCounts = async ({ grade, genre, sale }) => {
   });
   counts.genre = Object.entries(genreCountMap).map(([genreId, count]) => ({
     genreId: Number(genreId),
-    count,
+    count
   }));
 
   // sale 상태별 카운트 집계
@@ -58,13 +59,11 @@ const getFilteredSalesWithCounts = async ({ grade, genre, sale }) => {
   });
   counts.sale = Object.entries(saleCountMap).map(([status, count]) => ({
     status,
-    count,
+    count
   }));
 
   return { sales, counts };
 };
-
-
 
 async function getCardById(cardId) {
   const card = await storeRepository.findSaleCardById(cardId);
@@ -73,7 +72,6 @@ async function getCardById(cardId) {
 async function getFilterCounts() {
   return await storeRepository.countFilters();
 }
-
 
 export default {
   getFilteredSalesWithCounts,
