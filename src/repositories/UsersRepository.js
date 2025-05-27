@@ -141,6 +141,8 @@ async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, lim
           imageUrl: true,
           description: true,
           totalQuantity: true,
+          gradeId: true,
+          genreId: true,
           grade: { select: { name: true } },
           genre: { select: { name: true } }
         }
