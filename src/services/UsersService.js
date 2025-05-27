@@ -1,4 +1,5 @@
 import usersRepository from '../repositories/UsersRepository.js';
+import { calculatePaginationDetails } from '../utils/pagination.js';
 
 // 카드 장르와 등급 불러오기
 async function getCardMetaData() {
