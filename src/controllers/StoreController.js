@@ -8,30 +8,13 @@ storeController.get('/', async (req, res, next) => {
   try {
     const { grade, genre, sale, orderBy } = req.query;
 
-    // CSV 문자열을 배열로 변환하는 함수
-    const parseCSV = (value) => {
-      if (!value) return [];
-      if (Array.isArray(value)) return value;
-      return value.split(',').map(v => v.trim());
-    };
-
-    const gradeArr = parseCSV(grade);
-    const genreArr = parseCSV(genre);
-    const saleArr = parseCSV(sale);
-
-    const result = await storeService.getFilteredSalesWithCounts({
-      grade: gradeArr,
-      genre: genreArr,
-      sale: saleArr,
-      orderBy
-    });
+    const result = await storeService.getFilteredSalesWithCounts({ grade, genre, sale, orderBy });
 
     res.json(result);
   } catch (err) {
     next(err);
   }
 });
-
 
 storeController.get(
   '/cards/:id',
