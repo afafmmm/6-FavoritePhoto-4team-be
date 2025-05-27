@@ -1,4 +1,5 @@
 import prisma from '../config/prisma.js';
+import getSort from '../utils/sort.js';
 
 // 필터 파싱 함수 (grade, genre는 배열 또는 콤마 구분 문자열로 전달됨 가정)
 function parseFilterArray(value) {
@@ -7,7 +8,7 @@ function parseFilterArray(value) {
   return value.split(',').map(Number);
 }
 
-const findSalesByFilters = async ({ grade, genre, sale }) => {
+const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', sale }) => {
   // prisma에서 조건 객체 생성
   const where = {};
 
@@ -26,8 +27,9 @@ const findSalesByFilters = async ({ grade, genre, sale }) => {
   // 실제 DB 조회 (관련된 cardGrade, cardGenre 포함)
   return await prisma.sale.findMany({
     where,
+    orderBy: getSort('card', orderBy),
     include: {
-     photoCard: {
+      photoCard: {
         include: {
           genre: true,
           grade: true,
@@ -104,8 +106,6 @@ async function findSaleCardById(id) {
     }
   });
 }
-
-
 
 export default {
   findSaleCardById,
