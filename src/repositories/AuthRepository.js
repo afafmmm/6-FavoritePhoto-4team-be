@@ -1,4 +1,4 @@
-import prisma from "../config/prisma.js";
+import prisma from '../config/prisma.js';
 
 async function create(data) {
   return prisma.user.create({
@@ -9,8 +9,8 @@ async function create(data) {
       nickname: true,
       profileImage: true,
       createdAt: true,
-      updatedAt: true,
-    },
+      updatedAt: true
+    }
   });
 }
 
@@ -23,20 +23,20 @@ async function findById(id) {
       nickname: true,
       profileImage: true,
       createdAt: true,
-      updatedAt: true,
-    },
+      updatedAt: true
+    }
   });
 }
 
 async function findByIdWithPassword(id) {
   return prisma.user.findUnique({
-    where: { id },
+    where: { id }
   });
 }
 
 async function findByEmail(email) {
   return prisma.user.findUnique({
-    where: { email },
+    where: { email }
   });
 }
 
@@ -45,8 +45,8 @@ async function findByNickname(nickname) {
     where: { nickname },
     select: {
       id: true,
-      nickname: true,
-    },
+      nickname: true
+    }
   });
 }
 
@@ -60,8 +60,22 @@ async function update(id, data) {
       nickname: true,
       profileImage: true,
       createdAt: true,
-      updatedAt: true,
-    },
+      updatedAt: true
+    }
+  });
+}
+
+async function findByGoogleId(googleId) {
+  return prisma.user.findUnique({
+    where: { googleId },
+    select: {
+      id: true,
+      email: true,
+      nickname: true,
+      profileImage: true,
+      createdAt: true,
+      updatedAt: true
+    }
   });
 }
 
@@ -72,4 +86,5 @@ export default {
   findByEmail,
   findByNickname,
   update,
+  findByGoogleId
 };
