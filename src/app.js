@@ -10,6 +10,7 @@ import salesController from './controllers/SalesController.js';
 import storeController from './controllers/StoreController.js';
 import pointsController from './controllers/PointsController.js';
 import notificationsController from './controllers/NotificationsController.js';
+import purchasecontroller from './controllers/Purchasecontroller.js'
 import { Server } from 'socket.io';
 import http from 'http';
 import tradeRequestController from './controllers/TradeRequestController.js';
@@ -37,6 +38,7 @@ app.use('/api/points', pointsController);
 // app.use('/api/store', salesController);
 app.use('/api/store', tradeRequestController);
 app.use('/api/store', salesController); // 계속 사용하고 있으니 주석하지 말아주세요
+app.use('/api/store', purchasecontroller);
 
 app.use(errorHandler);
 
