@@ -2,6 +2,7 @@ import express from 'express';
 import authService from '../services/AuthService.js';
 import passport from '../config/passport.js';
 import { asyncHandler } from '../utils/async-handler.js';
+import jwt from 'jsonwebtoken';
 
 const authController = express.Router();
 
@@ -80,5 +81,43 @@ authController.post(
     res.json({ accessToken: newAccessToken });
   })
 );
+
+// 구글 OAuth2 로그인
+// 1. 구글 로그인 페이지로 리다이렉트
+authController.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// 2. 구글 콜백 처리
+authController.get(
+  '/google/callback',
+  passport.authenticate('google', { session: false, failureRedirect: '/api/auth/google/fail' }),
+  (req, res) => {
+    // JWT 발급 및 프론트로 전달
+    const user = req.user;
+    const payload = {
+      userId: user.id,
+      email: user.email,
+      nickname: user.nickname
+    };
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || '15m'
+    });
+    const refreshToken = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d'
+    });
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'None',
+      secure: true
+    });
+    // 프론트엔드로 토큰과 유저 정보 전달 (리다이렉트 또는 JSON)
+    res.redirect(`http://localhost:3000/`);
+  }
+);
+
+// 구글 로그인 실패시
+authController.get('/google/fail', (req, res) => {
+  res.status(401).json({ message: '구글 로그인에 실패했습니다.' });
+});
 
 export default authController;

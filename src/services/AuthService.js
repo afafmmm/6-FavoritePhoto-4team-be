@@ -70,6 +70,25 @@ async function logInUser(email, password) {
   return { accessToken, refreshToken, user: userWithoutPassword };
 }
 
+async function logInWithGoogle(googleId) {
+  const user = await authRepository.findByGoogleId(googleId);
+  if (!user) {
+    throw new Error(401, '구글 계정으로 가입된 사용자가 없습니다.');
+  }
+  const payload = {
+    userId: user.id,
+    email: user.email,
+    nickname: user.nickname
+  };
+  const accessToken = jwt.sign(payload, JWT_SECRET, {
+    expiresIn: ACCESS_TOKEN_EXPIRES_IN
+  });
+  const refreshToken = jwt.sign(payload, JWT_SECRET, {
+    expiresIn: REFRESH_TOKEN_EXPIRES_IN
+  });
+  return { accessToken, refreshToken, user };
+}
+
 async function getUserById(id) {
   const user = await authRepository.findById(id);
 
@@ -100,5 +119,6 @@ export default {
   signUpUser,
   logInUser,
   getUserById,
-  generateNewAccessToken
+  generateNewAccessToken,
+  logInWithGoogle
 };
