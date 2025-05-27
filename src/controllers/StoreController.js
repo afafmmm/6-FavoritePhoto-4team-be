@@ -1,25 +1,28 @@
 import express from 'express';
+import passport from 'passport'; // passport import 추가
 import storeService from '../services/StoreService.js';
-import passport from '../config/passport.js';
+
 const storeController = express.Router();
 
-// 카드 목록 조회
-storeController.get('/', async (req, res, next) => {
+
+storeController.get("/", async (req, res, next) => {
   try {
-    const data = await storeService.getAllCardsWithCounts();
-    res.json(data);
+    const { grade, genre, sale } = req.query;
+
+    const result = await storeService.getFilteredSalesWithCounts({ grade, genre, sale });
+
+    res.json(result);
   } catch (err) {
     next(err);
   }
 });
 
 
-// 카드 상세 조회
 storeController.get(
   '/cards/:id',
   passport.authenticate('access-token', {
     session: false,
-    failWithError: true
+    failWithError: true,
   }),
   async (req, res, next) => {
     try {

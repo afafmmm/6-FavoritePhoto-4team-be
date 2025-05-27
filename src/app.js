@@ -12,12 +12,13 @@ import pointsController from './controllers/PointsController.js';
 import notificationsController from './controllers/NotificationsController.js';
 import { Server } from 'socket.io';
 import http from 'http';
+import tradeRequestController from './controllers/TradeRequestController.js';
 
 const app = express();
 app.use(
   cors({
     origin: [
-      'https://6-favorite-photo-4team-fe.vercel.app', // 프론트엔드 주소
+      'https://6-favorite-photo-4team-fe.vercel.app', 
       'http://localhost:3000' // 로컬 개발 환경 주소
     ],
     credentials: true
@@ -33,6 +34,8 @@ app.use('/api/users', usersController);
 app.use('/api/store', storeController);
 app.use('/api/notifications', notificationsController);
 app.use('/api/points', pointsController);
+// app.use('/api/store', salesController);
+app.use('/api/store', tradeRequestController);
 app.use('/api/store', salesController); // 계속 사용하고 있으니 주석하지 말아주세요
 
 app.use(errorHandler);

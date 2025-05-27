@@ -42,10 +42,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZ
 ### 포인트 증가
 POST http://localhost:3002/api/points/update
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODIzNzU0NiwiZXhwIjoxNzQ4MjM4NDQ2fQ.xPdH3egp9zKEVauQyG5mhK7Ko6hpS3yAyXf0SDVF28M
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MGQ5NjM3MC1mMmMzLTRmMWMtYTQ5NS02ZmUzZmRhYjA3YzMiLCJlbWFpbCI6Indvb2p1QGV4YW1wbGUuY29tIiwibmlja25hbWUiOiLsmrDso7wiLCJpYXQiOjE3NDgzMTMzOTIsImV4cCI6MTc0ODMxNDI5Mn0.rDB_Nr85lDQzVY5CZBQ2rTwO3hB2lYTeNEL7byk9PEQ
 
 {
-  "amount": 100
+  "amount": 10000
 }
 
 ### 내 알림 전체 조회
