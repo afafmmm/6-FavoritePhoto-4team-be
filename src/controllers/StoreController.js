@@ -1,5 +1,5 @@
 import express from 'express';
-import passport from 'passport'; // passport import 추가
+import passport from 'passport'; 
 import storeService from '../services/StoreService.js';
 
 const storeController = express.Router();

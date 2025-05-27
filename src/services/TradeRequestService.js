@@ -43,14 +43,9 @@ async function createTradeRequest({ listedCardId, applicantId, offeredUserCardId
     //UserCard 상태 업데이트
     await tx.userCard.updateMany({
       where: { id: { in: offeredUserCardIds } },
-      data: { status: "TRADED" }
+      data: { status: "PENDING" }
     });
 
-    //Sale 상태 업데이트
-    await tx.sale.updateMany({
-      where: { photoCardId: listedCardId, status: 'AVAILABLE' },
-      data: { status: 'PENDING' }
-    });
 
     return newTradeRequest;
   });
