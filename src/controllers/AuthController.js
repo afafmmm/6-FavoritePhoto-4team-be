@@ -111,7 +111,7 @@ authController.get(
       secure: true
     });
     // 프론트엔드로 토큰과 유저 정보 전달 (리다이렉트 또는 JSON)
-    res.redirect(`http://localhost:3000/`);
+    res.redirect(`https://6-favorite-photo-4team-fe.vercel.app`);
   }
 );
 
