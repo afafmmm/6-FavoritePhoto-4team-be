@@ -13,16 +13,22 @@ const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || '7d';
 
 async function signUpUser({ nickname, email, password, passwordConfirmation }) {
   if (password !== passwordConfirmation) {
-    throw new Error(422, '비밀번호가 일치하지 않습니다.');
+    const error = new Error('비밀번호가 일치하지 않습니다.');
+    error.code = 422;
+    throw error;
   }
   const existingUserByEmail = await authRepository.findByEmail(email);
   if (existingUserByEmail) {
-    throw new Error(409, '이미 사용중인 이메일입니다.');
+    const error = new Error('이미 사용중인 이메일입니다.');
+    error.code = 409;
+    throw error;
   }
 
   const existingUserByNickname = await authRepository.findByNickname(nickname);
   if (existingUserByNickname) {
-    throw new Error(409, '이미 사용중인 닉네임입니다.');
+    const error = new Error('이미 사용중인 닉네임입니다.');
+    error.code = 409;
+    throw error;
   }
 
   // 비밀번호 해싱
@@ -44,12 +50,16 @@ async function signUpUser({ nickname, email, password, passwordConfirmation }) {
 async function logInUser(email, password) {
   const user = await authRepository.findByEmail(email);
   if (!user) {
-    throw new Error(401, '이메일 또는 비밀번호가 일치하지 않습니다.');
+    const error = new Error('이메일 또는 비밀번호가 일치하지 않습니다.');
+    error.code = 401;
+    throw error;
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw new Error(401, '이메일 또는 비밀번호가 일치하지 않습니다.');
+    const error = new Error('이메일 또는 비밀번호가 일치하지 않습니다.');
+    error.code = 401;
+    throw error;
   }
 
   const payload = {
@@ -82,7 +92,9 @@ async function getUserById(id) {
 
 function generateNewAccessToken(user) {
   if (!user || !user.id) {
-    throw new Error(400, '새로운 액세스 토큰을 생성하기 위한 사용자 정보가 유효하지 않습니다.');
+    const error = new Error('새로운 액세스 토큰을 생성하기 위한 사용자 정보가 유효하지 않습니다.');
+    error.code = 400;
+    throw error;
   }
 
   const payload = {

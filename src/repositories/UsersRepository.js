@@ -171,7 +171,7 @@ async function findMySales(
     gradeId,
     search,
     saleType, // 판매 중, 교환 요청됨, undefined(품절된 것?)
-    soldOut = false, // true(품절됨), false(그 외 = 판매or교환 중) -- FE에서 보냄
+    soldOut = 'false', // true(품절됨), false(그 외 = 판매or교환 중) -- FE에서 보냄
     offset = 0,
     limit = 10
   }
@@ -219,6 +219,47 @@ async function findMySales(
   });
 }
 
+// GET: My Gallery 카드 개수 전체 조회 (ACTIVE 상태만 조회)
+async function countMyGallery(userId, { genreId, gradeId, search }) {
+  const photoCardFilter = {
+    ...(genreId && { genreId: Number(genreId) }),
+    ...(gradeId && { gradeId: Number(gradeId) }),
+    ...(search && { name: { contains: search, mode: 'insensitive' } })
+  };
+
+  return await prisma.userCard.count({
+    where: {
+      ownerId: userId,
+      status: 'ACTIVE',
+      photoCard: photoCardFilter
+    }
+  });
+}
+
+// GET: 내 판매 카드 개수 전체 조회 (판매중, 교환대기중, 판맨완료)
+async function countMySales(
+  userId,
+  { genreId, gradeId, search, saleType, soldOut = 'false' } // soldOut 기본값을 문자열 "false"로 명시
+) {
+  const statusList = String(soldOut).toLowerCase() === 'true' ? ['SOLDOUT'] : ['AVAILABLE', 'PENDING'];
+
+  const photoCardFilter = {
+    ...(genreId && { genreId: Number(genreId) }),
+    ...(gradeId && { gradeId: Number(gradeId) }),
+    ...(search && { name: { contains: search, mode: 'insensitive' } })
+  };
+
+  return await prisma.userCard.count({
+    where: {
+      ownerId: userId,
+      status: { in: statusList },
+      photoCard: photoCardFilter,
+      ...(saleType === '판매' && { saleUserCards: { some: {} } }),
+      ...(saleType === '교환' && { tradeRequestUserCards: { some: {} } })
+    }
+  });
+}
+
 const usersRepository = {
   findById,
   findGenre,
@@ -227,7 +268,9 @@ const usersRepository = {
   findMyGallery,
   findMySales,
   getMonthlyCardCount,
-  getCardsCount
+  getCardsCount,
+  countMyGallery, // 추가
+  countMySales // 추가
 };
 
 export default usersRepository;
