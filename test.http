@@ -1,12 +1,12 @@
 ### 회원가입
-POST http://localhost:3002/api/auth/signup
+POST https://six-favoritephoto-4team-be.onrender.com/api/auth/signup
 Content-Type: application/json
 
 {
-  "email": "testuser3@example.com",
-  "password": "testpassword",
-  "passwordConfirmation": "testpassword",
-  "nickname": "테스트유저3"
+  "email": "superuser@example.com",
+  "password": "superpassword",
+  "passwordConfirmation": "superpassword",
+  "nickname": "슈퍼유저"
 }
 
 ### 로그인
@@ -14,8 +14,8 @@ POST http://localhost:3002/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "testuser3@example.com",
-  "password": "testpassword"
+  "email": "superuser@example.com",
+  "password": "superpassword"
 }
 ### 랜덤 상자 뽑기 (포인트 획득)
 POST http://localhost:3002/api/points/random-box
@@ -31,30 +31,30 @@ GET https://six-favoritephoto-4team-be.onrender.com/api/store
 Content-Type: application/json
 
 ### 알림 1
-POST http://localhost:3002/api/notifications
+POST https://six-favoritephoto-4team-be.onrender.com/api/notifications
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODIzMzc2NywiZXhwIjoxNzQ4MjM0NjY3fQ.5_436L3Emek269g8Zs4md5I5bUTK6zd8cecc9GBwaxs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODI1MDY4MywiZXhwIjoxNzQ4MjUxNTgzfQ.HlIwKH_p_z5LoONdEaJ-QmYa7E7JJFVHm-f7QMonKS0
 
 {
-  "message": "테스트 5"
+  "message": "테스트 12"
 }
 
 ### 포인트 증가
 POST http://localhost:3002/api/points/update
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODIzNzU0NiwiZXhwIjoxNzQ4MjM4NDQ2fQ.xPdH3egp9zKEVauQyG5mhK7Ko6hpS3yAyXf0SDVF28M
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODI0OTM2MiwiZXhwIjoxNzQ4MjUwMjYyfQ.gDDsAITQm_iHbOSxb-cEz0lHfaYz74amhrMOYmgYfQs
 
 {
   "amount": 100
 }
 
 ### 내 알림 전체 조회
-GET http://localhost:3002/api/notifications
+GET https://six-favoritephoto-4team-be.onrender.com/api/notifications
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODI0MjI1MSwiZXhwIjoxNzQ4MjQzMTUxfQ.2Mnb2khmKJtkxiweqnn3cgSM-dGPdq5LLItFGw0DWu0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODI0OTM2MiwiZXhwIjoxNzQ4MjUwMjYyfQ.gDDsAITQm_iHbOSxb-cEz0lHfaYz74amhrMOYmgYfQs
 
 ### 알림 읽음 처리
-PATCH http://localhost:3002/api/notifications/5/read
+PATCH https://six-favoritephoto-4team-be.onrender.com/api/notifications/5/read
 Content-Type: application/json
 Authorization: Bearer {ACCESS_TOKEN}
 
@@ -65,3 +65,17 @@ Authorization: Bearer {ACCESS_TOKEN}
 
 
 
+### 카드 생성 (포토카드 등록)
+POST http://localhost:3002/api/users/post
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1NTk5MGI3OC01OGEyLTRjNzUtYWUyMy0yZjZmN2E0ZjcxMzUiLCJlbWFpbCI6InN1cGVydXNlckBleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7IqI7Y287Jyg7KCAIiwiaWF0IjoxNzQ4MjQ3MjYwLCJleHAiOjE3NDgyNDgxNjB9.LjtdQopxEMJ1r6-NSYJhrDXczamsrwlfZY4EsnjJU8o
+Content-Type: multipart/form-data
+
+{
+  "name": "테스트 카드",
+  "grade": "일반",
+  "genre": "풍경",
+  "description": "테스트용 카드입니다.",
+  "volumn": 10,
+  "price": 1000,
+  "image": "@./test.png"
+}
