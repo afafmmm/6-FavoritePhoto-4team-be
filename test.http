@@ -42,11 +42,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZ
 ### 포인트 증가
 POST https://six-favoritephoto-4team-be.onrender.com/api/points/update
 Content-Type: application/json
-<<<<<<< HEAD
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODQwMDk0OCwiZXhwIjoxNzQ4NDAxODQ4fQ.wIf4ZccTIuMznAuXPBZj-N_A1y5bPx28HgwxwiEYULM
-=======
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNjdhN2RiNy1iOWNkLTQ0NGMtOGE4Mi1jZGM1MGRlNzVlOTYiLCJlbWFpbCI6ImFzZDExQGFzZC5hc2QiLCJuaWNrbmFtZSI6InRlc3QxMCIsImlhdCI6MTc0ODQwOTE1MSwiZXhwIjoxNzQ4NDEwMDUxfQ.pMAxXAMmyrv2y3a_K0LJ8pa13EifVpwK5mcQfOrxPC4
->>>>>>> dev
 
 {
   "amount": 1000000000
