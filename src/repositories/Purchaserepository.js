@@ -18,9 +18,13 @@ export async function findPurchaseSaleWithUserCards(saleId) {
 export async function updatePurchasedUserCardOwner(userCardId, newOwnerId, tx = prisma) {
   return tx.userCard.update({
     where: { id: userCardId },
-    data: { ownerId: newOwnerId },
-  })
+    data: {
+      ownerId: newOwnerId,
+      status: 'ACTIVE',
+    },
+  });
 }
+
 
 // 판매 수량 및 상태 업데이트 (구매 후 재고 및 상태 업데이트)
 export async function updatePurchaseSaleQuantityAndStatus(saleId, remainingQuantity, status, tx = prisma) {
