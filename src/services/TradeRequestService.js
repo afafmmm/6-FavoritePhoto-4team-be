@@ -122,7 +122,8 @@ async function getTradeRequestsByApplicantAndCard(userId, saleId) {
   const requests = await prisma.tradeRequest.findMany({
     where: {
       applicantId: userId,
-      photoCardId: sale.photoCardId
+      photoCardId: sale.photoCardId,
+      tradeStatus: 'PENDING'
     },
     include: {
       tradeRequestUserCards: {
@@ -138,11 +139,6 @@ async function getTradeRequestsByApplicantAndCard(userId, saleId) {
           }
         }
       },
-      photoCard: {
-        include: {
-          creator: true
-        }
-      }
     },
     orderBy: {
       createdAt: 'desc'
