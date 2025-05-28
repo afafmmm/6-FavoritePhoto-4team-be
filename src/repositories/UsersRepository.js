@@ -118,49 +118,59 @@ async function getMonthlyCardCount(userId) {
 
 // GET: 소유한 카드(거래·교환x)
 async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, limit = 10 }) {
-  // query string 조건 정리 (밑의 where절로)
+  // query 문자열 조건
   const photoCardFilter = {
-    // 카드 관련 조건: &&로 유무를 검사하고, 있으면 조건으로 넣어라(spread 문법)
-    ...(genreId && { genreId: Number(genreId) }), // 조건3: 카드 장르
-    ...(gradeId && { gradeId: Number(gradeId) }), // 조건4: 카드 등급
-    ...(search && { name: { contains: search, mode: 'insensitive' } }) // 조건5: 검색어 = 카드 이름
+    // 카드 관련 조건: &&로 유무를 검사하고, 있으면 조건으로 넣음
+    ...(genreId && { genreId: Number(genreId) }), // 1. 장르
+    ...(gradeId && { gradeId: Number(gradeId) }), // 2. 등급
+    ...(search && { name: { contains: search, mode: 'insensitive' } }) // 3. 검색어 = 카드 이름
   };
 
-  // { } 안은 query string 부분
-  return await prisma.userCard.findMany({
-    // 불러올 내용: userCard 전체 + 등급과 장르
-    select: {
-      id: true,
-      price: true,
-      // 소유자 정보
-      owner: { select: { id: true, nickname: true } },
-      photoCard: {
-        select: {
-          id: true,
-          name: true,
-          imageUrl: true,
-          description: true,
-          totalQuantity: true,
-          gradeId: true,
-          genreId: true,
-          grade: { select: { name: true } },
-          genre: { select: { name: true } }
-        }
+  // 반환해야 할 것: 페이지 정보, 카드 정보
+  const [totalItems, items] = await Promise.all([
+    // 1. 총 개수
+    prisma.userCard.count({
+      where: {
+        ownerId: userId,
+        status: 'ACTIVE',
+        photoCard: photoCardFilter
       }
-    },
+    }),
+    // 2. 선택 조건: userCard 기본 정보 + 등급, 장르
+    prisma.userCard.findMany({
+      select: {
+        id: true,
+        price: true,
+        // 소유자 정보
+        owner: { select: { id: true, nickname: true } },
+        photoCard: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+            description: true,
+            totalQuantity: true,
+            gradeId: true,
+            genreId: true,
+            grade: { select: { name: true } },
+            genre: { select: { name: true } }
+          }
+        }
+      },
+      // 필터링 조건
+      where: {
+        ownerId: userId, // 조건1: 로그인한 userId
+        status: 'ACTIVE', // 조건2: 판매 혹은 교환 중이 아닌 카드만
+        photoCard: photoCardFilter
+      },
 
-    // 필터링 조건
-    where: {
-      ownerId: userId, // 조건1: 로그인한 userId
-      status: 'ACTIVE', // 조건2: 카드 상태, 판매 혹은 교환 중이 아닌 카드만
-      photoCard: photoCardFilter
-    },
-
-    // 페이지, 정렬
-    skip: Number(offset),
-    take: Number(limit),
-    orderBy: { createdAt: 'desc' }
-  });
+      // 페이지, 정렬
+      skip: Number(offset),
+      take: Number(limit),
+      orderBy: { createdAt: 'desc' }
+    })
+  ]);
+  return { totalItems, items };
 }
 
 // GET: 판매 중인 카드
@@ -219,24 +229,7 @@ async function findMySales(
   });
 }
 
-// GET: My Gallery 카드 개수 전체 조회 (ACTIVE 상태만 조회)
-async function countMyGallery(userId, { genreId, gradeId, search }) {
-  const photoCardFilter = {
-    ...(genreId && { genreId: Number(genreId) }),
-    ...(gradeId && { gradeId: Number(gradeId) }),
-    ...(search && { name: { contains: search, mode: 'insensitive' } })
-  };
-
-  return await prisma.userCard.count({
-    where: {
-      ownerId: userId,
-      status: 'ACTIVE',
-      photoCard: photoCardFilter
-    }
-  });
-}
-
-// GET: 내 판매 카드 개수 전체 조회 (판매중, 교환대기중, 판맨완료)
+// GET: 내 판매 카드 개수 전체 조회 (판매중, 교환대기중, 판매 완료)
 async function countMySales(
   userId,
   { genreId, gradeId, search, saleType, soldOut = 'false' } // soldOut 기본값을 문자열 "false"로 명시
@@ -269,8 +262,7 @@ const usersRepository = {
   findMySales,
   getMonthlyCardCount,
   getCardsCount,
-  countMyGallery, // 추가
-  countMySales // 추가
+  countMySales
 };
 
 export default usersRepository;
