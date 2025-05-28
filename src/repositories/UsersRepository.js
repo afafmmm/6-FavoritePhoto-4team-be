@@ -33,20 +33,25 @@ async function findGrade() {
 
 // 사용자별 카드 개수 세기
 async function getCardsCount(userId) {
+  // 1. 일단 userCard에서 등급별 전체 개수를 불러옴
   const allCards = await prisma.userCard.findMany({
     where: {
       ownerId: userId
     },
     include: {
-      photoCard: { select: { gradeId: true } }
+      photoCard: { select: { id: true, gradeId: true } }
     }
-  }); // 일단 전체 카드 개수를 가져옴
+  });
 
-  // 그리고 카드 상태를 active와 그 외로 나눔
-  const active = allCards.filter((card) => card.status === 'ACTIVE');
-  const inactive = allCards.filter((card) => card.status !== 'ACTIVE');
+  // 2. photoCard 기준으로 바꿈
+  const getPhotoCardCount = (cards) =>
+    Array.from(new Map(cards.map((card) => [card.photoCard.id, card.photoCard])).values());
 
-  // 그리고 등급별로 반환함
+  // 3. 카드 상태를 active와 그 외로 나눔
+  const active = getPhotoCardCount(allCards.filter((card) => card.status === 'ACTIVE'));
+  const inactive = getPhotoCardCount(allCards.filter((card) => card.status !== 'ACTIVE'));
+
+  // 4. 등급별로 반환함
   return {
     active: countCardsByGrade(active),
     inactive: countCardsByGrade(inactive)
