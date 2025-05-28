@@ -126,50 +126,53 @@ async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, lim
     ...(search && { name: { contains: search, mode: 'insensitive' } }) // 3. 검색어 = 카드 이름
   };
 
-  // 반환해야 할 것: 페이지 정보, 카드 정보
-  const [totalItems, items] = await Promise.all([
-    // 1. 총 개수
-    prisma.userCard.count({
-      where: {
-        ownerId: userId,
-        status: 'ACTIVE',
-        photoCard: photoCardFilter
-      }
-    }),
-    // 2. 선택 조건: userCard 기본 정보 + 등급, 장르
-    prisma.userCard.findMany({
-      select: {
-        id: true,
-        price: true,
-        // 소유자 정보
-        owner: { select: { id: true, nickname: true } },
-        photoCard: {
-          select: {
-            id: true,
-            name: true,
-            imageUrl: true,
-            description: true,
-            totalQuantity: true,
-            gradeId: true,
-            genreId: true,
-            grade: { select: { name: true } },
-            genre: { select: { name: true } }
-          }
-        }
-      },
-      // 필터링 조건
-      where: {
-        ownerId: userId, // 조건1: 로그인한 userId
-        status: 'ACTIVE', // 조건2: 판매 혹은 교환 중이 아닌 카드만
-        photoCard: photoCardFilter
-      },
+  // 카드 개수 추출
+  const photoCardCount = await prisma.userCard.groupBy({
+    by: ['photoCardId'],
+    where: {
+      ownerId: userId,
+      status: 'ACTIVE',
+      photoCard: photoCardFilter
+    },
+    _count: true
+  });
 
-      // 페이지, 정렬
-      skip: Number(offset),
-      take: Number(limit),
-      orderBy: { createdAt: 'desc' }
-    })
-  ]);
+  // 전체 카드 개수
+  const totalItems = photoCardCount.length;
+
+  // 페이지네이션 포함 쿼리 문자열 반환
+  const items = await prisma.photoCard.findMany({
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+      description: true,
+      totalQuantity: true,
+      gradeId: true,
+      genreId: true,
+      grade: { select: { name: true } },
+      genre: { select: { name: true } },
+      userCards: {
+        where: { ownerId: userId, status: 'ACTIVE' },
+        select: { id: true, price: true },
+        take: 1
+      },
+      creator: { select: { id: true, nickname: true } }
+    },
+
+    where: {
+      userCards: {
+        some: { ownerId: userId, status: 'ACTIVE' }
+      }
+    },
+
+    ...photoCardFilter,
+    // 페이지, 정렬
+    skip: Number(offset),
+    take: Number(limit),
+    orderBy: { createdAt: 'desc' }
+  });
+
   return { totalItems, items };
 }
 
