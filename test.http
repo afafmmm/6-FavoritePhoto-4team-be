@@ -31,12 +31,12 @@ GET https://six-favoritephoto-4team-be.onrender.com/api/store
 Content-Type: application/json
 
 ### 알림 1
-POST http://localhost:3002/api/notifications
+POST https://six-favoritephoto-4team-be.onrender.com/api/notifications
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODIzMzc2NywiZXhwIjoxNzQ4MjM0NjY3fQ.5_436L3Emek269g8Zs4md5I5bUTK6zd8cecc9GBwaxs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlZTNmZDU5Yi04OTY2LTQ4ODItYmFkOS1kNjdlMWFlNGMzOTAiLCJlbWFpbCI6InRlc3R1c2VyM0BleGFtcGxlLmNvbSIsIm5pY2tuYW1lIjoi7YWM7Iqk7Yq47Jyg7KCAMyIsImlhdCI6MTc0ODQwMDk0OCwiZXhwIjoxNzQ4NDAxODQ4fQ.wIf4ZccTIuMznAuXPBZj-N_A1y5bPx28HgwxwiEYULM
 
 {
-  "message": "테스트 5"
+  "message": "테스트 15"
 }
 
 ### 포인트 증가
