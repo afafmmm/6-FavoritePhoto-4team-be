@@ -22,23 +22,17 @@ async function create(query) {
 async function getMyGallery(userId, query) {
   const { genreId, gradeId, search, page, size } = query;
 
-  // 1. 필터 조건에 맞는 전체 아이템 개수 조회
-  const totalItems = await usersRepository.countMyGallery(userId, {
-    genreId,
-    gradeId,
-    search
-  });
-
-  // 2. 페이지네이션 상세 정보 계산
+  // 1. 페이지네이션 계산
   const currentPage = page ? parseInt(page, 10) : 1;
+
   const paginationDetails = calculatePaginationDetails({
-    totalItems,
-    currentPage: currentPage,
-    size: size // calculatePaginationDetails에서 size 기본값 처리
+    totalItems: 0, // 임시 값
+    currentPage,
+    size // calculatePaginationDetails에서 size 기본값 처리
   });
 
-  // 3. 현재 페이지에 해당하는 데이터 조회
-  const items = await usersRepository.findMyGallery(userId, {
+  // 2. 현재 페이지에 해당하는 데이터 조회
+  const { totalItems, items } = await usersRepository.findMyGallery(userId, {
     genreId,
     gradeId,
     search,
@@ -46,10 +40,14 @@ async function getMyGallery(userId, query) {
     limit: paginationDetails.itemsPerPage
   });
 
-  return {
-    items,
-    pagination: paginationDetails
-  };
+  // 3. 진짜 페이지네이션 갱신
+  const pagination = calculatePaginationDetails({
+    totalItems,
+    currentPage,
+    size
+  });
+
+  return { items, pagination };
 }
 
 // GET: 내 판매 카드
