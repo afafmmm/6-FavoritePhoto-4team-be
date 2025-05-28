@@ -1,33 +1,45 @@
 import prisma from '../config/prisma.js';
+import getSort from '../utils/sort.js';
+import { getGenreFilter, getGradeFilter, getStatusFilter } from '../utils/filter.js'; 
 
-// 필터 파싱 함수 (grade, genre는 배열 또는 콤마 구분 문자열로 전달됨 가정)
-function parseFilterArray(value) {
-  if (!value) return [];
-  if (Array.isArray(value)) return value.map(Number);
-  return value.split(',').map(Number);
-}
-
-const findSalesByFilters = async ({ grade, genre, sale }) => {
-  // prisma에서 조건 객체 생성
+const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', sale }) => {
   const where = {};
 
-  if (grade.length) {
-    where.cardGradeId = { in: grade.map(Number) };
+  if (grade?.length) {
+    const gradeNames = grade
+      .map(Number)
+      .map(getGradeFilter)
+      .map((obj) => obj.name);
+    where.photoCard = {
+      grade: {
+        name: { in: gradeNames }
+      }
+    };
   }
 
-  if (genre.length) {
-    where.cardGenreId = { in: genre.map(Number) };
+  if (genre?.length) {
+    const genreNames = genre
+      .map(Number)
+      .map(getGenreFilter)
+      .map((obj) => obj.name);
+    where.photoCard = {
+      ...where.photoCard,
+      genre: {
+        name: { in: genreNames }
+      }
+    };
   }
 
-  if (sale.length) {
-    where.status = { in: sale };
+  if (sale?.length) {
+    const statusFilter = getStatusFilter(sale);
+    where.status = { in: statusFilter };
   }
 
-  // 실제 DB 조회 (관련된 cardGrade, cardGenre 포함)
   return await prisma.sale.findMany({
     where,
+    orderBy: getSort('card', orderBy),
     include: {
-     photoCard: {
+      photoCard: {
         include: {
           genre: true,
           grade: true,
@@ -104,8 +116,6 @@ async function findSaleCardById(id) {
     }
   });
 }
-
-
 
 export default {
   findSaleCardById,

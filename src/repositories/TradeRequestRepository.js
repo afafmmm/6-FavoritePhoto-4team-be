@@ -3,7 +3,7 @@ async function findSaleByPhotoCardId(photoCardId) {
   return prisma.sale.findFirst({
     where: {
       photoCardId,
-      status: { in: ['AVAILABLE', 'PENDING'] }
+      status: { in: ['AVAILABLE'] }
     }
   });
 }
@@ -18,7 +18,7 @@ async function findUserCardsByIds(userId, userCardIds) {
   });
 }
 
-//거래 요청청
+//거래 요청
 async function createTradeRequest({ photoCardId, ownerId, applicantId, offeredPhotoCardId, description }) {
   const [tradeRequest] = await prisma.$transaction([
     prisma.tradeRequest.create({
@@ -28,7 +28,7 @@ async function createTradeRequest({ photoCardId, ownerId, applicantId, offeredPh
         applicantId,
         offeredPhotoCardId,
         description,
-        tradeStatus: 'PENDING'
+        tradeStatus: 'AVAILABLE'
       }
     }),
     prisma.sale.updateMany({
