@@ -1,3 +1,6 @@
+import * as purchaseRepository from '../repositories/Purchaserepository.js';
+import prisma from '../config/prisma.js';
+
 export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
   return await prisma.$transaction(async (tx) => {
     const sale = await purchaseRepository.findPurchaseSaleWithUserCards(saleId);
@@ -32,17 +35,26 @@ export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
       data: { points: { decrement: totalPrice } },
     });
 
-    // 판매자 포인트 지급
-    const sellerPoint = await tx.userPoint.upsert({
+    // 판매자 포인트 지급 - upsert 대신 findFirst + update/create
+    const existingSellerPoint = await tx.userPoint.findFirst({
       where: { userId: sale.sellerId },
-      update: { points: { increment: totalPrice } },
-      create: {
-        userId: sale.sellerId,
-        points: totalPrice,
-        lastClaimed: null,
-        todayClaimCount: 0,
-      },
     });
+
+    if (existingSellerPoint) {
+      await tx.userPoint.update({
+        where: { id: existingSellerPoint.id },
+        data: { points: { increment: totalPrice } },
+      });
+    } else {
+      await tx.userPoint.create({
+        data: {
+          userId: sale.sellerId,
+          points: totalPrice,
+          lastClaimed: null,
+          todayClaimCount: 0,
+        },
+      });
+    }
 
     // UserCard 소유권 이전
     const promises = userCardsToPurchase.map(uc =>
