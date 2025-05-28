@@ -91,6 +91,19 @@ authController.get(
   '/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: '/api/auth/google/fail' }),
   (req, res) => {
+    // 기존 refreshToken, accessToken 쿠키 삭제
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'None',
+      secure: true
+    });
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'None',
+      secure: true
+    });
     // JWT 발급 및 프론트로 전달
     const user = req.user;
     const payload = {
