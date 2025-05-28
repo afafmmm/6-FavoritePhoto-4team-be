@@ -1,15 +1,14 @@
 import express from 'express';
-import passport from 'passport'; // passport import 추가
+import passport from 'passport'; 
 import storeService from '../services/StoreService.js';
 
 const storeController = express.Router();
 
-
-storeController.get("/", async (req, res, next) => {
+storeController.get('/', async (req, res, next) => {
   try {
-    const { grade, genre, sale } = req.query;
+    const { grade, genre, sale, orderBy } = req.query;
 
-    const result = await storeService.getFilteredSalesWithCounts({ grade, genre, sale });
+    const result = await storeService.getFilteredSalesWithCounts({ grade, genre, sale, orderBy });
 
     res.json(result);
   } catch (err) {
@@ -17,12 +16,11 @@ storeController.get("/", async (req, res, next) => {
   }
 });
 
-
 storeController.get(
   '/cards/:id',
   passport.authenticate('access-token', {
     session: false,
-    failWithError: true,
+    failWithError: true
   }),
   async (req, res, next) => {
     try {
