@@ -100,6 +100,34 @@ async function findTradeRequestById(id) {
   });
 }
 
+async function findTradeRequestsByApplicant(applicantId) {
+  return prisma.tradeRequest.findMany({
+    where: { applicantId },
+    include: {
+      photoCard: {
+        include: {
+          creator: true  
+        }
+      },
+      tradeRequestUserCards: {
+        include: {
+          userCard: {
+            include: {
+              photoCard: {
+                include: {
+                  creator: true  
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+}
+
+
 
 export default {
   findSaleByPhotoCardId,
@@ -108,5 +136,6 @@ export default {
   createTradeRequestUserCards,
   updateUserCardsStatus,
   cancelTradeRequest,
-  findTradeRequestById
+  findTradeRequestById,
+  findTradeRequestsByApplicant
 };

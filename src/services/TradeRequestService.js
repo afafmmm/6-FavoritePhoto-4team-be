@@ -1,12 +1,21 @@
 import prisma from "../config/prisma.js";
 import tradeRequestRepository from "../repositories/TradeRequestRepository.js";
 
-async function createTradeRequest({ listedCardId, applicantId, offeredUserCardIds, description }) {
-  // 대상 카드 조회 (포토카드 + 소유자)
-  const targetSale = await tradeRequestRepository.findSaleByPhotoCardId(listedCardId);
-  if (!targetSale) {
-    throw new Error("교환 대상 카드가 존재하지 않습니다.");
+async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, description }) {
+  // sale 조회 (photoCardId, sellerId 포함)
+  const targetSale = await prisma.sale.findUnique({
+    where: { id: saleId },
+    include: {
+      photoCard: true
+    }
+  });
+
+  if (!targetSale || targetSale.status !== 'AVAILABLE') {
+    throw new Error("유효하지 않거나 거래 가능한 상태가 아닌 판매 카드입니다.");
   }
+
+  const photoCardId = targetSale.photoCardId;
+  const ownerId = targetSale.sellerId;
 
   // 신청자가 제공하는 카드 소유 확인
   const ownedUserCards = await tradeRequestRepository.findUserCardsByIds(applicantId, offeredUserCardIds);
@@ -16,19 +25,19 @@ async function createTradeRequest({ listedCardId, applicantId, offeredUserCardId
 
   const offeredPhotoCardId = ownedUserCards[0].photoCardId;
 
-  // 트랜잭션으로 묶어서 처리
+  // 트랜잭션으로 거래 요청 생성
   const tradeRequest = await prisma.$transaction(async (tx) => {
-
     const newTradeRequest = await tx.tradeRequest.create({
       data: {
-        photoCardId: listedCardId,
-        ownerId: targetSale.sellerId,
+        photoCardId,
+        ownerId,
         applicantId,
         offeredPhotoCardId,
         description,
         tradeStatus: 'PENDING'
       }
     });
+
     await Promise.all(
       offeredUserCardIds.map(userCardId =>
         tx.tradeRequestUserCard.create({
@@ -40,18 +49,17 @@ async function createTradeRequest({ listedCardId, applicantId, offeredUserCardId
       )
     );
 
-    //UserCard 상태 업데이트
     await tx.userCard.updateMany({
       where: { id: { in: offeredUserCardIds } },
-      data: { status: "PENDING" }
+      data: { status: 'PENDING' }
     });
-
 
     return newTradeRequest;
   });
 
   return tradeRequest;
 }
+
 
 //취소하기
 async function cancelTradeRequest(tradeRequestId, userId) {
@@ -101,7 +109,53 @@ async function cancelTradeRequest(tradeRequestId, userId) {
   return { message: '교환 요청이 취소되었습니다.' };
 }
 
+
+async function getTradeRequestsByApplicantAndCard(userId, saleId) {
+  const sale = await prisma.sale.findUnique({
+    where: { id: saleId }
+  });
+
+  if (!sale) {
+    throw new Error('해당 saleId에 해당하는 판매 항목이 존재하지 않습니다.');
+  }
+
+  const requests = await prisma.tradeRequest.findMany({
+    where: {
+      applicantId: userId,
+      photoCardId: sale.photoCardId
+    },
+    include: {
+      tradeRequestUserCards: {
+        include: {
+          userCard: {
+            include: {
+              photoCard: {
+                include: {
+                  creator: true
+                }
+              }
+            }
+          }
+        }
+      },
+      photoCard: {
+        include: {
+          creator: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
+
+  return requests;
+}
+
+
+
 export default {
   createTradeRequest,
-  cancelTradeRequest
+  cancelTradeRequest,
+  getTradeRequestsByApplicantAndCard
 };
