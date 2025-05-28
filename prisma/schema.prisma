@@ -30,10 +30,10 @@ model User {
 model UserPoint {
   id              Int       @id @default(autoincrement())
   userId          String
-  points          Int       @default(0)
+  points          Int       @default(10)
   lastClaimed     DateTime?
   todayClaimCount Int       @default(0) // 오늘 포인트 클레임 횟수
-  user            User      @relation(fields: [userId], references: [id])
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // 카드 장르 정보 테이블
@@ -88,7 +88,7 @@ model UserCard {
   status                String                 @default("ACTIVE") // 카드 상태 (예: active, traded 등)
   createdAt             DateTime               @default(now())
   photoCard             PhotoCard              @relation(fields: [photoCardId], references: [id])
-  owner                 User?                  @relation(fields: [ownerId], references: [id])
+  owner                 User?                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   saleUserCards         SaleUserCard[] // 이 카드가 판매에 포함된 경우
   tradeRequestUserCards TradeRequestUserCard[] // 이 카드가 교환에 포함된 경우
 }
@@ -100,7 +100,7 @@ model Notification {
   message   String
   createdAt DateTime @default(now())
   read      Boolean  @default(false)
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // 포토카드 교환 신청 내역
@@ -113,8 +113,8 @@ model TradeRequest {
   description           String? // 교환 신청 설명
   tradeStatus           String                 @default("PENDING") // 교환 상태
   createdAt             DateTime               @default(now())
-  owner                 User                   @relation("Owner", fields: [ownerId], references: [id])
-  applicant             User                   @relation("Applicant", fields: [applicantId], references: [id])
+  owner                 User                   @relation("Owner", fields: [ownerId], references: [id], onDelete: Cascade)
+  applicant             User                   @relation("Applicant", fields: [applicantId], references: [id], onDelete: Cascade)
   photoCard             PhotoCard              @relation("TargetPhotoCard", fields: [photoCardId], references: [id])
   offeredPhotoCard      PhotoCard              @relation("OfferedPhotoCard", fields: [offeredPhotoCardId], references: [id])
   tradeRequestUserCards TradeRequestUserCard[] // 실제 교환에 포함된 UserCard들
@@ -141,7 +141,7 @@ model Sale {
   status             String         @default("AVAILABLE") // 판매 상태
   desiredDescription String? // 교환 희망 설명 (선택적)
   createdAt          DateTime       @default(now())
-  seller             User           @relation(fields: [sellerId], references: [id])
+  seller             User           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   photoCard          PhotoCard      @relation(fields: [photoCardId], references: [id])
   saleUserCards      SaleUserCard[] // 실제 판매에 포함된 UserCard들
   cardGrade          CardGrade?     @relation(fields: [cardGradeId], references: [id]) // 교환 희망 등급 (선택적)
