@@ -24,7 +24,7 @@ Content-Type: application/json
 
 ### 내 포인트 조회
 GET http://localhost:3002/api/points/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNjdhN2RiNy1iOWNkLTQ0NGMtOGE4Mi1jZGM1MGRlNzVlOTYiLCJlbWFpbCI6ImFzZDExQGFzZC5hc2QiLCJuaWNrbmFtZSI6InRlc3QxMCIsImlhdCI6MTc0ODQwOTM0MSwiZXhwIjoxNzQ4NDEwMjQxfQ.ZabWewSl6xgI-xmr-nKURcLSpyiBBYYQgknnd4TiHso
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNjdhN2RiNy1iOWNkLTQ0NGMtOGE4Mi1jZGM1MGRlNzVlOTYiLCJlbWFpbCI6ImFzZDExQGFzZC5hc2QiLCJuaWNrbmFtZSI6InRlc3QxMCIsImlhdCI6MTc0ODQxNDYyMiwiZXhwIjoxNzQ4NDE1NTIyfQ.bREQChPhlcXqhwa3j3DnZWUrC3z0Ao_bdM9SmKQMqhM
 
 ### 
 GET https://six-favoritephoto-4team-be.onrender.com/api/store
