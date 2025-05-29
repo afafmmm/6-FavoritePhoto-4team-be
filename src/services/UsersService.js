@@ -20,30 +20,39 @@ async function create(query) {
 
 // GET: My Gallery
 async function getMyGallery(userId, query) {
-  const { genreId, gradeId, search, page, size } = query;
+  // 1. 쿼리 문자열 검증
+  const genreId = query.genreId ? Number(query.genreId) : null;
+  const gradeId = query.gradeId ? Number(query.gradeId) : null;
+  const search = query.search || null;
+  const page = query.page ? Math.max(1, parseInt(query.page, 10)) : 1;
+  const size = query.size || 'md';
 
-  // 1. 페이지네이션 계산
-  const currentPage = page ? parseInt(page, 10) : 1;
-
-  const paginationDetails = calculatePaginationDetails({
+  const tempPagination = calculatePaginationDetails({
     totalItems: 0, // 임시 값
-    currentPage,
-    size // calculatePaginationDetails에서 size 기본값 처리
+    currentPage: page,
+    size
   });
 
-  // 2. 현재 페이지에 해당하는 데이터 조회
+  // 2. 대충 오류 처리
+  if (genreId && (genreId < 1 || genreId > 4)) {
+    const error = new Error('장르 ID는 1~4 사이의 값이어야 합니다.');
+    error.code = 400;
+    throw error;
+  }
+
+  // 3. 데이터 조회
   const { totalItems, items } = await usersRepository.findMyGallery(userId, {
     genreId,
     gradeId,
     search,
-    offset: paginationDetails.startIndex,
-    limit: paginationDetails.itemsPerPage
+    offset: tempPagination.startIndex,
+    limit: tempPagination.itemsPerPage
   });
 
-  // 3. 진짜 페이지네이션 갱신
+  // 4. 진짜 페이지네이션 갱신
   const pagination = calculatePaginationDetails({
     totalItems,
-    currentPage,
+    currentPage: page,
     size
   });
 
