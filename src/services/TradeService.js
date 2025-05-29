@@ -1,8 +1,8 @@
 import prisma from '../config/prisma.js';
 import TradeRepository from '../repositories/TradeRepository.js';
 
-async function getTradeRequestsForCard(photoCardId) {
-  return await TradeRepository.findTradeRequestsByPhotoCardId(photoCardId);
+async function getTradeRequestsForSale(saleId) {
+  return await TradeRepository.findTradeRequestsBySaleId(saleId);
 }
 
 async function acceptTradeRequest(tradeRequestId) {
@@ -38,7 +38,7 @@ async function rejectTradeRequest(tradeRequestId, ownerId) {
 }
 
 export default {
-  getTradeRequestsForCard,
+  getTradeRequestsForSale,
   acceptTradeRequest,
   rejectTradeRequest
 };

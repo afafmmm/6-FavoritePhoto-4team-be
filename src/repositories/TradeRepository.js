@@ -1,9 +1,15 @@
 import prisma from '../config/prisma.js';
 
-async function findTradeRequestsByPhotoCardId(photoCardId) {
-  return await prisma.tradeRequest.findMany({
+async function findTradeRequestsBySaleId(saleId) {
+  const sale = await prisma.sale.findUnique({
+    where: { id: saleId }
+  });
+
+  if (!sale) throw new Error('존재하지 않는 판매 항목입니다.');
+
+  return prisma.tradeRequest.findMany({
     where: {
-      photoCardId,
+      photoCardId: sale.photoCardId,
       tradeStatus: 'PENDING'
     },
     include: {
@@ -105,7 +111,7 @@ async function findTradeRequestById(id) {
 }
 
 export default {
-  findTradeRequestsByPhotoCardId,
+  findTradeRequestsBySaleId,
   acceptTradeRequest,
   findTradeRequestById
 };
