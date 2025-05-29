@@ -133,4 +133,31 @@ usersController.get(
   }
 );
 
+//--유저 카드 상세 조회 (우주)
+//--특정 유저의 포토카드 상세 조회 (/gallery/:id)
+usersController.get(
+  '/gallery/:id',
+  passport.authenticate('access-token', {
+    session: false,
+    failWithError: true
+  }),
+  async (req, res, next) => {
+    try {
+      const photoCardId = parseInt(req.params.id, 10);
+      if (isNaN(photoCardId)) {
+        const error = new Error('photoCardId가 숫자가 아닙니다.');
+        error.code = 400;
+        throw error;
+      }
+
+      const userId = req.user.id;
+      const userCards = await usersService.getUserPhotoCardDetail(userId, photoCardId);
+
+      res.json(userCards);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 export default usersController;

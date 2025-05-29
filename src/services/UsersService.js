@@ -118,6 +118,11 @@ async function getCardsCount(userId) {
   return await usersRepository.getCardsCount(userId);
 }
 
+//--특정 유저의 포토카드 상세 (우주)
+async function getUserPhotoCardDetail(userId, photoCardId) {
+  return await usersRepository.getUserPhotoCardDetail(userId, photoCardId);
+}
+
 const usersService = {
   getCardMetaData,
   create,
@@ -125,7 +130,8 @@ const usersService = {
   getMySales,
   getUser,
   getCardCreationCount,
-  getCardsCount
+  getCardsCount,
+  getUserPhotoCardDetail
 };
 
 export default usersService;
