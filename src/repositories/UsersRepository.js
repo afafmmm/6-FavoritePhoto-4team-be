@@ -159,8 +159,7 @@ async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, lim
       genre: { select: { name: true } },
       userCards: {
         where: { ownerId: userId, status: 'ACTIVE' },
-        select: { id: true, price: true },
-        take: 1
+        select: { id: true, price: true }
       },
       creator: { select: { id: true, nickname: true } }
     },
