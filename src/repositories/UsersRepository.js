@@ -123,27 +123,38 @@ async function getMonthlyCardCount(userId) {
 
 // GET: 소유한 카드(거래·교환x)
 async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, limit = 10 }) {
-  // query 문자열 조건
-  const photoCardFilter = {
-    // 카드 관련 조건: &&로 유무를 검사하고, 있으면 조건으로 넣음
-    ...(genreId && { genreId: Number(genreId) }), // 1. 장르
-    ...(gradeId && { gradeId: Number(gradeId) }), // 2. 등급
-    ...(search && { name: { contains: search, mode: 'insensitive' } }) // 3. 검색어 = 카드 이름
+  // 1. query 문자열 조건절
+  const whereClause = {
+    userCards: {
+      some: { ownerId: userId, status: 'ACTIVE' }
+    }
   };
 
-  // 카드 개수 추출
-  const photoCardCount = await prisma.userCard.groupBy({
-    by: ['photoCardId'],
-    where: {
-      ownerId: userId,
-      status: 'ACTIVE',
-      photoCard: photoCardFilter
-    },
-    _count: true
+  if (genreId) {
+    whereClause.genreId = Number(genreId);
+  }
+  if (gradeId) {
+    whereClause.gradeId = Number(gradeId);
+  }
+  if (search) {
+    whereClause.name = { contains: search, mode: 'insensitive' };
+  }
+
+  // 2. 전체 카드 개수 (count 쿼리)
+  const totalItems = await prisma.photoCard.count({
+    where: whereClause
   });
 
-  // 전체 카드 개수
-  const totalItems = photoCardCount.length;
+  // 카드 개수 추출
+  // const photoCardCount = await prisma.userCard.groupBy({
+  //   by: ['photoCardId'],
+  //   where: {
+  //     ownerId: userId,
+  //     status: 'ACTIVE',
+  //     photoCard: photoCardFilter
+  //   },
+  //   _count: true
+  // });
 
   // 페이지네이션 포함 쿼리 문자열 반환
   const items = await prisma.photoCard.findMany({
@@ -164,14 +175,7 @@ async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, lim
       creator: { select: { id: true, nickname: true } }
     },
 
-    where: {
-      userCards: {
-        some: { ownerId: userId, status: 'ACTIVE' }
-      }
-    },
-
-    ...photoCardFilter,
-    // 페이지, 정렬
+    where: whereClause,
     skip: Number(offset),
     take: Number(limit),
     orderBy: { createdAt: 'desc' }
@@ -226,8 +230,8 @@ async function findMySales(
       photoCard: photoCardFilter,
 
       // 판매 방법: 일반 판매 or 교환 제시 -- FE에서 받아와서 적용
-      ...(saleType === '판매' && { saleUserCards: { some: {} } }), // 유형: 판매면 saleUserCards 다 가져와
-      ...(saleType === '교환' && { tradeRequestUserCards: { some: {} } }) // 유형: 교환이면 tradeRequestUserCards 다 가져와
+      ...(saleType === '판매' && { saleUserCard: { some: {} } }), // 유형: 판매면 saleUserCards 다 가져와
+      ...(saleType === '교환' && { tradeRequestUserCard: { some: {} } }) // 유형: 교환이면 tradeRequestUserCards 다 가져와
     },
 
     skip: Number(offset),
@@ -254,8 +258,8 @@ async function countMySales(
       ownerId: userId,
       status: { in: statusList },
       photoCard: photoCardFilter,
-      ...(saleType === '판매' && { saleUserCards: { some: {} } }),
-      ...(saleType === '교환' && { tradeRequestUserCards: { some: {} } })
+      ...(saleType === '판매' && { saleUserCard: { some: {} } }),
+      ...(saleType === '교환' && { tradeRequestUserCard: { some: {} } })
     }
   });
 }
