@@ -122,7 +122,7 @@ async function getMonthlyCardCount(userId) {
 // ----------- //
 
 // GET: 소유한 카드(거래·교환x)
-async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, limit = 10 }) {
+async function findMyGallery(userId, { genre, grade, keyword, offset = 0, limit = 10 }) {
   // 1. query 문자열 조건절
   const whereClause = {
     userCards: {
@@ -130,14 +130,14 @@ async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, lim
     }
   };
 
-  if (genreId) {
-    whereClause.genreId = Number(genreId);
+  if (grade) {
+    whereClause.grade = { id: Number(grade) };
   }
-  if (gradeId) {
-    whereClause.gradeId = Number(gradeId);
+  if (genre) {
+    whereClause.genre = { id: Number(genre) };
   }
-  if (search) {
-    whereClause.name = { contains: search, mode: 'insensitive' };
+  if (keyword) {
+    whereClause.name = { contains: keyword, mode: 'insensitive' };
   }
 
   // 2. 전체 카드 개수 (count 쿼리)
@@ -153,10 +153,8 @@ async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, lim
       imageUrl: true,
       description: true,
       totalQuantity: true,
-      gradeId: true,
-      genreId: true,
-      grade: { select: { name: true } },
-      genre: { select: { name: true } },
+      grade: { select: { id: true, name: true } },
+      genre: { select: { id: true, name: true } },
       userCards: {
         where: { ownerId: userId, status: 'ACTIVE' },
         select: { id: true, price: true }

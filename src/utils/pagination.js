@@ -1,4 +1,4 @@
-function getItemsPerPage(size) {
+export function getItemsPerPage(size) {
   switch (
     String(size).toLowerCase() // 소문자로 비교
   ) {
