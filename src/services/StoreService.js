@@ -10,21 +10,20 @@ function parseFilterValue(value) {
   return [String(value)];
 }
 
-const getFilteredSalesWithCounts = async ({ grade, genre, sale, orderBy }) => {
+const getFilteredSalesWithCounts = async ({ grade, genre, sale, orderBy, keyword }) => {
   const gradeFilter = parseFilterValue(grade);
   const genreFilter = parseFilterValue(genre);
 
-  
   const saleFilterRaw = parseFilterValue(sale);
-const saleFilter = getStatusFilter(saleFilterRaw);
-console.log('saleFilter after getStatusFilter:', saleFilter);
+  const saleFilter = getStatusFilter(saleFilterRaw);
+  console.log('saleFilter after getStatusFilter:', saleFilter);
   
-
   const sales = await storeRepository.findSalesByFilters({
     grade: gradeFilter,
     genre: genreFilter,
     sale: saleFilter,
-    orderBy
+    orderBy,
+    keyword
   });
 
   return { sales };

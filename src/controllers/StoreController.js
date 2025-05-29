@@ -6,15 +6,15 @@ const storeController = express.Router();
 
 storeController.get('/', async (req, res, next) => {
   try {
-    const { grade, genre, sale, orderBy } = req.query;
-
-    const result = await storeService.getFilteredSalesWithCounts({ grade, genre, sale, orderBy });
-
+    console.log("🔥SERVER")
+    const { grade, genre, sale, orderBy, keyword } = req.query;
+    const result = await storeService.getFilteredSalesWithCounts({ grade, genre, sale, orderBy , keyword });
     res.json(result);
   } catch (err) {
     next(err);
   }
 });
+
 
 storeController.get(
   '/cards/:id',
