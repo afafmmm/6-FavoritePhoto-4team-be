@@ -12,6 +12,12 @@ async function createSale(data) {
   return await SalesRepository.createSale({ ...data, userCardIds: limitedUserCardIds });
 }
 
+async function getSaleDetail(saleId) {
+  const sale = await SalesRepository.findSaleDetailById(saleId);
+  if (!sale) throw new Error('존재하지 않는 판매 항목입니다.');
+  return sale;
+}
+
 async function cancelSale(userId, saleId) {
   return await SalesRepository.cancelSale(userId, saleId);
 }
@@ -20,4 +26,4 @@ async function updateSale(userId, saleId, updateData) {
   return await SalesRepository.updateSale(userId, saleId, updateData);
 }
 
-export default { createSale, cancelSale, updateSale };
+export default { createSale, cancelSale, updateSale, getSaleDetail };

@@ -17,6 +17,26 @@ salesController.post('/cards', passport.authenticate('access-token', { session: 
   }
 });
 
+// 판매 상세 조회
+salesController.get(
+  '/cards/:saleId',
+  passport.authenticate('access-token', { session: false }),
+  async (req, res, next) => {
+    try {
+      const saleId = Number(req.params.saleId);
+      const result = await SalesService.getSaleDetail(saleId);
+
+      if (sale.sellerId !== req.user.id) {
+        throw new Error('본인의 판매 정보만 열람할 수 있습니다.');
+      }
+
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 // 판매 취소
 salesController.delete(
   '/cards/:saleId',

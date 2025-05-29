@@ -4,14 +4,14 @@ import TradeService from '../services/TradeService.js';
 
 const tradeController = express.Router();
 
-// 특정 판매 카드에 대한 교환 요청 목록 조회
+// 특정 판매카드에 대한 교환 요청 목록 조회
 tradeController.get(
-  '/cards/:photoCardId/trade-requests',
+  '/cards/:saleId/trade-requests',
   passport.authenticate('access-token', { session: false }),
   async (req, res, next) => {
     try {
-      const photoCardId = Number(req.params.photoCardId);
-      const tradeRequests = await TradeService.getTradeRequestsForCard(photoCardId);
+      const saleId = Number(req.params.saleId);
+      const tradeRequests = await TradeService.getTradeRequestsForSale(saleId);
       res.status(200).json(tradeRequests);
     } catch (err) {
       next(err);

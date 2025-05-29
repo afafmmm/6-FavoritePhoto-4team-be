@@ -72,6 +72,30 @@ async function createSale({
   });
 }
 
+async function findSaleDetailById(saleId) {
+  return await prisma.sale.findUnique({
+    where: { id: saleId },
+    include: {
+      photoCard: {
+        include: {
+          grade: true,
+          genre: true,
+          creator: {
+            select: { id: true, nickname: true }
+          }
+        }
+      },
+      saleUserCards: {
+        include: {
+          userCard: true
+        }
+      },
+      desiredGrade: true,
+      desiredGenre: true
+    }
+  });
+}
+
 async function cancelSale(userId, saleId) {
   return await prisma.$transaction(async (tx) => {
     const sale = await tx.sale.findUnique({
@@ -225,4 +249,4 @@ async function updateSale(userId, saleId, updateData) {
   });
 }
 
-export default { createSale, cancelSale, updateSale };
+export default { createSale, cancelSale, updateSale, findSaleDetailById };
