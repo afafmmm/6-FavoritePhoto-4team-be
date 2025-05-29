@@ -1,5 +1,5 @@
 import usersRepository from '../repositories/UsersRepository.js';
-import { calculatePaginationDetails } from '../utils/pagination.js';
+import { calculatePaginationDetails, getItemsPerPage } from '../utils/pagination.js';
 
 // 카드 장르와 등급 불러오기
 async function getCardMetaData() {
@@ -21,35 +21,33 @@ async function create(query) {
 // GET: My Gallery
 async function getMyGallery(userId, query) {
   // 1. 쿼리 문자열 검증
-  const genreId = query.genreId ? Number(query.genreId) : null;
-  const gradeId = query.gradeId ? Number(query.gradeId) : null;
-  const search = query.search || null;
+  const genre = query.genre ? Number(query.genre) : null;
+  const grade = query.grade ? Number(query.grade) : null;
+  const keyword = query.keyword || null;
   const page = query.page ? Math.max(1, parseInt(query.page, 10)) : 1;
   const size = query.size || 'md';
 
-  const tempPagination = calculatePaginationDetails({
-    totalItems: 0, // 임시 값
-    currentPage: page,
-    size
-  });
-
   // 2. 대충 오류 처리
-  if (genreId && (genreId < 1 || genreId > 4)) {
+  if (genre && (genre < 1 || genre > 4)) {
     const error = new Error('장르 ID는 1~4 사이의 값이어야 합니다.');
     error.code = 400;
     throw error;
   }
 
-  // 3. 데이터 조회
+  // 3. 페이지 계산
+  const itemsPerPage = getItemsPerPage(size);
+  const offset = (page - 1) * itemsPerPage;
+
+  // 4. 데이터 조회
   const { totalItems, items } = await usersRepository.findMyGallery(userId, {
-    genreId,
-    gradeId,
-    search,
-    offset: tempPagination.startIndex,
-    limit: tempPagination.itemsPerPage
+    genre,
+    grade,
+    keyword,
+    offset: offset,
+    limit: itemsPerPage
   });
 
-  // 4. 진짜 페이지네이션 갱신
+  // 5. 페이지네이션 갱신
   const pagination = calculatePaginationDetails({
     totalItems,
     currentPage: page,
