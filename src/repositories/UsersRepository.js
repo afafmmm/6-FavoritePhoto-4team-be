@@ -145,18 +145,7 @@ async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, lim
     where: whereClause
   });
 
-  // 카드 개수 추출
-  // const photoCardCount = await prisma.userCard.groupBy({
-  //   by: ['photoCardId'],
-  //   where: {
-  //     ownerId: userId,
-  //     status: 'ACTIVE',
-  //     photoCard: photoCardFilter
-  //   },
-  //   _count: true
-  // });
-
-  // 페이지네이션 포함 쿼리 문자열 반환
+  // 3. 페이지네이션 포함 쿼리 문자열 반환
   const items = await prisma.photoCard.findMany({
     select: {
       id: true,
