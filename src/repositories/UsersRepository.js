@@ -228,7 +228,8 @@ async function findMySales(
       userCards: {
         where: { ownerId: userId, NOT: [{ status: 'ACTIVE' }] },
         select: { id: true, price: true, status: true, owner: { select: { id: true, nickname: true } } }
-      }
+      },
+      creator: { select: { id: true, nickname: true } }
     },
 
     where: whereClause,
