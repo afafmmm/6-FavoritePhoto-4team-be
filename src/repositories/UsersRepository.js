@@ -222,12 +222,13 @@ async function findMySales(
       name: true,
       imageUrl: true,
       description: true,
+      initialPrice: true,
       grade: { select: { id: true, name: true } },
       genre: { select: { id: true, name: true } },
-      userCards: {
-        where: { ownerId: userId, status: { not: 'ACTIVE' } },
-        select: { id: true, price: true, status: true, owner: { select: { id: true, nickname: true } } }
-      },
+      // 판매중
+      sales: { where: { sellerId: userId }, select: { id: true, price: true, status: true } },
+      // 교환 중
+      targetTradeRequests: { where: { ownerId: userId }, select: { id: true, tradeStatus: true } },
       creator: { select: { id: true, nickname: true } }
     },
 
