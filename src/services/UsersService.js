@@ -59,37 +59,41 @@ async function getMyGallery(userId, query) {
 
 // GET: 내 판매 카드
 async function getMySales(userId, query) {
-  const { genreId, gradeId, search, saleType, soldOut, page, size } = query;
+  // 1. 쿼리 문자열 검증
+  const genre = query.genre ? Number(query.genre) : null;
+  const grade = query.grade ? Number(query.grade) : null;
+  const keyword = query.keyword || null;
+  const page = query.page ? Math.max(1, parseInt(query.page, 10)) : 1;
+  const size = query.size || 'md';
 
-  const totalItems = await usersRepository.countMySales(userId, {
-    genreId,
-    gradeId,
-    search,
-    saleType,
-    soldOut
+  // 2. 대충 오류 처리
+  if (genre && (genre < 1 || genre > 4)) {
+    const error = new Error('장르 ID는 1~4 사이의 값이어야 합니다.');
+    error.code = 400;
+    throw error;
+  }
+
+  // 3. 페이지 계산
+  const itemsPerPage = getItemsPerPage(size);
+  const offset = (page - 1) * itemsPerPage;
+
+  // 4. 데이터 조회
+  const { totalItems, items } = await usersRepository.findMySales(userId, {
+    genre,
+    grade,
+    keyword,
+    offset: offset,
+    limit: itemsPerPage
   });
 
-  const currentPage = page ? parseInt(page, 10) : 1;
-  const paginationDetails = calculatePaginationDetails({
+  // 5. 페이지네이션 갱신
+  const pagination = calculatePaginationDetails({
     totalItems,
-    currentPage: currentPage,
-    size: size
+    currentPage: page,
+    size
   });
 
-  const items = await usersRepository.findMySales(userId, {
-    genreId,
-    gradeId,
-    search,
-    saleType,
-    soldOut,
-    offset: paginationDetails.startIndex,
-    limit: paginationDetails.itemsPerPage
-  });
-
-  return {
-    items,
-    pagination: paginationDetails
-  };
+  return { items, pagination };
 }
 
 // GET: 사용자 1人
