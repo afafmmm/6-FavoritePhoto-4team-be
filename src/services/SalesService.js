@@ -1,13 +1,21 @@
 import SalesRepository from '../repositories/SalesRepository.js';
 
 async function createSale(data) {
-  if (!Array.isArray(data.userCardIds) || data.userCardIds.length !== data.saleQuantity) {
-    const error = new Error('선택한 카드 수와 판매 수량이 일치하지 않습니다.');
+  if (!Array.isArray(data.userCardIds) || data.userCardIds.length < data.saleQuantity) {
+    const error = new Error('선택한 카드 수가 판매 수량보다 적습니다.');
     error.code = 400;
     throw error;
   }
 
-  return await SalesRepository.createSale(data);
+  // 정확히 필요한 수량만 사용
+  const limitedUserCardIds = data.userCardIds.slice(0, data.saleQuantity);
+  return await SalesRepository.createSale({ ...data, userCardIds: limitedUserCardIds });
+}
+
+async function getSaleDetail(saleId) {
+  const sale = await SalesRepository.findSaleDetailById(saleId);
+  if (!sale) throw new Error('존재하지 않는 판매 항목입니다.');
+  return sale;
 }
 
 async function cancelSale(userId, saleId) {
@@ -18,4 +26,4 @@ async function updateSale(userId, saleId, updateData) {
   return await SalesRepository.updateSale(userId, saleId, updateData);
 }
 
-export default { createSale, cancelSale, updateSale };
+export default { createSale, cancelSale, updateSale, getSaleDetail };

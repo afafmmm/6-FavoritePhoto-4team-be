@@ -33,20 +33,25 @@ async function findGrade() {
 
 // 사용자별 카드 개수 세기
 async function getCardsCount(userId) {
+  // 1. 일단 userCard에서 등급별 전체 개수를 불러옴
   const allCards = await prisma.userCard.findMany({
     where: {
       ownerId: userId
     },
     include: {
-      photoCard: { select: { gradeId: true } }
+      photoCard: { select: { id: true, gradeId: true } }
     }
-  }); // 일단 전체 카드 개수를 가져옴
+  });
 
-  // 그리고 카드 상태를 active와 그 외로 나눔
-  const active = allCards.filter((card) => card.status === 'ACTIVE');
-  const inactive = allCards.filter((card) => card.status !== 'ACTIVE');
+  // 2. photoCard 기준으로 바꿈
+  const getPhotoCardCount = (cards) =>
+    Array.from(new Map(cards.map((card) => [card.photoCard.id, card.photoCard])).values());
 
-  // 그리고 등급별로 반환함
+  // 3. 카드 상태를 active와 그 외로 나눔
+  const active = getPhotoCardCount(allCards.filter((card) => card.status === 'ACTIVE'));
+  const inactive = getPhotoCardCount(allCards.filter((card) => card.status !== 'ACTIVE'));
+
+  // 4. 등급별로 반환함
   return {
     active: countCardsByGrade(active),
     inactive: countCardsByGrade(inactive)
@@ -57,7 +62,6 @@ async function getCardsCount(userId) {
 async function create(query) {
   const { name, grade, genre, description, volumn, price, image, creatorId } = query;
 
-  const imageUrl = `/uploads/${image.filename}`;
   const gradeRecord = await prisma.cardGrade.findUnique({
     where: { name: grade }
   });
@@ -78,7 +82,7 @@ async function create(query) {
   const photoCard = await prisma.photoCard.create({
     data: {
       name,
-      imageUrl,
+      imageUrl: image, // image가 Cloudinary URL
       gradeId: gradeRecord.id,
       genreId: genreRecord.id,
       description,
@@ -117,104 +121,123 @@ async function getMonthlyCardCount(userId) {
 // ----------- //
 
 // GET: 소유한 카드(거래·교환x)
-async function findMyGallery(userId, { genreId, gradeId, search, offset = 0, limit = 10 }) {
-  // query string 조건 정리 (밑의 where절로)
-  const photoCardFilter = {
-    // 카드 관련 조건: &&로 유무를 검사하고, 있으면 조건으로 넣어라(spread 문법)
-    ...(genreId && { genreId: Number(genreId) }), // 조건3: 카드 장르
-    ...(gradeId && { gradeId: Number(gradeId) }), // 조건4: 카드 등급
-    ...(search && { name: { contains: search, mode: 'insensitive' } }) // 조건5: 검색어 = 카드 이름
+async function findMyGallery(userId, { genre, grade, keyword, offset = 0, limit = 10 }) {
+  // 1. query 문자열 조건절
+  const whereClause = {
+    userCards: {
+      some: { ownerId: userId, status: 'ACTIVE' }
+    }
   };
 
-  // { } 안은 query string 부분
-  return await prisma.userCard.findMany({
-    // 불러올 내용: userCard 전체 + 등급과 장르
+  if (grade) {
+    whereClause.grade = { id: Number(grade) };
+  }
+  if (genre) {
+    whereClause.genre = { id: Number(genre) };
+  }
+  if (keyword) {
+    whereClause.name = { contains: keyword, mode: 'insensitive' };
+  }
+
+  // 2. 전체 카드 개수 (count 쿼리)
+  const totalItems = await prisma.photoCard.count({
+    where: whereClause
+  });
+
+  // 3. 페이지네이션 포함 쿼리 문자열 반환
+  const items = await prisma.photoCard.findMany({
     select: {
       id: true,
-      price: true,
-      // 소유자 정보
-      owner: { select: { id: true, nickname: true } },
-      photoCard: {
-        select: {
-          id: true,
-          name: true,
-          imageUrl: true,
-          description: true,
-          totalQuantity: true,
-          grade: { select: { name: true } },
-          genre: { select: { name: true } }
-        }
-      }
+      name: true,
+      imageUrl: true,
+      description: true,
+      totalQuantity: true,
+      grade: { select: { id: true, name: true } },
+      genre: { select: { id: true, name: true } },
+      userCards: {
+        where: { ownerId: userId, status: 'ACTIVE' },
+        select: { id: true, price: true, owner: { select: { id: true, nickname: true } } }
+      },
+      creator: { select: { id: true, nickname: true } }
     },
 
-    // 필터링 조건
-    where: {
-      ownerId: userId, // 조건1: 로그인한 userId
-      status: 'ACTIVE', // 조건2: 카드 상태, 판매 혹은 교환 중이 아닌 카드만
-      photoCard: photoCardFilter
-    },
-
-    // 페이지, 정렬
+    where: whereClause,
     skip: Number(offset),
     take: Number(limit),
     orderBy: { createdAt: 'desc' }
   });
+
+  return { totalItems, items };
 }
 
 // GET: 판매 중인 카드
 async function findMySales(
   userId,
   {
-    genreId,
-    gradeId,
-    search,
-    saleType, // 판매 중, 교환 요청됨, undefined(품절된 것?)
-    soldOut = false, // true(품절됨), false(그 외 = 판매or교환 중) -- FE에서 보냄
+    genre,
+    grade,
+    keyword,
+    // saleType, // 판매 중, 교환 요청됨, undefined(품절된 것?)
+    // soldOut = 'false', // true(품절됨), false(그 외 = 판매or교환 중) -- FE에서 보냄
     offset = 0,
     limit = 10
   }
 ) {
-  // 상태: ABAILABLE(판매 중), PENDING(교환 중), SOLDOUT(품절)
-  const statusList = soldOut === 'true' ? ['SOLDOUT'] : ['AVAILABLE', 'PENDING'];
-
-  // saleType 정의
-  const allowedSaleTypes = ['판매', '교환'];
-  if (saleType && !allowedSaleTypes.includes(saleType)) {
-    const error = new Error("판매 유형은 '판매', '교환' 중 택1");
-    error.code = 400;
-    throw error;
-  }
-
-  // query string 조건 정리22
-  const photoCardFilter = {
-    ...(genreId && { genreId: Number(genreId) }),
-    ...(gradeId && { gradeId: Number(gradeId) }),
-    ...(search && { name: { contains: search, mode: 'insensitive' } })
+  const whereClause = {
+    userCards: {
+      some: { ownerId: userId, status: { not: 'ACTIVE' } }
+    }
   };
 
+  if (grade) {
+    whereClause.grade = { id: Number(grade) };
+  }
+  if (genre) {
+    whereClause.genre = { id: Number(genre) };
+  }
+  if (keyword) {
+    whereClause.name = { contains: keyword, mode: 'insensitive' };
+  }
+
+  // 상태: ABAILABLE(판매 중), PENDING(교환 중), SOLDOUT(품절)
+  // const statusList = soldOut === 'true' ? ['SOLDOUT'] : ['AVAILABLE', 'PENDING'];
+
+  // saleType 정의
+  // const allowedSaleTypes = ['판매', '교환'];
+  // if (saleType && !allowedSaleTypes.includes(saleType)) {
+  //   const error = new Error("판매 유형은 '판매', '교환' 중 택1");
+  //   error.code = 400;
+  //   throw error;
+  // }
+
+  // 2. 전체 카드 개수 (count 쿼리)
+  const totalItems = await prisma.photoCard.count({
+    where: whereClause
+  });
+
   // 실제 DB에서 불러올 조건, 반환 처리
-  return await prisma.userCard.findMany({
-    include: {
-      photoCard: {
-        include: { grade: true, genre: true }
-      }
+  const items = await prisma.photoCard.findMany({
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+      description: true,
+      grade: { select: { id: true, name: true } },
+      genre: { select: { id: true, name: true } },
+      userCards: {
+        where: { ownerId: userId, status: { not: 'ACTIVE' } },
+        select: { id: true, price: true, status: true, owner: { select: { id: true, nickname: true } } }
+      },
+      creator: { select: { id: true, nickname: true } }
     },
 
-    // 필터링 조건
-    where: {
-      ownerId: userId,
-      status: { in: statusList },
-      photoCard: photoCardFilter,
-
-      // 판매 방법: 일반 판매 or 교환 제시 -- FE에서 받아와서 적용
-      ...(saleType === '판매' && { saleUserCards: { some: {} } }), // 유형: 판매면 saleUserCards 다 가져와
-      ...(saleType === '교환' && { tradeRequestUserCards: { some: {} } }) // 유형: 교환이면 tradeRequestUserCards 다 가져와
-    },
-
+    where: whereClause,
     skip: Number(offset),
     take: Number(limit),
     orderBy: { createdAt: 'desc' }
   });
+
+  return { totalItems, items };
 }
 
 const usersRepository = {

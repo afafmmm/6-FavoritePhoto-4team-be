@@ -1,4 +1,5 @@
 import usersRepository from '../repositories/UsersRepository.js';
+import { calculatePaginationDetails, getItemsPerPage } from '../utils/pagination.js';
 
 // 카드 장르와 등급 불러오기
 async function getCardMetaData() {
@@ -19,12 +20,80 @@ async function create(query) {
 
 // GET: My Gallery
 async function getMyGallery(userId, query) {
-  return await usersRepository.findMyGallery(userId, query);
+  // 1. 쿼리 문자열 검증
+  const genre = query.genre ? Number(query.genre) : null;
+  const grade = query.grade ? Number(query.grade) : null;
+  const keyword = query.keyword || null;
+  const page = query.page ? Math.max(1, parseInt(query.page, 10)) : 1;
+  const size = query.size || 'md';
+
+  // 2. 대충 오류 처리
+  if (genre && (genre < 1 || genre > 4)) {
+    const error = new Error('장르 ID는 1~4 사이의 값이어야 합니다.');
+    error.code = 400;
+    throw error;
+  }
+
+  // 3. 페이지 계산
+  const itemsPerPage = getItemsPerPage(size);
+  const offset = (page - 1) * itemsPerPage;
+
+  // 4. 데이터 조회
+  const { totalItems, items } = await usersRepository.findMyGallery(userId, {
+    genre,
+    grade,
+    keyword,
+    offset: offset,
+    limit: itemsPerPage
+  });
+
+  // 5. 페이지네이션 갱신
+  const pagination = calculatePaginationDetails({
+    totalItems,
+    currentPage: page,
+    size
+  });
+
+  return { items, pagination };
 }
 
 // GET: 내 판매 카드
 async function getMySales(userId, query) {
-  return await usersRepository.findMySales(userId, query);
+  // 1. 쿼리 문자열 검증
+  const genre = query.genre ? Number(query.genre) : null;
+  const grade = query.grade ? Number(query.grade) : null;
+  const keyword = query.keyword || null;
+  const page = query.page ? Math.max(1, parseInt(query.page, 10)) : 1;
+  const size = query.size || 'md';
+
+  // 2. 대충 오류 처리
+  if (genre && (genre < 1 || genre > 4)) {
+    const error = new Error('장르 ID는 1~4 사이의 값이어야 합니다.');
+    error.code = 400;
+    throw error;
+  }
+
+  // 3. 페이지 계산
+  const itemsPerPage = getItemsPerPage(size);
+  const offset = (page - 1) * itemsPerPage;
+
+  // 4. 데이터 조회
+  const { totalItems, items } = await usersRepository.findMySales(userId, {
+    genre,
+    grade,
+    keyword,
+    offset: offset,
+    limit: itemsPerPage
+  });
+
+  // 5. 페이지네이션 갱신
+  const pagination = calculatePaginationDetails({
+    totalItems,
+    currentPage: page,
+    size
+  });
+
+  return { items, pagination };
 }
 
 // GET: 사용자 1人

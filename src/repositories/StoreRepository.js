@@ -1,33 +1,68 @@
 import prisma from '../config/prisma.js';
+import getSort from '../utils/sort.js';
+import { getGenreFilter, getGradeFilter, getStatusFilter } from '../utils/filter.js'; 
 
-// 필터 파싱 함수 (grade, genre는 배열 또는 콤마 구분 문자열로 전달됨 가정)
-function parseFilterArray(value) {
-  if (!value) return [];
-  if (Array.isArray(value)) return value.map(Number);
-  return value.split(',').map(Number);
-}
+const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', sale, keyword }) => {
+  const where = {
+    AND: []
+  };
 
-const findSalesByFilters = async ({ grade, genre, sale }) => {
-  // prisma에서 조건 객체 생성
-  const where = {};
+  const photoCardConditions = {};
 
-  if (grade.length) {
-    where.cardGradeId = { in: grade.map(Number) };
+  // 등급 필터
+  if (grade?.length) {
+    const gradeNames = grade
+      .map(Number)
+      .map(getGradeFilter)
+      .map(obj => obj.name);
+
+    photoCardConditions.grade = {
+      name: { in: gradeNames }
+    };
   }
 
-  if (genre.length) {
-    where.cardGenreId = { in: genre.map(Number) };
+  // 장르 필터
+  if (genre?.length) {
+    const genreNames = genre
+      .map(Number)
+      .map(getGenreFilter)
+      .map(obj => obj.name);
+
+    photoCardConditions.genre = {
+      name: { in: genreNames }
+    };
   }
 
-  if (sale.length) {
-    where.status = { in: sale };
+  // 키워드 검색 필터
+  if (keyword) {
+    where.AND.push({
+      OR: [
+        { photoCard: { name: { contains: keyword, mode: 'insensitive' } } },
+        { seller: { nickname: { contains: keyword, mode: 'insensitive' } } }
+        // 필요하면 설명(description)도 추가 가능
+        // { photoCard: { description: { contains: keyword, mode: 'insensitive' } } }
+      ]
+    });
   }
 
-  // 실제 DB 조회 (관련된 cardGrade, cardGenre 포함)
+  // 상태 필터
+  if (sale?.length) {
+    const statusFilter = getStatusFilter(sale);
+    where.AND.push({
+      status: { in: statusFilter }
+    });
+  }
+
+  // photoCard 조건 병합
+  if (Object.keys(photoCardConditions).length > 0) {
+    where.AND.push({ photoCard: photoCardConditions });
+  }
+
   return await prisma.sale.findMany({
     where,
+    orderBy: getSort('card', orderBy),
     include: {
-     photoCard: {
+      photoCard: {
         include: {
           genre: true,
           grade: true,
@@ -50,16 +85,12 @@ async function countFilters() {
     prisma.sale.groupBy({
       by: ['cardGradeId'],
       _count: true,
-      where: {
-        status: 'AVAILABLE'
-      }
+      where: { status: 'AVAILABLE' }
     }),
     prisma.sale.groupBy({
       by: ['cardGenreId'],
       _count: true,
-      where: {
-        status: 'AVAILABLE'
-      }
+      where: { status: 'AVAILABLE' }
     }),
     prisma.sale.groupBy({
       by: ['status'],
@@ -68,15 +99,15 @@ async function countFilters() {
   ]);
 
   return {
-    grade: gradeCounts.map((item) => ({
+    grade: gradeCounts.map(item => ({
       gradeId: item.cardGradeId,
       count: item._count
     })),
-    genre: genreCounts.map((item) => ({
+    genre: genreCounts.map(item => ({
       genreId: item.cardGenreId,
       count: item._count
     })),
-    sale: saleCounts.map((item) => ({
+    sale: saleCounts.map(item => ({
       status: item.status,
       count: item._count
     }))
@@ -104,8 +135,6 @@ async function findSaleCardById(id) {
     }
   });
 }
-
-
 
 export default {
   findSaleCardById,
