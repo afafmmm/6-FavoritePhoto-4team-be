@@ -158,7 +158,8 @@ async function findMyGallery(userId, { genre, grade, keyword, offset = 0, limit 
       userCards: {
         where: { ownerId: userId, status: 'ACTIVE' },
         select: { id: true, price: true, owner: { select: { id: true, nickname: true } } }
-      }
+      },
+      creator: { select: { id: true, nickname: true } }
     },
 
     where: whereClause,
@@ -227,7 +228,8 @@ async function findMySales(
       userCards: {
         where: { ownerId: userId, NOT: [{ status: 'ACTIVE' }] },
         select: { id: true, price: true, status: true, owner: { select: { id: true, nickname: true } } }
-      }
+      },
+      creator: { select: { id: true, nickname: true } }
     },
 
     where: whereClause,
