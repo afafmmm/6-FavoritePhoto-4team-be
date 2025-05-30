@@ -79,15 +79,24 @@ export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
     const firstUserCard = userCardsToPurchase[0];
     // 포토카드 정보 조회
     const photoCard = await tx.photoCard.findUnique({
-      where: { id: firstUserCard.photoCardId },
-      include: { cardGrade: true }
+      where: { id: firstUserCard.photoCardId }
     });
+    // 카드 등급 정보 조회
+    let cardGrade = '등급 불러오기 실패';
+    if (photoCard?.gradeId) {
+      const grade = await tx.cardGrade.findUnique({ where: { id: photoCard.gradeId } });
+      cardGrade = grade?.name || cardGrade;
+    }
     const cardName = photoCard?.name || '카드 이름 불러오기 실패';
-    const cardGrade = photoCard?.cardGrade?.name || '등급 불러오기 실패';
-    const message = `[${cardGrade} | ${cardName}] ${purchaseQuantity}장을 성공적으로 구매했습니다.`;
+    const buyerMessage = `[${cardGrade} | ${cardName}] ${purchaseQuantity}장을 성공적으로 구매했습니다.`;
     await Notification.createNotification({
       userId: buyerId,
-      message
+      buyerMessage
+    });
+    const sellerMessage = `[${cardGrade} | ${cardName}] ${purchaseQuantity}장이 판매되었습니다.`;
+    await Notification.createNotification({
+      userId: sale.sellerId,
+      sellerMessage
     });
 
     return {
