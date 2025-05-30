@@ -1,6 +1,7 @@
 import * as purchaseRepository from '../repositories/Purchaserepository.js';
 import prisma from '../config/prisma.js';
 import * as PointService from './PointService.js';
+import Notification from '../services/NotificationsService.js';
 
 export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
   return await prisma.$transaction(async (tx) => {
@@ -73,6 +74,21 @@ export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
       newSaleQuantity === 0 ? 'SOLDOUT' : 'AVAILABLE',
       tx
     );
+
+    // 구매 카드 정보로 알림 메시지 생성
+    const firstUserCard = userCardsToPurchase[0];
+    // 포토카드 정보 조회
+    const photoCard = await tx.photoCard.findUnique({
+      where: { id: firstUserCard.photoCardId },
+      include: { cardGrade: true }
+    });
+    const cardName = photoCard?.name || '카드 이름 불러오기 실패';
+    const cardGrade = photoCard?.cardGrade?.name || '등급 불러오기 실패';
+    const message = `[${cardGrade} | ${cardName}] ${purchaseQuantity}장을 성공적으로 구매했습니다.`;
+    await Notification.createNotification({
+      userId: buyerId,
+      message
+    });
 
     return {
       message: '구매 완료',
