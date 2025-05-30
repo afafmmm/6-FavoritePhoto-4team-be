@@ -157,9 +157,8 @@ async function findMyGallery(userId, { genre, grade, keyword, offset = 0, limit 
       genre: { select: { id: true, name: true } },
       userCards: {
         where: { ownerId: userId, status: 'ACTIVE' },
-        select: { id: true, price: true }
-      },
-      creator: { select: { id: true, nickname: true } }
+        select: { id: true, price: true, owner: { select: { id: true, nickname: true } } }
+      }
     },
 
     where: whereClause,
@@ -175,80 +174,69 @@ async function findMyGallery(userId, { genre, grade, keyword, offset = 0, limit 
 async function findMySales(
   userId,
   {
-    genreId,
-    gradeId,
-    search,
-    saleType, // 판매 중, 교환 요청됨, undefined(품절된 것?)
-    soldOut = 'false', // true(품절됨), false(그 외 = 판매or교환 중) -- FE에서 보냄
+    genre,
+    grade,
+    keyword,
+    // saleType, // 판매 중, 교환 요청됨, undefined(품절된 것?)
+    // soldOut = 'false', // true(품절됨), false(그 외 = 판매or교환 중) -- FE에서 보냄
     offset = 0,
     limit = 10
   }
 ) {
-  // 상태: ABAILABLE(판매 중), PENDING(교환 중), SOLDOUT(품절)
-  const statusList = soldOut === 'true' ? ['SOLDOUT'] : ['AVAILABLE', 'PENDING'];
-
-  // saleType 정의
-  const allowedSaleTypes = ['판매', '교환'];
-  if (saleType && !allowedSaleTypes.includes(saleType)) {
-    const error = new Error("판매 유형은 '판매', '교환' 중 택1");
-    error.code = 400;
-    throw error;
-  }
-
-  // query string 조건 정리22
-  const photoCardFilter = {
-    ...(genreId && { genreId: Number(genreId) }),
-    ...(gradeId && { gradeId: Number(gradeId) }),
-    ...(search && { name: { contains: search, mode: 'insensitive' } })
+  const whereClause = {
+    userCards: {
+      some: { ownerId: userId, NOT: { status: 'ACTIVE' } }
+    }
   };
 
+  if (grade) {
+    whereClause.grade = { id: Number(grade) };
+  }
+  if (genre) {
+    whereClause.genre = { id: Number(genre) };
+  }
+  if (keyword) {
+    whereClause.name = { contains: keyword, mode: 'insensitive' };
+  }
+
+  // 상태: ABAILABLE(판매 중), PENDING(교환 중), SOLDOUT(품절)
+  // const statusList = soldOut === 'true' ? ['SOLDOUT'] : ['AVAILABLE', 'PENDING'];
+
+  // saleType 정의
+  // const allowedSaleTypes = ['판매', '교환'];
+  // if (saleType && !allowedSaleTypes.includes(saleType)) {
+  //   const error = new Error("판매 유형은 '판매', '교환' 중 택1");
+  //   error.code = 400;
+  //   throw error;
+  // }
+
+  // 2. 전체 카드 개수 (count 쿼리)
+  const totalItems = await prisma.photoCard.count({
+    where: whereClause
+  });
+
   // 실제 DB에서 불러올 조건, 반환 처리
-  return await prisma.userCard.findMany({
-    include: {
-      photoCard: {
-        include: { grade: true, genre: true }
+  const items = await prisma.photoCard.findMany({
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+      description: true,
+      grade: { select: { id: true, name: true } },
+      genre: { select: { id: true, name: true } },
+      userCards: {
+        where: { ownerId: userId, NOT: [{ status: 'ACTIVE' }] },
+        select: { id: true, price: true, status: true, owner: { select: { id: true, nickname: true } } }
       }
     },
 
-    // 필터링 조건
-    where: {
-      ownerId: userId,
-      status: { in: statusList },
-      photoCard: photoCardFilter,
-
-      // 판매 방법: 일반 판매 or 교환 제시 -- FE에서 받아와서 적용
-      ...(saleType === '판매' && { saleUserCard: { some: {} } }), // 유형: 판매면 saleUserCards 다 가져와
-      ...(saleType === '교환' && { tradeRequestUserCard: { some: {} } }) // 유형: 교환이면 tradeRequestUserCards 다 가져와
-    },
-
+    where: whereClause,
     skip: Number(offset),
     take: Number(limit),
     orderBy: { createdAt: 'desc' }
   });
-}
 
-// GET: 내 판매 카드 개수 전체 조회 (판매중, 교환대기중, 판매 완료)
-async function countMySales(
-  userId,
-  { genreId, gradeId, search, saleType, soldOut = 'false' } // soldOut 기본값을 문자열 "false"로 명시
-) {
-  const statusList = String(soldOut).toLowerCase() === 'true' ? ['SOLDOUT'] : ['AVAILABLE', 'PENDING'];
-
-  const photoCardFilter = {
-    ...(genreId && { genreId: Number(genreId) }),
-    ...(gradeId && { gradeId: Number(gradeId) }),
-    ...(search && { name: { contains: search, mode: 'insensitive' } })
-  };
-
-  return await prisma.userCard.count({
-    where: {
-      ownerId: userId,
-      status: { in: statusList },
-      photoCard: photoCardFilter,
-      ...(saleType === '판매' && { saleUserCard: { some: {} } }),
-      ...(saleType === '교환' && { tradeRequestUserCard: { some: {} } })
-    }
-  });
+  return { totalItems, items };
 }
 
 const usersRepository = {
@@ -259,8 +247,7 @@ const usersRepository = {
   findMyGallery,
   findMySales,
   getMonthlyCardCount,
-  getCardsCount,
-  countMySales
+  getCardsCount
 };
 
 export default usersRepository;
