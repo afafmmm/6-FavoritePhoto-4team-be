@@ -62,7 +62,6 @@ async function getCardsCount(userId) {
 async function create(query) {
   const { name, grade, genre, description, volumn, price, image, creatorId } = query;
 
-  const imageUrl = `/uploads/${image.filename}`;
   const gradeRecord = await prisma.cardGrade.findUnique({
     where: { name: grade }
   });
@@ -83,7 +82,7 @@ async function create(query) {
   const photoCard = await prisma.photoCard.create({
     data: {
       name,
-      imageUrl,
+      imageUrl: image,           // image가 Cloudinary URL
       gradeId: gradeRecord.id,
       genreId: genreRecord.id,
       description,
