@@ -82,7 +82,7 @@ async function create(query) {
   const photoCard = await prisma.photoCard.create({
     data: {
       name,
-      imageUrl: image,           // image가 Cloudinary URL
+      imageUrl: image, // image가 Cloudinary URL
       gradeId: gradeRecord.id,
       genreId: genreRecord.id,
       description,
@@ -185,7 +185,7 @@ async function findMySales(
 ) {
   const whereClause = {
     userCards: {
-      some: { ownerId: userId, NOT: { status: 'ACTIVE' } }
+      some: { ownerId: userId, status: { not: 'ACTIVE' } }
     }
   };
 
@@ -225,7 +225,7 @@ async function findMySales(
       grade: { select: { id: true, name: true } },
       genre: { select: { id: true, name: true } },
       userCards: {
-        where: { ownerId: userId, NOT: [{ status: 'ACTIVE' }] },
+        where: { ownerId: userId, status: { not: 'ACTIVE' } },
         select: { id: true, price: true, status: true, owner: { select: { id: true, nickname: true } } }
       },
       creator: { select: { id: true, nickname: true } }
