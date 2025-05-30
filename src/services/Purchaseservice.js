@@ -91,12 +91,12 @@ export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
     const buyerMessage = `[${cardGrade} | ${cardName}] ${purchaseQuantity}장을 성공적으로 구매했습니다.`;
     await Notification.createNotification({
       userId: buyerId,
-      buyerMessage
+      message: buyerMessage
     });
     const sellerMessage = `[${cardGrade} | ${cardName}] ${purchaseQuantity}장이 판매되었습니다.`;
     await Notification.createNotification({
       userId: sale.sellerId,
-      sellerMessage
+      message: sellerMessage
     });
 
     return {
