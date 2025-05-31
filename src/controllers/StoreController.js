@@ -1,20 +1,27 @@
 import express from 'express';
-import passport from 'passport'; 
+import passport from 'passport';
 import storeService from '../services/StoreService.js';
 
 const storeController = express.Router();
 
 storeController.get('/', async (req, res, next) => {
   try {
-    console.log("🔥SERVER")
-    const { grade, genre, sale, orderBy, keyword } = req.query;
-    const result = await storeService.getFilteredSalesWithCounts({ grade, genre, sale, orderBy , keyword });
+    console.log('🔥SERVER');
+    const { grade, genre, sale, orderBy, keyword, withCounts } = req.query;
+    const result = await storeService.getFilteredSalesWithCounts({
+      grade,
+      genre,
+      sale,
+      orderBy,
+      keyword,
+      withCounts: withCounts === 'true'
+    });
+
     res.json(result);
   } catch (err) {
     next(err);
   }
 });
-
 
 storeController.get(
   '/cards/:id',

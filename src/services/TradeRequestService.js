@@ -1,5 +1,5 @@
-import prisma from "../config/prisma.js";
-import tradeRequestRepository from "../repositories/TradeRequestRepository.js";
+import prisma from '../config/prisma.js';
+import tradeRequestRepository from '../repositories/TradeRequestRepository.js';
 
 async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, description }) {
   // sale 조회 (photoCardId, sellerId 포함)
@@ -11,7 +11,7 @@ async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, des
   });
 
   if (!targetSale || targetSale.status !== 'AVAILABLE') {
-    throw new Error("유효하지 않거나 거래 가능한 상태가 아닌 판매 카드입니다.");
+    throw new Error('유효하지 않거나 거래 가능한 상태가 아닌 판매 카드입니다.');
   }
 
   const photoCardId = targetSale.photoCardId;
@@ -20,7 +20,7 @@ async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, des
   // 신청자가 제공하는 카드 소유 확인
   const ownedUserCards = await tradeRequestRepository.findUserCardsByIds(applicantId, offeredUserCardIds);
   if (ownedUserCards.length !== offeredUserCardIds.length) {
-    throw new Error("신청자가 제공하는 카드 중 소유하지 않은 카드가 있습니다.");
+    throw new Error('신청자가 제공하는 카드 중 소유하지 않은 카드가 있습니다.');
   }
 
   const offeredPhotoCardId = ownedUserCards[0].photoCardId;
@@ -39,7 +39,7 @@ async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, des
     });
 
     await Promise.all(
-      offeredUserCardIds.map(userCardId =>
+      offeredUserCardIds.map((userCardId) =>
         tx.tradeRequestUserCard.create({
           data: {
             tradeRequestId: newTradeRequest.id,
@@ -60,11 +60,10 @@ async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, des
   return tradeRequest;
 }
 
-
 //취소하기
 async function cancelTradeRequest(tradeRequestId, userId) {
   const tradeRequest = await tradeRequestRepository.findTradeRequestById(tradeRequestId);
-   console.log('tradeRequest.applicantId:', tradeRequest?.applicantId);
+  console.log('tradeRequest.applicantId:', tradeRequest?.applicantId);
   console.log('userId:', userId);
 
   if (!tradeRequest) {
@@ -109,7 +108,6 @@ async function cancelTradeRequest(tradeRequestId, userId) {
   return { message: '교환 요청이 취소되었습니다.' };
 }
 
-
 async function getTradeRequestsByApplicantAndCard(userId, saleId) {
   const sale = await prisma.sale.findUnique({
     where: { id: saleId }
@@ -126,6 +124,13 @@ async function getTradeRequestsByApplicantAndCard(userId, saleId) {
       tradeStatus: 'PENDING'
     },
     include: {
+      applicant: {
+        select: {
+          id: true,
+          nickname: true,
+          profileImage: true
+        }
+      },
       tradeRequestUserCards: {
         include: {
           userCard: {
@@ -138,7 +143,7 @@ async function getTradeRequestsByApplicantAndCard(userId, saleId) {
             }
           }
         }
-      },
+      }
     },
     orderBy: {
       createdAt: 'desc'
@@ -147,8 +152,6 @@ async function getTradeRequestsByApplicantAndCard(userId, saleId) {
 
   return requests;
 }
-
-
 
 export default {
   createTradeRequest,

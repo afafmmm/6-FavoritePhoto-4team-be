@@ -55,6 +55,13 @@ async function findTradeRequestsByApplicant(applicantId) {
   return prisma.tradeRequest.findMany({
     where: { applicantId },
     include: {
+      applicant: {
+        select: {
+          id: true,
+          nickname: true,
+          profileImage: true,
+        }
+      },
       photoCard: {
         include: {
           creator: true  
@@ -77,6 +84,7 @@ async function findTradeRequestsByApplicant(applicantId) {
     orderBy: { createdAt: 'desc' }
   });
 }
+
 
 
 
