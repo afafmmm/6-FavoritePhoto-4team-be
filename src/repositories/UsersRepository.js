@@ -170,75 +170,178 @@ async function findMyGallery(userId, { genre, grade, keyword, offset = 0, limit 
   return { totalItems, items };
 }
 
-// GET: 판매 중인 카드
+// ------------ //
+// 판매 중인 카드 //
+// ----------- //
+
 async function findMySales(
   userId,
   {
     genre,
     grade,
     keyword,
-    // saleType, // 판매 중, 교환 요청됨, undefined(품절된 것?)
-    // soldOut = 'false', // true(품절됨), false(그 외 = 판매or교환 중) -- FE에서 보냄
+    saleType, // 전체, 판매, 교환 (품절x)
+    saleStatus, // 전체, 판매 중, 판매 완료
     offset = 0,
     limit = 10
   }
 ) {
-  const whereClause = {
-    userCards: {
-      some: { ownerId: userId, status: { not: 'ACTIVE' } }
-    }
-  };
+  let sales = []; // 판매 상태 카드 목록
+  let trade = []; // 교환 상태 카드 목록
+  let totalSalesCards = 0;
+  let totalTradeCards = 0;
 
+  // 1-1. 공통 필터 조건
+  const whereClause = { AND: [] };
+
+  // 등급
   if (grade) {
-    whereClause.grade = { id: Number(grade) };
+    whereClause.AND.push({
+      photoCard: { grade: { id: Number(grade) } }
+    });
   }
+
+  // 장르
   if (genre) {
-    whereClause.genre = { id: Number(genre) };
+    whereClause.AND.push({
+      photoCard: { genre: { id: Number(genre) } }
+    });
   }
+
+  // 검색
   if (keyword) {
-    whereClause.name = { contains: keyword, mode: 'insensitive' };
+    whereClause.AND.push({
+      photoCard: { name: { contains: keyword, mode: 'insensitive' } }
+    });
   }
 
-  // 상태: ABAILABLE(판매 중), PENDING(교환 중), SOLDOUT(품절)
-  // const statusList = soldOut === 'true' ? ['SOLDOUT'] : ['AVAILABLE', 'PENDING'];
+  // 매진 여부
+  if (saleStatus) {
+    if (saleStatus === 'AVAILABLE') {
+      whereClause.AND.push({ status: 'AVAILABLE' });
+    } else if (saleStatus === 'SOLDOUT') {
+      whereClause.AND.push({ status: 'SOLDOUT' });
+    }
+  }
 
-  // saleType 정의
-  // const allowedSaleTypes = ['판매', '교환'];
-  // if (saleType && !allowedSaleTypes.includes(saleType)) {
-  //   const error = new Error("판매 유형은 '판매', '교환' 중 택1");
-  //   error.code = 400;
-  //   throw error;
-  // }
+  // 판매방법
+  if (saleType) {
+    if (saleType === 'AVAILABLE') {
+      whereClause.AND.push({ status: 'AVAILABLE' });
+    } else if (saleType === 'PENDING') {
+      whereClause.AND.push({ tradeStatus: 'PENDING' });
+    }
+  }
 
-  // 2. 전체 카드 개수 (count 쿼리)
-  const totalItems = await prisma.photoCard.count({
-    where: whereClause
-  });
+  // 2. 판매 중인 카드
+  const fetchSalesCards = saleType === 'AVAILABLE' || !saleType; // 2-1. 불러오는 조건1: 전체 다 or 판매인 것만
+  if (fetchSalesCards) {
+    const salesWhereClause = { sellerId: userId }; // 조건2: 사용자
 
-  // 실제 DB에서 불러올 조건, 반환 처리
-  const items = await prisma.photoCard.findMany({
-    select: {
-      id: true,
-      name: true,
-      imageUrl: true,
-      description: true,
-      initialPrice: true,
-      grade: { select: { id: true, name: true } },
-      genre: { select: { id: true, name: true } },
-      // 판매중
-      sales: { where: { sellerId: userId }, select: { id: true, price: true, status: true } },
-      // 교환 중
-      targetTradeRequests: { where: { ownerId: userId }, select: { id: true, tradeStatus: true } },
-      creator: { select: { id: true, nickname: true } }
-    },
+    // 2-2. 판매 중인 카드 개수 셈
+    totalSalesCards = await prisma.sale.count({
+      where: { ...salesWhereClause, ...whereClause }
+    });
 
-    where: whereClause,
-    skip: Number(offset),
-    take: Number(limit),
-    orderBy: { createdAt: 'desc' }
-  });
+    // 2-3. 데이터 불러옴
+    sales = await prisma.sale.findMany({
+      select: {
+        id: true,
+        price: true,
+        saleQuantity: true,
+        status: true,
 
-  return { totalItems, items };
+        photoCard: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+            description: true,
+            initialPrice: true,
+            grade: { select: { id: true, name: true } },
+            genre: { select: { id: true, name: true } },
+            creator: { select: { id: true, nickname: true } }
+          }
+        },
+        saleUserCards: {
+          select: {
+            userCard: { select: { id: true, status: true } }
+          }
+        }
+      },
+
+      where: { ...salesWhereClause, ...whereClause }, // 2-4. 조건 다 적용
+      skip: Number(offset),
+      take: Number(limit),
+      orderBy: { createdAt: 'desc' }
+    });
+
+    // 3-5. 모양 바꿔서 반환
+    sales = sales.map((item) => {
+      // 판매 중인 카드 수량
+      const availableCards = item.saleUserCards.filter((card) => card.userCard.status === 'AVAILABLE').length;
+
+      // 품절 카드 수량
+      const soldOutCards = item.saleUserCards.filter((card) => card.userCard.status === 'SOLDOUT').length;
+
+      return {
+        ...item,
+        saleQuantity: availableCards + soldOutCards // 상태별로 수량 계산
+      };
+    });
+  }
+
+  // 3. 교환 중인 카드
+  const fetchTradeCards = saleType === 'PENDING' || !saleType; // 3-1. 불러오는 조건1: 전체 다 or 교환
+
+  if (fetchTradeCards) {
+    const tradeWhereClause = { ownerId: userId, tradeStatus: 'PENDING' }; // 조건2: 사용자, state
+
+    // 3-2. 교환 중인 카드 개수
+    totalTradeCards = await prisma.tradeRequest.count({
+      where: { ...tradeWhereClause, ...whereClause }
+    });
+
+    // 3-3. 데이터 불러옴
+    trade = await prisma.tradeRequest.findMany({
+      select: {
+        id: true,
+        tradeStatus: true,
+
+        photoCard: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+            initialPrice: true,
+            description: true,
+            grade: { select: { id: true, name: true } },
+            genre: { select: { id: true, name: true } },
+            creator: { select: { id: true, nickname: true } }
+          }
+        }
+      },
+
+      where: { ...tradeWhereClause, ...whereClause }, // 3-4
+      skip: Number(offset),
+      take: Number(limit),
+      orderBy: { createdAt: 'desc' }
+    });
+
+    trade = trade.map((item) => ({
+      ...item,
+      status: item.tradeStatus, // tradeStatus를 status로 변경
+      price: item.photoCard.initialPrice,
+      saleQuantity: 1 // 교환은 1개로 고정
+    }));
+  }
+
+  const items = [...sales, ...trade];
+
+  // 4. 페이지네이션 적용
+  const paginatedItems = items.slice(offset, offset + limit);
+  const totalItems = totalSalesCards + totalTradeCards;
+  return { totalItems, items: paginatedItems };
 }
 
 const usersRepository = {

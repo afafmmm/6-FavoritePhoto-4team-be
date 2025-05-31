@@ -63,10 +63,12 @@ async function getMySales(userId, query) {
   const genre = query.genre ? Number(query.genre) : null;
   const grade = query.grade ? Number(query.grade) : null;
   const keyword = query.keyword || null;
+  const saleType = query.saleType || null;
+  const saleStatus = query.saleStatus || null;
   const page = query.page ? Math.max(1, parseInt(query.page, 10)) : 1;
   const size = query.size || 'md';
 
-  // 2. 대충 오류 처리
+  // 2. 검증
   if (genre && (genre < 1 || genre > 4)) {
     const error = new Error('장르 ID는 1~4 사이의 값이어야 합니다.');
     error.code = 400;
@@ -82,6 +84,8 @@ async function getMySales(userId, query) {
     genre,
     grade,
     keyword,
+    saleType,
+    saleStatus,
     offset: offset,
     limit: itemsPerPage
   });
