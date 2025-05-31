@@ -192,56 +192,128 @@ async function findMySales(
   let totalTradeCards = 0;
 
   // 1-1. 공통 필터 조건
-  const whereClause = { AND: [] };
+  // 1-1. 공통 필터 조건 생성 함수 (장르, 등급, 검색어만)
+  const getCommonConditions = () => {
+    const conditions = [];
 
-  // 등급
-  if (grade) {
-    whereClause.AND.push({
-      photoCard: { grade: { id: Number(grade) } }
-    });
-  }
-
-  // 장르
-  if (genre) {
-    whereClause.AND.push({
-      photoCard: { genre: { id: Number(genre) } }
-    });
-  }
-
-  // 검색
-  if (keyword) {
-    whereClause.AND.push({
-      photoCard: { name: { contains: keyword, mode: 'insensitive' } }
-    });
-  }
-
-  // 매진 여부
-  if (saleStatus) {
-    if (saleStatus === 'AVAILABLE') {
-      whereClause.AND.push({ status: 'AVAILABLE' });
-    } else if (saleStatus === 'SOLDOUT') {
-      whereClause.AND.push({ status: 'SOLDOUT' });
+    // 등급
+    if (grade) {
+      conditions.push({
+        photoCard: { grade: { id: Number(grade) } }
+      });
     }
-  }
 
-  // 판매방법
-  if (saleType) {
-    if (saleType === 'AVAILABLE') {
-      whereClause.AND.push({ status: 'AVAILABLE' });
-    } else if (saleType === 'PENDING') {
-      whereClause.AND.push({ tradeStatus: 'PENDING' });
+    // 장르
+    if (genre) {
+      conditions.push({
+        photoCard: { genre: { id: Number(genre) } }
+      });
     }
-  }
+
+    // 검색
+    if (keyword) {
+      conditions.push({
+        photoCard: { name: { contains: keyword, mode: 'insensitive' } }
+      });
+    }
+
+    return conditions;
+  };
 
   // 2. 판매 중인 카드
-  const fetchSalesCards = saleType === 'AVAILABLE' || !saleType; // 2-1. 불러오는 조건1: 전체 다 or 판매인 것만
+  // saleStatus 조회하는데 자꾸 교환 데이터가 같이 나온다... 궁여지책으로 처리했다...
+  if (saleStatus) {
+    if (saleType === 'PENDING') {
+      return { totalItems: 0, items: [] };
+    }
+
+    if (saleStatus === 'AVAILABLE' || saleStatus === 'SOLDOUT') {
+      const salesConditions = getCommonConditions();
+      salesConditions.push({ status: saleStatus });
+
+      const salesWhereClause = {
+        sellerId: userId,
+        AND: salesConditions.length > 0 ? salesConditions : undefined
+      };
+
+      totalSalesCards = await prisma.sale.count({ where: salesWhereClause });
+
+      sales = await prisma.sale.findMany({
+        select: {
+          id: true,
+          price: true,
+          saleQuantity: true,
+          status: true,
+
+          photoCard: {
+            select: {
+              id: true,
+              name: true,
+              imageUrl: true,
+              description: true,
+              initialPrice: true,
+              grade: { select: { id: true, name: true } },
+              genre: { select: { id: true, name: true } },
+              creator: { select: { id: true, nickname: true } }
+            }
+          },
+          saleUserCards: {
+            select: {
+              userCard: { select: { id: true, status: true } }
+            }
+          }
+        },
+
+        where: salesWhereClause,
+        skip: Number(offset),
+        take: Number(limit),
+        orderBy: { createdAt: 'desc' }
+      });
+
+      // 모양 바꿔서 반환
+      sales = sales.map((item) => {
+        const availableCards = item.saleUserCards.filter((card) => card.userCard.status === 'AVAILABLE').length;
+        const soldOutCards = item.saleUserCards.filter((card) => card.userCard.status === 'SOLDOUT').length;
+
+        return {
+          ...item,
+          saleQuantity: availableCards + soldOutCards
+        };
+      });
+    }
+
+    // saleStatus가 지정된 경우 교환 데이터는 조회하지 않음
+    const items = [...sales];
+    const totalItems = totalSalesCards;
+    return { totalItems, items };
+  }
+
+  const fetchSalesCards = saleType === 'AVAILABLE' || !saleType;
+
+  // 2-1. 판매 전용 조건
   if (fetchSalesCards) {
-    const salesWhereClause = { sellerId: userId }; // 조건2: 사용자
+    const salesConditions = getCommonConditions();
+
+    // ▣ 판매방법 필터
+    if (saleType === 'AVAILABLE') salesConditions.push({ status: 'AVAILABLE' });
+
+    // ▣ 매진 여부 필터 (sale modal만 가져옴)
+    if (saleStatus) {
+      if (saleStatus === 'AVAILABLE') {
+        salesConditions.push({ status: 'AVAILABLE' });
+      } else if (saleStatus === 'SOLDOUT') {
+        salesConditions.push({ status: 'SOLDOUT' });
+      }
+    }
+
+    // 합침
+    const salesWhereClause = {
+      sellerId: userId,
+      AND: salesConditions.length > 0 ? salesConditions : undefined
+    };
 
     // 2-2. 판매 중인 카드 개수 셈
-    totalSalesCards = await prisma.sale.count({
-      where: { ...salesWhereClause, ...whereClause }
-    });
+    totalSalesCards = await prisma.sale.count({ where: salesWhereClause });
 
     // 2-3. 데이터 불러옴
     sales = await prisma.sale.findMany({
@@ -270,13 +342,13 @@ async function findMySales(
         }
       },
 
-      where: { ...salesWhereClause, ...whereClause }, // 2-4. 조건 다 적용
+      where: salesWhereClause,
       skip: Number(offset),
       take: Number(limit),
       orderBy: { createdAt: 'desc' }
     });
 
-    // 3-5. 모양 바꿔서 반환
+    // 2-4. 모양 바꿔서 반환
     sales = sales.map((item) => {
       // 판매 중인 카드 수량
       const availableCards = item.saleUserCards.filter((card) => card.userCard.status === 'AVAILABLE').length;
@@ -292,15 +364,25 @@ async function findMySales(
   }
 
   // 3. 교환 중인 카드
-  const fetchTradeCards = saleType === 'PENDING' || !saleType; // 3-1. 불러오는 조건1: 전체 다 or 교환
+  const fetchTradeCards = saleType === 'PENDING' || !saleType;
 
+  // 3-1. 교환 전용 조건
   if (fetchTradeCards) {
-    const tradeWhereClause = { ownerId: userId, tradeStatus: 'PENDING' }; // 조건2: 사용자, state
+    const tradeConditions = getCommonConditions();
+
+    // ▣ 판매 방법 필터
+    if (saleType === 'PENDING') {
+      tradeConditions.push({ tradeStatus: 'PENDING' });
+    }
+
+    const tradeWhereClause = {
+      ownerId: userId,
+      tradeStatus: 'PENDING',
+      AND: tradeConditions.length > 0 ? tradeConditions : undefined
+    };
 
     // 3-2. 교환 중인 카드 개수
-    totalTradeCards = await prisma.tradeRequest.count({
-      where: { ...tradeWhereClause, ...whereClause }
-    });
+    totalTradeCards = await prisma.tradeRequest.count({ where: tradeWhereClause });
 
     // 3-3. 데이터 불러옴
     trade = await prisma.tradeRequest.findMany({
@@ -322,7 +404,7 @@ async function findMySales(
         }
       },
 
-      where: { ...tradeWhereClause, ...whereClause }, // 3-4
+      where: tradeWhereClause,
       skip: Number(offset),
       take: Number(limit),
       orderBy: { createdAt: 'desc' }
