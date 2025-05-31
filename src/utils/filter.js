@@ -3,7 +3,7 @@ export function getGenreFilter(num) {
     1: '풍경',
     2: '여행',
     3: '인물',
-    4: '사물',
+    4: '사물'
   };
 
   const genreName = genreMap[num];
@@ -17,7 +17,7 @@ export function getGradeFilter(num) {
     1: 'COMMON',
     2: 'RARE',
     3: 'SUPER_RARE',
-    4: 'LEGENDARY',
+    4: 'LEGENDARY'
   };
 
   const gradeName = gradeMap[num];
@@ -32,7 +32,7 @@ export function getStatusFilter(statuses) {
   if (!Array.isArray(statuses)) {
     statuses = [statuses];
   }
-  statuses.forEach(status => {
+  statuses.forEach((status) => {
     if (!validStatuses.includes(status)) {
       throw new Error(`status는 ${validStatuses.join(', ')} 중 하나여야 합니다.`);
     }
