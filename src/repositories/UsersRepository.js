@@ -426,6 +426,40 @@ async function findMySales(
   return { totalItems, items: paginatedItems };
 }
 
+//--특정 유저의 포토카드 상세 (우주)
+async function getUserPhotoCardDetail(userId, photoCardId) {
+  return await prisma.userCard.findMany({
+    where: {
+      ownerId: userId,
+      photoCardId: photoCardId
+    },
+    include: {
+      photoCard: {
+        include: {
+          genre: true,
+          grade: true,
+          creator: {
+            select: {
+              id: true,
+              nickname: true
+            }
+          }
+        }
+      },
+      owner: {
+        select: {
+          id: true,
+          nickname: true,
+          profileImage: true
+        }
+      },
+      saleUserCards: true,
+      tradeRequestUserCards: true
+    }
+  });
+}
+
+
 const usersRepository = {
   findById,
   findGenre,
@@ -434,7 +468,8 @@ const usersRepository = {
   findMyGallery,
   findMySales,
   getMonthlyCardCount,
-  getCardsCount
+  getCardsCount,
+  getUserPhotoCardDetail
 };
 
 export default usersRepository;

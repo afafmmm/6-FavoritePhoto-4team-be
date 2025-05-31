@@ -39,3 +39,17 @@ export function getStatusFilter(statuses) {
   });
   return statuses;
 }
+
+export const cardStatuses = ['PENDING', 'AVAILABLE'];
+
+export function getCardFilter(cardStatus) {
+  if (!Array.isArray(cardStatus)) {
+    cardStatus = [cardStatus];
+  }
+  cardStatus.forEach(status => {
+    if (!cardStatuses.includes(status)) {
+      throw new Error(`status는 ${cardStatuses.join(', ')} 중 하나여야 합니다.`);
+    }
+  });
+  return cardStatus;
+}

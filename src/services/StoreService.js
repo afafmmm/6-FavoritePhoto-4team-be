@@ -10,15 +10,15 @@ function parseFilterValue(value) {
   return [String(value)];
 }
 
-const getFilteredSalesWithCounts = async ({ grade, genre, sale, orderBy, keyword }) => {
+const getFilteredSalesWithCounts = async ({ grade, genre, sale, orderBy, keyword, withCounts = false }) => {
   const gradeFilter = parseFilterValue(grade);
   const genreFilter = parseFilterValue(genre);
 
   const saleFilterRaw = parseFilterValue(sale);
   const saleFilter = getStatusFilter(saleFilterRaw);
   console.log('saleFilter after getStatusFilter:', saleFilter);
-  
-  const sales = await storeRepository.findSalesByFilters({
+
+  const salesPromise = storeRepository.findSalesByFilters({
     grade: gradeFilter,
     genre: genreFilter,
     sale: saleFilter,
@@ -26,8 +26,19 @@ const getFilteredSalesWithCounts = async ({ grade, genre, sale, orderBy, keyword
     keyword
   });
 
+  if (withCounts) {
+    const [sales, counts] = await Promise.all([
+      salesPromise,
+      storeRepository.countFilters()
+    ]);
+
+    return { sales, counts }; 
+  }
+
+  const sales = await salesPromise;
   return { sales };
 };
+
 
 async function getCardById(cardId) {
   const card = await storeRepository.findSaleCardById(cardId);

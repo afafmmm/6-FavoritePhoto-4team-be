@@ -84,35 +84,36 @@ async function countFilters() {
   const [gradeCounts, genreCounts, saleCounts] = await Promise.all([
     prisma.sale.groupBy({
       by: ['cardGradeId'],
-      _count: true,
+      _count: { _all: true },
       where: { status: 'AVAILABLE' }
     }),
     prisma.sale.groupBy({
       by: ['cardGenreId'],
-      _count: true,
+      _count: { _all: true },
       where: { status: 'AVAILABLE' }
     }),
     prisma.sale.groupBy({
       by: ['status'],
-      _count: true
+      _count: { _all: true }
     })
   ]);
 
   return {
     grade: gradeCounts.map(item => ({
       gradeId: item.cardGradeId,
-      count: item._count
+      count: item._count._all
     })),
     genre: genreCounts.map(item => ({
       genreId: item.cardGenreId,
-      count: item._count
+      count: item._count._all
     })),
     sale: saleCounts.map(item => ({
       status: item.status,
-      count: item._count
+      count: item._count._all
     }))
   };
 }
+
 
 async function findSaleCardById(id) {
   return await prisma.sale.findUnique({

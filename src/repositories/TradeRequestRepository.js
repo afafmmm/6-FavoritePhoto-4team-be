@@ -18,55 +18,6 @@ async function findUserCardsByIds(userId, userCardIds) {
   });
 }
 
-//거래 요청
-async function createTradeRequest({ photoCardId, ownerId, applicantId, offeredPhotoCardId, description }) {
-  const [tradeRequest] = await prisma.$transaction([
-    prisma.tradeRequest.create({
-      data: {
-        photoCardId,
-        ownerId,
-        applicantId,
-        offeredPhotoCardId,
-        description,
-        tradeStatus: 'AVAILABLE'
-      }
-    }),
-    prisma.sale.updateMany({
-      where: {
-        photoCardId,
-        status: 'AVAILABLE'
-      },
-      data: {
-        status: 'PENDING'
-      }
-    })
-  ]);
-
-  return tradeRequest;
-}
-
-async function createTradeRequestUserCards(tradeRequestId, userCardIds) {
-  const createPromises = userCardIds.map((userCardId) =>
-    prisma.tradeRequestUserCard.create({
-      data: {
-        tradeRequestId,
-        userCardId
-      }
-    })
-  );
-  return Promise.all(createPromises);
-}
-
-async function updateUserCardsStatus(userCardIds, status) {
-  return prisma.userCard.updateMany({
-    where: {
-      id: { in: userCardIds }
-    },
-    data: {
-      status
-    }
-  });
-}
 
 async function cancelTradeRequest(tradeRequestId) {
   return prisma.$transaction(async (tx) => {
@@ -104,6 +55,13 @@ async function findTradeRequestsByApplicant(applicantId) {
   return prisma.tradeRequest.findMany({
     where: { applicantId },
     include: {
+      applicant: {
+        select: {
+          id: true,
+          nickname: true,
+          profileImage: true,
+        }
+      },
       photoCard: {
         include: {
           creator: true  
@@ -129,12 +87,10 @@ async function findTradeRequestsByApplicant(applicantId) {
 
 
 
+
 export default {
   findSaleByPhotoCardId,
   findUserCardsByIds,
-  createTradeRequest,
-  createTradeRequestUserCards,
-  updateUserCardsStatus,
   cancelTradeRequest,
   findTradeRequestById,
   findTradeRequestsByApplicant
