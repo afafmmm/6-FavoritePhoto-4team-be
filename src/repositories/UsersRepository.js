@@ -205,11 +205,11 @@ async function countGalleryFilters(userId, { genre, grade, keyword }) {
   });
 
   return {
-    grade: gradeCounts.map(item => ({
+    grade: gradeCounts.map((item) => ({
       gradeId: item.gradeId,
       count: item._count._all
     })),
-    genre: genreCounts.map(item => ({
+    genre: genreCounts.map((item) => ({
       genreId: item.genreId,
       count: item._count._all
     }))
@@ -226,7 +226,7 @@ async function findMySales(
     grade,
     keyword,
     saleType, // 전체, 판매, 교환 (품절x)
-    saleStatus, // 전체, 판매 중, 판매 완료
+    sale, // 전체, 판매 중, 판매 완료
     offset = 0,
     limit = 10
   }
@@ -267,14 +267,14 @@ async function findMySales(
 
   // 2. 판매 중인 카드
   // saleStatus 조회하는데 자꾸 교환 데이터가 같이 나온다... 궁여지책으로 처리했다...
-  if (saleStatus) {
+  if (sale) {
     if (saleType === 'PENDING') {
       return { totalItems: 0, items: [] };
     }
 
-    if (saleStatus === 'AVAILABLE' || saleStatus === 'SOLDOUT') {
+    if (sale === 'AVAILABLE' || sale === 'SOLDOUT') {
       const salesConditions = getCommonConditions();
-      salesConditions.push({ status: saleStatus });
+      salesConditions.push({ status: sale });
 
       const salesWhereClause = {
         sellerId: userId,
@@ -343,10 +343,10 @@ async function findMySales(
     if (saleType === 'AVAILABLE') salesConditions.push({ status: 'AVAILABLE' });
 
     // ▣ 매진 여부 필터 (sale modal만 가져옴)
-    if (saleStatus) {
-      if (saleStatus === 'AVAILABLE') {
+    if (sale) {
+      if (sale === 'AVAILABLE') {
         salesConditions.push({ status: 'AVAILABLE' });
-      } else if (saleStatus === 'SOLDOUT') {
+      } else if (sale === 'SOLDOUT') {
         salesConditions.push({ status: 'SOLDOUT' });
       }
     }
@@ -503,7 +503,6 @@ async function getUserPhotoCardDetail(userId, photoCardId) {
     }
   });
 }
-
 
 const usersRepository = {
   findById,
