@@ -471,13 +471,13 @@ async function findMySales(
   return { totalItems, items: paginatedItems };
 }
 
-async function countSalesFilters(userId, { genre, grade, keyword, saleType, saleStatus }) {
+async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale }) {
   const filterKeyword = keyword ? { name: { contains: keyword, mode: 'insensitive' } } : {};
 
   // 판매용 조건
   const saleWhere = {
     sellerId: userId,
-    ...(saleStatus ? { status: saleStatus } : {}),
+    ...(sale ? { status: sale } : {}),
     photoCard: {
       ...(genre ? { genre: { id: Number(genre) } } : {}),
       ...(grade ? { grade: { id: Number(grade) } } : {}),
@@ -577,7 +577,7 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
   return {
     grade: Array.from(combinedGradeCounts.entries()).map(([gradeId, count]) => ({ gradeId, count })),
     genre: Array.from(combinedGenreCounts.entries()).map(([genreId, count]) => ({ genreId, count })),
-    saleStatus: saleStatusCounts.map(item => ({ status: item.status, count: item._count._all })),
+    sale: saleStatusCounts.map(item => ({ status: item.status, count: item._count._all })),
     saleType: tradeStatusCounts.map(item => ({ saleType: item.tradeStatus, count: item._count._all })) // 여기서 saleType은 tradeStatus임
   };
 }

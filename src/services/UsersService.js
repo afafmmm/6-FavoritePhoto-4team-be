@@ -90,7 +90,7 @@ async function getMySales(userId, query) {
   const grade = query.grade ? Number(query.grade) : null;
   const keyword = query.keyword || null;
   const saleType = query.saleType || null;
-  const saleStatus = query.saleStatus || null;
+  const sale = query.sale || null;
   const page = query.page ? Math.max(1, parseInt(query.page, 10)) : 1;
   const size = query.size || 'md';
   const withCounts = true; // 우주: counts 요청 여부
@@ -112,7 +112,7 @@ async function getMySales(userId, query) {
     grade,
     keyword,
     saleType,
-    saleStatus,
+    sale,
     offset,
     limit: itemsPerPage
   });
@@ -125,7 +125,7 @@ async function getMySales(userId, query) {
         grade,
         keyword,
         saleType,
-        saleStatus
+        sale
       }) // 우주: 필터 카운트 병렬 조회
     ]);
 
@@ -157,7 +157,6 @@ async function getMySales(userId, query) {
     };
   }
 }
-
 
 // GET: 사용자 1人
 async function getUser(id) {
