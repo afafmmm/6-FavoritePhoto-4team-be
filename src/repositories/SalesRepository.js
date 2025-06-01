@@ -82,6 +82,16 @@ async function findSaleDetailById(saleId) {
           genre: true,
           creator: {
             select: { id: true, nickname: true }
+          },
+          userCards: {
+            where: {
+              status: 'ACTIVE'
+            },
+            include: {
+              owner: {
+                select: { id: true, nickname: true }
+              }
+            }
           }
         }
       },
