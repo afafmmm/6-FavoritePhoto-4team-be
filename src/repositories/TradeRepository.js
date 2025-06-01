@@ -63,7 +63,7 @@ async function acceptTradeRequest(tradeRequestId) {
 
     const offeredCardIds = tradeRequest.tradeRequestUserCards.map((t) => t.userCardId);
 
-    // 1. 판매자 입장: 교환 제안 카드들을 소유하게 됨
+    // 판매자 입장: 교환 제안 카드들을 소유하게 됨
     await tx.userCard.updateMany({
       where: { id: { in: offeredCardIds } },
       data: {
@@ -72,7 +72,7 @@ async function acceptTradeRequest(tradeRequestId) {
       }
     });
 
-    // 2. 구매자 입장: 판매자의 카드 중 하나를 소유하게 됨
+    // 구매자 입장: 판매자의 카드 중 하나를 소유하게 됨
     const availableCard = await tx.userCard.findFirst({
       where: {
         photoCardId: tradeRequest.photoCardId,
@@ -90,7 +90,28 @@ async function acceptTradeRequest(tradeRequestId) {
       }
     });
 
-    // 3. 거래 요청 상태를 ACCEPTED로 변경 (혹시 알림에 따로 필요할까 싶어 넣긴함)
+    // 해당 카드의 Sale을 찾아 수량 감소
+    const sale = await tx.sale.findFirst({
+      where: {
+        photoCardId: tradeRequest.photoCardId,
+        sellerId: tradeRequest.ownerId,
+        status: 'AVAILABLE'
+      }
+    });
+
+    if (!sale) throw new Error('해당 카드에 대한 판매 정보가 존재하지 않습니다.');
+
+    // 판매 수량 1 감소
+    await tx.sale.update({
+      where: { id: sale.id },
+      data: {
+        saleQuantity: {
+          decrement: 1
+        }
+      }
+    });
+
+    // 거래 요청 상태를 ACCEPTED로 변경
     await tx.tradeRequest.update({
       where: { id: tradeRequestId },
       data: { tradeStatus: 'ACCEPTED' }
@@ -100,7 +121,6 @@ async function acceptTradeRequest(tradeRequestId) {
   });
 }
 
-// 우주님 레포에도 있는 것 같습니다..
 async function findTradeRequestById(id) {
   return prisma.tradeRequest.findUnique({
     where: { id },
