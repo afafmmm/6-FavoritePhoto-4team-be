@@ -26,6 +26,7 @@ async function getMyGallery(userId, query) {
   const keyword = query.keyword || null;
   const page = query.page ? Math.max(1, parseInt(query.page, 10)) : 1;
   const size = query.size || 'md';
+  const withCounts = true; // 우주: counts 요청 여부
 
   // 2. 대충 오류 처리
   if (genre && (genre < 1 || genre > 4)) {
@@ -39,22 +40,47 @@ async function getMyGallery(userId, query) {
   const offset = (page - 1) * itemsPerPage;
 
   // 4. 데이터 조회
-  const { totalItems, items } = await usersRepository.findMyGallery(userId, {
+  const galleryPromise = usersRepository.findMyGallery(userId, {
     genre,
     grade,
     keyword,
-    offset: offset,
+    offset,
     limit: itemsPerPage
   });
 
-  // 5. 페이지네이션 갱신
-  const pagination = calculatePaginationDetails({
-    totalItems,
-    currentPage: page,
-    size
-  });
+  if (withCounts) {
+    const [gallery, counts] = await Promise.all([
+      galleryPromise,
+      usersRepository.countGalleryFilters(userId, { genre, grade, keyword }) // 우주: 필터 카운트 병렬 조회
+    ]);
 
-  return { items, pagination };
+    // 5. 페이지네이션 갱신
+    const pagination = calculatePaginationDetails({
+      totalItems: gallery.totalItems,
+      currentPage: page,
+      size
+    });
+
+    return {
+      items: gallery.items,
+      pagination,
+      counts // 우주: 프론트에서 필터 갯수 렌더링할 수 있도록 추가
+    };
+  } else {
+    const gallery = await galleryPromise;
+
+    // 5. 페이지네이션 갱신
+    const pagination = calculatePaginationDetails({
+      totalItems: gallery.totalItems,
+      currentPage: page,
+      size
+    });
+
+    return {
+      items: gallery.items,
+      pagination
+    };
+  }
 }
 
 // GET: 내 판매 카드

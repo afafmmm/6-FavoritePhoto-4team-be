@@ -95,6 +95,7 @@ usersController.get(
   async (req, res, next) => {
     try {
       const userId = req.user.id;
+      req.query.withCounts = 'true'; 
       const result = await usersService.getMyGallery(userId, req.query);
       res.json(result);
     } catch (err) {
