@@ -471,6 +471,118 @@ async function findMySales(
   return { totalItems, items: paginatedItems };
 }
 
+async function countSalesFilters(userId, { genre, grade, keyword, saleType, saleStatus }) {
+  const filterKeyword = keyword ? { name: { contains: keyword, mode: 'insensitive' } } : {};
+
+  // 판매용 조건
+  const saleWhere = {
+    sellerId: userId,
+    ...(saleStatus ? { status: saleStatus } : {}),
+    photoCard: {
+      ...(genre ? { genre: { id: Number(genre) } } : {}),
+      ...(grade ? { grade: { id: Number(grade) } } : {}),
+      ...filterKeyword
+    }
+  };
+
+  // 교환용 조건 (saleType에 따른 필터링도 가능)
+  // 여기선 tradeStatus만 쓰는 걸로 일단 둠
+  const tradeWhere = {
+    ownerId: userId,
+    ...(saleType ? { tradeStatus: saleType } : {}),
+    photoCard: {
+      ...(genre ? { genre: { id: Number(genre) } } : {}),
+      ...(grade ? { grade: { id: Number(grade) } } : {}),
+      ...filterKeyword
+    }
+  };
+
+  // 1) Sale에서 필터별 카운트
+  const saleGradeCounts = await prisma.sale.groupBy({
+    by: ['cardGradeId'],
+    where: saleWhere,
+    _count: { _all: true }
+  });
+  const saleGenreCounts = await prisma.sale.groupBy({
+    by: ['cardGenreId'],
+    where: saleWhere,
+    _count: { _all: true }
+  });
+  const saleStatusCounts = await prisma.sale.groupBy({
+    by: ['status'],
+    where: { sellerId: userId }, // 전체 판매 상태별 카운트 (필터 없이)
+    _count: { _all: true }
+  });
+
+  // 2) TradeRequest에서 필터별 카운트 (saleType 역할)
+  // tradeStatus별 카운트
+  const tradeStatusCounts = await prisma.tradeRequest.groupBy({
+    by: ['tradeStatus'],
+    where: { ownerId: userId },
+    _count: { _all: true }
+  });
+
+  // tradeRequest 내 photoCard grade, genre 카운트
+  // photoCardId 별로 groupBy -> id 모아서 gradeId, genreId 가져옴
+  const tradePhotoCardCounts = await prisma.tradeRequest.groupBy({
+    by: ['photoCardId'],
+    where: tradeWhere,
+    _count: { _all: true }
+  });
+
+  const tradePhotoCards = await prisma.photoCard.findMany({
+    where: {
+      id: { in: tradePhotoCardCounts.map(t => t.photoCardId) }
+    },
+    select: { id: true, gradeId: true, genreId: true }
+  });
+
+  const tradeGradeMap = new Map();
+  const tradeGenreMap = new Map();
+
+  for (const card of tradePhotoCards) {
+    const match = tradePhotoCardCounts.find(t => t.photoCardId === card.id);
+    if (!match) continue;
+
+    if (card.gradeId) {
+      tradeGradeMap.set(card.gradeId, (tradeGradeMap.get(card.gradeId) || 0) + match._count._all);
+    }
+    if (card.genreId) {
+      tradeGenreMap.set(card.genreId, (tradeGenreMap.get(card.genreId) || 0) + match._count._all);
+    }
+  }
+
+  // 최종 합산 grade
+  const combinedGradeCounts = new Map();
+  for (const item of saleGradeCounts) {
+    if (item.cardGradeId) {
+      combinedGradeCounts.set(item.cardGradeId, (combinedGradeCounts.get(item.cardGradeId) || 0) + item._count._all);
+    }
+  }
+  for (const [gradeId, count] of tradeGradeMap.entries()) {
+    combinedGradeCounts.set(gradeId, (combinedGradeCounts.get(gradeId) || 0) + count);
+  }
+
+  // 최종 합산 genre
+  const combinedGenreCounts = new Map();
+  for (const item of saleGenreCounts) {
+    if (item.cardGenreId) {
+      combinedGenreCounts.set(item.cardGenreId, (combinedGenreCounts.get(item.cardGenreId) || 0) + item._count._all);
+    }
+  }
+  for (const [genreId, count] of tradeGenreMap.entries()) {
+    combinedGenreCounts.set(genreId, (combinedGenreCounts.get(genreId) || 0) + count);
+  }
+
+  return {
+    grade: Array.from(combinedGradeCounts.entries()).map(([gradeId, count]) => ({ gradeId, count })),
+    genre: Array.from(combinedGenreCounts.entries()).map(([genreId, count]) => ({ genreId, count })),
+    saleStatus: saleStatusCounts.map(item => ({ status: item.status, count: item._count._all })),
+    saleType: tradeStatusCounts.map(item => ({ saleType: item.tradeStatus, count: item._count._all })) // 여기서 saleType은 tradeStatus임
+  };
+}
+
+
 //--특정 유저의 포토카드 상세 (우주)
 async function getUserPhotoCardDetail(userId, photoCardId) {
   return await prisma.userCard.findMany({
@@ -514,7 +626,8 @@ const usersRepository = {
   getMonthlyCardCount,
   getCardsCount,
   getUserPhotoCardDetail,
-  countGalleryFilters
+  countGalleryFilters,
+  countSalesFilters
 };
 
 export default usersRepository;
