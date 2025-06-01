@@ -25,15 +25,14 @@ const getFilteredSalesWithCounts = async ({ grade, genre, sale, orderBy, keyword
     orderBy,
     keyword
   });
+if (withCounts) {
+  const [sales, counts] = await Promise.all([
+    salesPromise,
+    storeRepository.countFilters({ grade: gradeFilter, genre: genreFilter, sale: saleFilterRaw, keyword })
+  ]);
 
-  if (withCounts) {
-    const [sales, counts] = await Promise.all([
-      salesPromise,
-      storeRepository.countFilters()
-    ]);
-
-    return { sales, counts }; 
-  }
+  return { sales, counts };
+}
 
   const sales = await salesPromise;
   return { sales };

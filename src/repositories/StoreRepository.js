@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 import getSort from '../utils/sort.js';
-import { getGenreFilter, getGradeFilter, getStatusFilter } from '../utils/filter.js'; 
+import { getGenreFilter, getGradeFilter, getStatusFilter } from '../utils/filter.js';
 
 const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', sale, keyword }) => {
   const where = {
@@ -14,7 +14,7 @@ const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', 
     const gradeNames = grade
       .map(Number)
       .map(getGradeFilter)
-      .map(obj => obj.name);
+      .map((obj) => obj.name);
 
     photoCardConditions.grade = {
       name: { in: gradeNames }
@@ -26,7 +26,7 @@ const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', 
     const genreNames = genre
       .map(Number)
       .map(getGenreFilter)
-      .map(obj => obj.name);
+      .map((obj) => obj.name);
 
     photoCardConditions.genre = {
       name: { in: genreNames }
@@ -80,23 +80,66 @@ const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', 
   });
 };
 
-async function countFilters() {
-  const [gradeCounts, genreCounts, saleCounts] = await Promise.all([
-    prisma.sale.groupBy({
-      by: ['cardGradeId'],
-      _count: { _all: true },
-      where: { status: 'AVAILABLE' }
-    }),
-    prisma.sale.groupBy({
-      by: ['cardGenreId'],
-      _count: { _all: true },
-      where: { status: 'AVAILABLE' }
-    }),
-    prisma.sale.groupBy({
-      by: ['status'],
-      _count: { _all: true }
-    })
-  ]);
+async function countFilters({ grade, genre, sale, keyword }) {
+  const where = {
+    AND: []
+  };
+
+  const photoCardConditions = {};
+
+  // grade
+  if (grade?.length) {
+    const gradeNames = grade.map(Number).map(getGradeFilter).map(obj => obj.name);
+    photoCardConditions.grade = { name: { in: gradeNames } };
+  }
+
+  // genre
+  if (genre?.length) {
+    const genreNames = genre.map(Number).map(getGenreFilter).map(obj => obj.name);
+    photoCardConditions.genre = { name: { in: genreNames } };
+  }
+
+  // keyword
+  if (keyword) {
+    where.AND.push({
+      OR: [
+        { photoCard: { name: { contains: keyword, mode: 'insensitive' } } },
+        { seller: { nickname: { contains: keyword, mode: 'insensitive' } } }
+      ]
+    });
+  }
+
+  // status
+  if (sale?.length) {
+    const statusFilter = getStatusFilter(sale);
+    where.AND.push({ status: { in: statusFilter } });
+  }
+
+  // photoCard 조건 병합
+  if (Object.keys(photoCardConditions).length > 0) {
+    where.AND.push({ photoCard: photoCardConditions });
+  }
+
+  // 등급 count
+  const gradeCounts = await prisma.sale.groupBy({
+    by: ['cardGradeId'],
+    _count: { _all: true },
+    where
+  });
+
+  // 장르 count
+  const genreCounts = await prisma.sale.groupBy({
+    by: ['cardGenreId'],
+    _count: { _all: true },
+    where
+  });
+
+  // 상태 count
+  const saleCounts = await prisma.sale.groupBy({
+    by: ['status'],
+    _count: { _all: true },
+    where
+  });
 
   return {
     grade: gradeCounts.map(item => ({
@@ -113,6 +156,8 @@ async function countFilters() {
     }))
   };
 }
+
+
 
 
 async function findSaleCardById(id) {
