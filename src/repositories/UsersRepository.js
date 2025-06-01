@@ -170,6 +170,51 @@ async function findMyGallery(userId, { genre, grade, keyword, offset = 0, limit 
   return { totalItems, items };
 }
 
+// 우주: 필터별 교집합 카운트 계산
+async function countGalleryFilters(userId, { genre, grade, keyword }) {
+  const whereClause = {
+    userCards: {
+      some: { ownerId: userId, status: 'ACTIVE' }
+    }
+  };
+
+  if (grade) {
+    whereClause.grade = { id: Number(grade) };
+  }
+
+  if (genre) {
+    whereClause.genre = { id: Number(genre) };
+  }
+
+  if (keyword) {
+    whereClause.name = { contains: keyword, mode: 'insensitive' };
+  }
+
+  // 등급 카운트
+  const gradeCounts = await prisma.photoCard.groupBy({
+    by: ['gradeId'],
+    where: whereClause,
+    _count: { _all: true }
+  });
+
+  // 장르 카운트
+  const genreCounts = await prisma.photoCard.groupBy({
+    by: ['genreId'],
+    where: whereClause,
+    _count: { _all: true }
+  });
+
+  return {
+    grade: gradeCounts.map(item => ({
+      gradeId: item.gradeId,
+      count: item._count._all
+    })),
+    genre: genreCounts.map(item => ({
+      genreId: item.genreId,
+      count: item._count._all
+    }))
+  };
+}
 // ------------ //
 // 판매 중인 카드 //
 // ----------- //
@@ -469,7 +514,8 @@ const usersRepository = {
   findMySales,
   getMonthlyCardCount,
   getCardsCount,
-  getUserPhotoCardDetail
+  getUserPhotoCardDetail,
+  countGalleryFilters
 };
 
 export default usersRepository;
