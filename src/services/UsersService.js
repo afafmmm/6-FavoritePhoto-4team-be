@@ -113,7 +113,11 @@ async function getMySales(userId, query) {
     keyword,
     saleType,
     sale,
+<<<<<<< HEAD
     offset,
+=======
+    offset: offset,
+>>>>>>> 0a1fbae (fix: 매개변수 이름 변경22)
     limit: itemsPerPage
   });
 
