@@ -90,9 +90,10 @@ async function getMySales(userId, query) {
   const grade = query.grade ? Number(query.grade) : null;
   const keyword = query.keyword || null;
   const saleType = query.saleType || null;
-  const saleStatus = query.saleStatus || null;
+  const sale = query.sale || null;
   const page = query.page ? Math.max(1, parseInt(query.page, 10)) : 1;
   const size = query.size || 'md';
+  const withCounts = true; // 우주: counts 요청 여부
 
   // 2. 검증
   if (genre && (genre < 1 || genre > 4)) {
@@ -106,24 +107,55 @@ async function getMySales(userId, query) {
   const offset = (page - 1) * itemsPerPage;
 
   // 4. 데이터 조회
-  const { totalItems, items } = await usersRepository.findMySales(userId, {
+  const salesPromise = usersRepository.findMySales(userId, {
     genre,
     grade,
     keyword,
     saleType,
-    saleStatus,
-    offset: offset,
+    sale,
+    offset,
     limit: itemsPerPage
   });
 
-  // 5. 페이지네이션 갱신
-  const pagination = calculatePaginationDetails({
-    totalItems,
-    currentPage: page,
-    size
-  });
+  if (withCounts) {
+    const [sales, counts] = await Promise.all([
+      salesPromise,
+      usersRepository.countSalesFilters(userId, {
+        genre,
+        grade,
+        keyword,
+        saleType,
+        sale
+      }) // 우주: 필터 카운트 병렬 조회
+    ]);
 
-  return { items, pagination };
+    // 5. 페이지네이션 갱신
+    const pagination = calculatePaginationDetails({
+      totalItems: sales.totalItems,
+      currentPage: page,
+      size
+    });
+
+    return {
+      items: sales.items,
+      pagination,
+      counts // 우주: 프론트에서 필터 갯수 렌더링할 수 있도록 추가
+    };
+  } else {
+    const sales = await salesPromise;
+
+    // 5. 페이지네이션 갱신
+    const pagination = calculatePaginationDetails({
+      totalItems: sales.totalItems,
+      currentPage: page,
+      size
+    });
+
+    return {
+      items: sales.items,
+      pagination
+    };
+  }
 }
 
 // GET: 사용자 1人

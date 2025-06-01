@@ -95,7 +95,7 @@ usersController.get(
   async (req, res, next) => {
     try {
       const userId = req.user.id;
-      req.query.withCounts = 'true'; 
+      req.query.withCounts = 'true'; //우주주
       const result = await usersService.getMyGallery(userId, req.query);
       res.json(result);
     } catch (err) {
@@ -111,6 +111,7 @@ usersController.get(
   async (req, res, next) => {
     try {
       const userId = req.user.id;
+      req.query.withCounts = 'true';
       const result = await usersService.getMySales(userId, req.query);
       res.json(result);
     } catch (err) {
