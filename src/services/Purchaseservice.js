@@ -3,7 +3,7 @@ import prisma from '../config/prisma.js';
 import * as PointService from './PointService.js';
 import Notification from '../services/NotificationsService.js';
 
-export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
+export async function purchaseCards(saleId, buyerId, purchaseQuantity, io = null) {
   return await prisma.$transaction(async (tx) => {
     const sale = await purchaseRepository.findPurchaseSaleWithUserCards(saleId);
 
