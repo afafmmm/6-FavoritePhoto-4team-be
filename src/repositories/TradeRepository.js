@@ -124,12 +124,15 @@ async function acceptTradeRequest(tradeRequestId, io = null) {
 
     // 교환 성사 알림 생성
     try {
-      const genreName = tradeRequest.photoCard.genre?.name ? `[${tradeRequest.photoCard.genre.name}] ` : '';
+      const cardGrade = tradeRequest.photoCard.gradeId
+        ? (await tx.cardGrade.findUnique({ where: { id: tradeRequest.photoCard.gradeId } }))?.name
+        : '';
+      const gradeText = cardGrade ? `[${cardGrade}] ` : '';
       const cardName = tradeRequest.photoCard.name || '포토카드';
       const ownerName = tradeRequest.owner?.nickname || '판매자';
       const applicantName = tradeRequest.applicant?.nickname || '신청자';
-      const messageToApplicant = `${ownerName}님과의 [${genreName} | ${cardName}] 포토카드 교환이 성사되었습니다.`;
-      const messageToOwner = `${applicantName}님과의 [${genreName} | ${cardName}] 포토카드 교환이 성사되었습니다.`;
+      const messageToApplicant = `${ownerName}님과의 [${gradeText} | ${cardName}] 포토카드 교환이 성사되었습니다.`;
+      const messageToOwner = `${applicantName}님과의 [${gradeText} | ${cardName}] 포토카드 교환이 성사되었습니다.`;
       await Notification.createNotification({ userId: tradeRequest.applicantId, message: messageToApplicant }, io);
       await Notification.createNotification({ userId: tradeRequest.ownerId, message: messageToOwner }, io);
     } catch (e) {
