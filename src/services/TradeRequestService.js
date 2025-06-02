@@ -62,16 +62,27 @@ async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, des
   });
 
   //거래 요청 생성 최종 단계(알림생성)
-  const photoCardData = targetSale.photoCard;
-  const cardGrade = photoCardData?.grade?.name || '등급 불러오기 실패';
-  const Message = `${applicantId}님이 [${cardGrade} | ${photoCardData.name}]의 포토카드 교환을 제안했습니다.`;
-  await Notification.createNotification(
-    {
-      userId: ownerId,
-      message: Message
-    },
-    io
-  );
+  try {
+    const photoCardData = targetSale.photoCard;
+    // applicantId로 사용자 닉네임 조회
+    const applicantUser = await prisma.user.findUnique({
+      where: { id: applicantId },
+      select: { nickname: true }
+    });
+    const applicantName = applicantUser?.nickname || `닉네임 불러오기 실패`;
+    const cardGrade = photoCardData?.grade?.name || '등급 불러오기 실패';
+    const Message = `${applicantName}님이 [${cardGrade} | ${photoCardData.name}]의 포토카드 교환을 제안했습니다.`;
+    await Notification.createNotification(
+      {
+        userId: ownerId,
+        message: Message
+      },
+      io
+    );
+  } catch (e) {
+    // 오류 발생 시 무시
+    console.log('알림 생성 중 오류 발생:', e.message);
+  }
   return tradeRequest;
 }
 
