@@ -16,11 +16,12 @@ purchaseRouter.post(
         return res.status(400).json({ message: '구매 수량을 올바르게 입력해주세요.' });
       }
 
-      const purchaseResult = await purchaseService.purchaseCards(saleId, buyerId, quantity);
+      const io = req.app.get('io');
+      const purchaseResult = await purchaseService.purchaseCards(saleId, buyerId, quantity, io);
 
       return res.status(200).json(purchaseResult);
     } catch (error) {
-      next(error);  
+      next(error);
     }
   }
 );
