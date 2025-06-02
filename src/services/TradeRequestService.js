@@ -1,7 +1,7 @@
 import prisma from '../config/prisma.js';
 import tradeRequestRepository from '../repositories/TradeRequestRepository.js';
 
-async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, description }) {
+async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, description, io = null }) {
   // sale 조회 (photoCardId, sellerId 포함)
   const targetSale = await prisma.sale.findUnique({
     where: { id: saleId },
@@ -57,6 +57,21 @@ async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, des
     return newTradeRequest;
   });
 
+  //거래 요청 생성 최종 단계(알림생성)
+  const photoCardData = targetSale.photoCard;
+  let cardGrade = '등급 불러오기 실패';
+  if (photoCardData?.gradeId) {
+    const grade = await tx.cardGrade.findUnique({ where: { id: photoCardData.gradeId } });
+    cardGrade = grade?.name || cardGrade;
+  }
+  const Message = `${applicantId}님이 [${cardGrade} | ${photoCardData.name}]의 포토카드 교환을 제안했습니다.`;
+  await Notification.createNotification(
+    {
+      userId: ownerId,
+      message: Message
+    },
+    io
+  );
   return tradeRequest;
 }
 
