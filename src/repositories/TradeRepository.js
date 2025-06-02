@@ -1,5 +1,5 @@
 import prisma from '../config/prisma.js';
-import Notification from './NotificationsService.js';
+import Notification from '../services/NotificationsService.js';
 
 async function findTradeRequestsBySaleId(saleId) {
   const sale = await prisma.sale.findUnique({
