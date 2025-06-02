@@ -1,5 +1,6 @@
 import prisma from '../config/prisma.js';
 import tradeRequestRepository from '../repositories/TradeRequestRepository.js';
+import Notification from './NotificationsService.js';
 
 async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, description, io = null }) {
   // sale 조회 (photoCardId, sellerId 포함)
