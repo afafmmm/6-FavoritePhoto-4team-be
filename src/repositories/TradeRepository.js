@@ -1,4 +1,5 @@
 import prisma from '../config/prisma.js';
+import Notification from './NotificationsService.js';
 
 async function findTradeRequestsBySaleId(saleId) {
   const sale = await prisma.sale.findUnique({
@@ -49,13 +50,17 @@ async function findTradeRequestsBySaleId(saleId) {
   });
 }
 
-async function acceptTradeRequest(tradeRequestId) {
+async function acceptTradeRequest(tradeRequestId, io = null) {
   return prisma.$transaction(async (tx) => {
     const tradeRequest = await tx.tradeRequest.findUnique({
       where: { id: tradeRequestId },
       include: {
         tradeRequestUserCards: true,
-        photoCard: true
+        photoCard: {
+          include: { genre: true }
+        },
+        owner: { select: { nickname: true } },
+        applicant: { select: { nickname: true } }
       }
     });
 
@@ -116,6 +121,20 @@ async function acceptTradeRequest(tradeRequestId) {
       where: { id: tradeRequestId },
       data: { tradeStatus: 'ACCEPTED' }
     });
+
+    // 교환 성사 알림 생성
+    try {
+      const genreName = tradeRequest.photoCard.genre?.name ? `[${tradeRequest.photoCard.genre.name}] ` : '';
+      const cardName = tradeRequest.photoCard.name || '포토카드';
+      const ownerName = tradeRequest.owner?.nickname || '판매자';
+      const applicantName = tradeRequest.applicant?.nickname || '신청자';
+      const messageToApplicant = `${ownerName}님과의 [${genreName} | ${cardName}] 포토카드 교환이 성사되었습니다.`;
+      const messageToOwner = `${applicantName}님과의 [${genreName} | ${cardName}] 포토카드 교환이 성사되었습니다.`;
+      await Notification.createNotification({ userId: tradeRequest.applicantId, message: messageToApplicant }, io);
+      await Notification.createNotification({ userId: tradeRequest.ownerId, message: messageToOwner }, io);
+    } catch (e) {
+      console.log('교환 성사 알림 생성 중 오류:', e.message);
+    }
 
     return { message: '교환이 완료되었습니다.' };
   });
