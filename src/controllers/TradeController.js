@@ -26,7 +26,8 @@ tradeController.patch(
   async (req, res, next) => {
     try {
       const tradeRequestId = Number(req.params.id);
-      const result = await TradeService.acceptTradeRequest(tradeRequestId);
+      const io = req.app.get('io');
+      const result = await TradeService.acceptTradeRequest(tradeRequestId, io);
       res.status(200).json(result);
     } catch (err) {
       next(err);
@@ -42,8 +43,8 @@ tradeController.patch(
     try {
       const tradeRequestId = Number(req.params.id);
       const userId = req.user.id;
-
-      const result = await TradeService.rejectTradeRequest(tradeRequestId, userId);
+      const io = req.app.get('io');
+      const result = await TradeService.rejectTradeRequest(tradeRequestId, userId, io);
       res.status(200).json(result);
     } catch (err) {
       next(err);
