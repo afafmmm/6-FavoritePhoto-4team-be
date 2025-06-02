@@ -87,19 +87,30 @@ async function countFilters({ grade, genre, sale, keyword }) {
 
   const photoCardConditions = {};
 
-  // grade
+  // grade 필터
   if (grade?.length) {
-    const gradeNames = grade.map(Number).map(getGradeFilter).map(obj => obj.name);
+    const gradeNames = grade
+      .map(Number)
+      .map(getGradeFilter)
+      .map((obj) => obj.name);
     photoCardConditions.grade = { name: { in: gradeNames } };
   }
 
-  // genre
+  // genre 필터
   if (genre?.length) {
-    const genreNames = genre.map(Number).map(getGenreFilter).map(obj => obj.name);
+    const genreNames = genre
+      .map(Number)
+      .map(getGenreFilter)
+      .map((obj) => obj.name);
     photoCardConditions.genre = { name: { in: genreNames } };
   }
 
-  // keyword
+  // photoCardConditions에 조건이 있으면 AND에 추가
+  if (Object.keys(photoCardConditions).length > 0) {
+    where.AND.push({ photoCard: photoCardConditions });
+  }
+
+  // keyword 필터
   if (keyword) {
     where.AND.push({
       OR: [
@@ -109,32 +120,52 @@ async function countFilters({ grade, genre, sale, keyword }) {
     });
   }
 
-  // status
+  // sale (status) 필터
   if (sale?.length) {
     const statusFilter = getStatusFilter(sale);
     where.AND.push({ status: { in: statusFilter } });
   }
 
-  // photoCard 조건 병합
-  if (Object.keys(photoCardConditions).length > 0) {
-    where.AND.push({ photoCard: photoCardConditions });
+  // 여기서부터는 필터링된 판매 항목 조회 및 집계 로직
+
+  // 1. 필터링된 판매 항목에서 photoCard의 gradeId와 genreId 가져오기
+  const filteredSales = await prisma.sale.findMany({
+    where,
+    select: {
+      photoCard: {
+        select: {
+          gradeId: true,
+          genreId: true
+        }
+      }
+    }
+  });
+
+  // 2. 클라이언트에서 groupBy 처리
+  const gradeCountMap = {};
+  const genreCountMap = {};
+
+  for (const sale of filteredSales) {
+    const { gradeId, genreId } = sale.photoCard;
+    if (gradeId != null) {
+      gradeCountMap[gradeId] = (gradeCountMap[gradeId] || 0) + 1;
+    }
+    if (genreId != null) {
+      genreCountMap[genreId] = (genreCountMap[genreId] || 0) + 1;
+    }
   }
 
-  // 등급 count
-  const gradeCounts = await prisma.sale.groupBy({
-    by: ['cardGradeId'],
-    _count: { _all: true },
-    where
-  });
+  const gradeCounts = Object.entries(gradeCountMap).map(([gradeId, count]) => ({
+    gradeId: Number(gradeId),
+    count
+  }));
 
-  // 장르 count
-  const genreCounts = await prisma.sale.groupBy({
-    by: ['cardGenreId'],
-    _count: { _all: true },
-    where
-  });
+  const genreCounts = Object.entries(genreCountMap).map(([genreId, count]) => ({
+    genreId: Number(genreId),
+    count
+  }));
 
-  // 상태 count
+  // 3. 상태 count는 그대로 Prisma groupBy 사용
   const saleCounts = await prisma.sale.groupBy({
     by: ['status'],
     _count: { _all: true },
@@ -142,22 +173,14 @@ async function countFilters({ grade, genre, sale, keyword }) {
   });
 
   return {
-    grade: gradeCounts.map(item => ({
-      gradeId: item.cardGradeId,
-      count: item._count._all
-    })),
-    genre: genreCounts.map(item => ({
-      genreId: item.cardGenreId,
-      count: item._count._all
-    })),
-    sale: saleCounts.map(item => ({
+    grade: gradeCounts,
+    genre: genreCounts,
+    sale: saleCounts.map((item) => ({
       status: item.status,
       count: item._count._all
     }))
   };
 }
-
-
 
 
 async function findSaleCardById(id) {
