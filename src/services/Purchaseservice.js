@@ -66,7 +66,7 @@ export async function purchaseCards(saleId, buyerId, purchaseQuantity, io = null
     );
     await Promise.all(promises);
 
-    // 판매 수량 갱신
+    // 판매 수량 갱신 //솔드 아웃 처리 || 0인지 아닌지 판단 후 상태 변환
     const newSaleQuantity = sale.saleQuantity - purchaseQuantity;
     await purchaseRepository.updatePurchaseSaleQuantityAndStatus(
       saleId,

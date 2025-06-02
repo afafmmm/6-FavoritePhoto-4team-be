@@ -13,13 +13,17 @@ tradeRequestController.post(
       const { saleId } = req.params;
       const applicantId = req.user.id;
       const { offeredUserCardIds, description } = req.body;
+      const io = req.app.get('io');
 
-      const result = await tradeRequestService.createTradeRequest({
-        saleId: Number(saleId),
-        applicantId,
-        offeredUserCardIds,
-        description
-      });
+      const result = await tradeRequestService.createTradeRequest(
+        {
+          saleId: Number(saleId),
+          applicantId,
+          offeredUserCardIds,
+          description
+        },
+        io
+      );
 
       res.status(201).json(result);
     } catch (err) {
@@ -27,7 +31,6 @@ tradeRequestController.post(
     }
   }
 );
-
 
 //취소하기
 tradeRequestController.patch(
@@ -66,6 +69,5 @@ tradeRequestController.get(
     }
   }
 );
-
 
 export default tradeRequestController;
