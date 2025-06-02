@@ -6,7 +6,11 @@ async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, des
   const targetSale = await prisma.sale.findUnique({
     where: { id: saleId },
     include: {
-      photoCard: true
+      photoCard: {
+        include: {
+          grade: true
+        }
+      }
     }
   });
 
@@ -59,11 +63,7 @@ async function createTradeRequest({ saleId, applicantId, offeredUserCardIds, des
 
   //거래 요청 생성 최종 단계(알림생성)
   const photoCardData = targetSale.photoCard;
-  let cardGrade = '등급 불러오기 실패';
-  if (photoCardData?.gradeId) {
-    const grade = await tx.cardGrade.findUnique({ where: { id: photoCardData.gradeId } });
-    cardGrade = grade?.name || cardGrade;
-  }
+  const cardGrade = photoCardData?.grade?.name || '등급 불러오기 실패';
   const Message = `${applicantId}님이 [${cardGrade} | ${photoCardData.name}]의 포토카드 교환을 제안했습니다.`;
   await Notification.createNotification(
     {
