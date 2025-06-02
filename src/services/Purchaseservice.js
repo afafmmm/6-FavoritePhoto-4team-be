@@ -36,7 +36,7 @@ export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
     //   data: { points: { decrement: totalPrice } }
     // });
 
-    await PointService.updatePoint(buyerId, -totalPrice, null);
+    await PointService.updatePoint(buyerId, -totalPrice, io);
 
     // 판매자 포인트 지급 - upsert 대신 findFirst + update/create
     const existingSellerPoint = await tx.userPoint.findFirst({
@@ -48,7 +48,7 @@ export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
       //   where: { id: existingSellerPoint.id },
       //   data: { points: { increment: totalPrice } }
       // });
-      await PointService.updatePoint(sale.sellerId, totalPrice, null);
+      await PointService.updatePoint(sale.sellerId, totalPrice, io);
     } else {
       await tx.userPoint.create({
         data: {
@@ -89,15 +89,21 @@ export async function purchaseCards(saleId, buyerId, purchaseQuantity) {
     }
     const cardName = photoCard?.name || '카드 이름 불러오기 실패';
     const buyerMessage = `[${cardGrade} | ${cardName}] ${purchaseQuantity}장을 성공적으로 구매했습니다.`;
-    await Notification.createNotification({
-      userId: buyerId,
-      message: buyerMessage
-    });
+    await Notification.createNotification(
+      {
+        userId: buyerId,
+        message: buyerMessage
+      },
+      io
+    );
     const sellerMessage = `[${cardGrade} | ${cardName}] ${purchaseQuantity}장이 판매되었습니다.`;
-    await Notification.createNotification({
-      userId: sale.sellerId,
-      message: sellerMessage
-    });
+    await Notification.createNotification(
+      {
+        userId: sale.sellerId,
+        message: sellerMessage
+      },
+      io
+    );
 
     return {
       message: '구매 완료',
