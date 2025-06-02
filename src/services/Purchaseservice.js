@@ -105,6 +105,18 @@ export async function purchaseCards(saleId, buyerId, purchaseQuantity, io = null
       io
     );
 
+    // 품절 알림
+    if (newSaleQuantity === 0) {
+      const soldoutMessage = `[${cardGrade} | ${cardName}]이 품절되었습니다.`;
+      await Notification.createNotification(
+        {
+          userId: sale.sellerId,
+          message: soldoutMessage
+        },
+        io
+      );
+    }
+
     return {
       message: '구매 완료',
       saleId,
