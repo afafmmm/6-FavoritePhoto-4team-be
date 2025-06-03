@@ -1,7 +1,7 @@
 # [4팀] 최애의 포토
 
 <p align="center">
-<img src="https://github.com/afafmmm/6-FavoritePhoto-4team-fe/blob/dev/public/contents.png" alt="배경 이미지"/>
+	<img src="https://private-user-images.githubusercontent.com/49442904/450694275-8edeaded-c705-45d5-9334-a232067d7092.jpg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDg5NDQ5MjMsIm5iZiI6MTc0ODk0NDYyMywicGF0aCI6Ii80OTQ0MjkwNC80NTA2OTQyNzUtOGVkZWFkZWQtYzcwNS00NWQ1LTkzMzQtYTIzMjA2N2Q3MDkyLmpwZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA2MDMlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNjAzVDA5NTcwM1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWI2NDg4MjA0NmE5MmFjMzUxZmNiZDBkMTk4MzJkZmZkNDRiY2I4MjM3YmFiOWYzN2Q4OTdjNGMyZTg1NjQ5NGQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.VjpXWdGcUsW1W_Z_oB6SvXYxImJC4qUMseN20vC-Q6M" alt="메인 사진" />
 </p>
 <br />
 
@@ -38,6 +38,7 @@
 
 ## 💾 시스템 아키텍쳐
 
+(지수 님이 넣어주기로 했음)
 
 <br />
 
@@ -60,6 +61,42 @@
 
 ## 👫 역할 소개
 
+### ✨ 김다은
+
+
+
+### ✨ 김우주
+
+
+
+### ✨ 양성경
+
+- 사용자 조회
+- 카드 생성 페이지 api
+	- 장르/등급 조회
+	- (월별) 카드 생성 횟수 조회
+	- 카드 생성
+- 마이 갤러리 페이지 api
+  - 생성한 카드 개수 조회
+  - 페이지 조회
+- 나의 포토카드 판매 페이지
+  - 생성한 카드 개수 조회 (위와 같음)
+  - 페이지 조회
+
+(표로 바꿀 것임)
+
+
+### ✨ 이지수
+
+
+
+### ✨ 장원빈
+
+
+
+
+### ✨ 홍성훈
+
 <br />
 
-## 💘 트러블 슈팅
+## 💣 트러블 슈팅
