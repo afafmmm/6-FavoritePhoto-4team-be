@@ -6,15 +6,17 @@ const storeController = express.Router();
 
 storeController.get('/', async (req, res, next) => {
   try {
-    console.log('🔥SERVER');
-    const { grade, genre, sale, orderBy, keyword, withCounts } = req.query;
+    console.log('🔥Sell Data');
+    const { grade, genre, sale, orderBy, keyword, withCounts, page, limit } = req.query;
     const result = await storeService.getFilteredSalesWithCounts({
       grade,
       genre,
       sale,
       orderBy,
       keyword,
-      withCounts: withCounts === 'true'
+      withCounts: withCounts === 'true',
+      page,
+      limit
     });
 
     res.json(result);
