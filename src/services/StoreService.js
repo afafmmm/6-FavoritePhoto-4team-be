@@ -10,29 +10,36 @@ function parseFilterValue(value) {
   return [String(value)];
 }
 
-const getFilteredSalesWithCounts = async ({ grade, genre, sale, orderBy, keyword, withCounts = false }) => {
+const getFilteredSalesWithCounts = async ({
+  grade, genre, sale, orderBy, keyword, withCounts = false, page = 1, limit = 12
+}) => {
   const gradeFilter = parseFilterValue(grade);
   const genreFilter = parseFilterValue(genre);
-
   const saleFilterRaw = parseFilterValue(sale);
   const saleFilter = getStatusFilter(saleFilterRaw);
-  console.log('saleFilter after getStatusFilter:', saleFilter);
 
   const salesPromise = storeRepository.findSalesByFilters({
     grade: gradeFilter,
     genre: genreFilter,
     sale: saleFilter,
     orderBy,
-    keyword
+    keyword,
+    page: Number(page),
+    limit: Number(limit)
   });
-if (withCounts) {
-  const [sales, counts] = await Promise.all([
-    salesPromise,
-    storeRepository.countFilters({ grade: gradeFilter, genre: genreFilter, sale: saleFilterRaw, keyword })
-  ]);
 
-  return { sales, counts };
-}
+  if (withCounts) {
+    const [sales, counts] = await Promise.all([
+      salesPromise,
+      storeRepository.countFilters({
+        grade: gradeFilter,
+        genre: genreFilter,
+        sale: saleFilterRaw,
+        keyword
+      })
+    ]);
+    return { sales, counts };
+  }
 
   const sales = await salesPromise;
   return { sales };

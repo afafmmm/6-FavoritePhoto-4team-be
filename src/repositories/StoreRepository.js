@@ -2,7 +2,15 @@ import prisma from '../config/prisma.js';
 import getSort from '../utils/sort.js';
 import { getGenreFilter, getGradeFilter, getStatusFilter } from '../utils/filter.js';
 
-const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', sale, keyword }) => {
+const findSalesByFilters = async ({
+  grade,
+  genre,
+  orderBy = '낮은 가격순',
+  sale,
+  keyword,
+  page = 1,
+  limit = 12
+}) => {
   const where = {
     AND: []
   };
@@ -39,8 +47,6 @@ const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', 
       OR: [
         { photoCard: { name: { contains: keyword, mode: 'insensitive' } } },
         { seller: { nickname: { contains: keyword, mode: 'insensitive' } } }
-        // 필요하면 설명(description)도 추가 가능
-        // { photoCard: { description: { contains: keyword, mode: 'insensitive' } } }
       ]
     });
   }
@@ -57,6 +63,10 @@ const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', 
   if (Object.keys(photoCardConditions).length > 0) {
     where.AND.push({ photoCard: photoCardConditions });
   }
+
+  // ✅ 페이지네이션 계산
+  const skip = (page - 1) * limit;
+  const take = limit;
 
   return await prisma.sale.findMany({
     where,
@@ -76,7 +86,9 @@ const findSalesByFilters = async ({ grade, genre, orderBy = '낮은 가격순', 
       },
       cardGrade: true,
       cardGenre: true
-    }
+    },
+    skip,
+    take
   });
 };
 
