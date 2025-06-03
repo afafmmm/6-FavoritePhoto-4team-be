@@ -8,7 +8,7 @@ if (!JWT_SECRET) {
   throw new Error('JWT_SECRET is not defined in environment variables. Please set it.');
 }
 
-const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '15m';
+const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '60m';
 const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || '7d';
 
 async function signUpUser({ nickname, email, password, passwordConfirmation }) {
