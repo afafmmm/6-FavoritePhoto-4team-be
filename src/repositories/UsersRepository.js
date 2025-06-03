@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import countCardsByGrade from '../utils/countByGrade.js';
 
-// 사용자 id 찾기
+// ✅ 사용자 id 찾기
 async function findById(id) {
   return await prisma.user.findUnique({
     where: { id },
@@ -17,21 +17,21 @@ async function findById(id) {
   });
 }
 
-// 카드 장르 찾기
+// ✅ 카드 장르 찾기
 async function findGenre() {
   return await prisma.cardGenre.findMany({
     select: { id: true, name: true }
   });
 }
 
-// 카드 등급 찾기
+// ✅ 카드 등급 찾기
 async function findGrade() {
   return await prisma.cardGrade.findMany({
     select: { id: true, name: true }
   });
 }
 
-// 사용자별 카드 개수 세기
+// ✅ 사용자별 카드 개수 세기
 async function getCardsCount(userId) {
   // 1. 일단 userCard에서 등급별 전체 개수를 불러옴
   const allCards = await prisma.userCard.findMany({
@@ -58,7 +58,7 @@ async function getCardsCount(userId) {
   };
 }
 
-// POST
+// ✅ POST
 async function create(query) {
   const { name, grade, genre, description, volumn, price, image, creatorId } = query;
 
@@ -106,7 +106,7 @@ async function create(query) {
   return photoCard;
 }
 
-// 카드 생성 횟수 (월별)
+// ✅ 카드 생성 횟수 (월별)
 async function getMonthlyCardCount(userId) {
   const now = new Date();
 
@@ -120,7 +120,7 @@ async function getMonthlyCardCount(userId) {
 
 // ----------- //
 
-// GET: 소유한 카드(거래·교환x)
+// ✅ GET: 소유한 카드(거래·교환x)
 async function findMyGallery(userId, { genre, grade, keyword, offset = 0, limit = 10 }) {
   // 1. query 문자열 조건절
   const whereClause = {
@@ -129,15 +129,9 @@ async function findMyGallery(userId, { genre, grade, keyword, offset = 0, limit 
     }
   };
 
-  if (grade) {
-    whereClause.grade = { id: Number(grade) };
-  }
-  if (genre) {
-    whereClause.genre = { id: Number(genre) };
-  }
-  if (keyword) {
-    whereClause.name = { contains: keyword, mode: 'insensitive' };
-  }
+  if (grade) whereClause.grade = { id: Number(grade) };
+  if (genre) whereClause.genre = { id: Number(genre) };
+  if (keyword) whereClause.name = { contains: keyword, mode: 'insensitive' };
 
   // 2. 전체 카드 개수 (count 쿼리)
   const totalItems = await prisma.photoCard.count({
@@ -215,10 +209,8 @@ async function countGalleryFilters(userId, { genre, grade, keyword }) {
     }))
   };
 }
-// ------------ //
-// 판매 중인 카드 //
-// ----------- //
 
+// ✅ 판매 중인 카드
 async function findMySales(
   userId,
   {
@@ -283,6 +275,7 @@ async function findMySales(
 
       totalSalesCards = await prisma.sale.count({ where: salesWhereClause });
 
+      console.log('salesWhereClause: ', salesWhereClause);
       sales = await prisma.sale.findMany({
         select: {
           id: true,
@@ -471,6 +464,7 @@ async function findMySales(
   return { totalItems, items: paginatedItems };
 }
 
+// Mobile 화면 필터
 async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale }) {
   const filterKeyword = keyword ? { name: { contains: keyword, mode: 'insensitive' } } : {};
 
@@ -532,7 +526,7 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
 
   const tradePhotoCards = await prisma.photoCard.findMany({
     where: {
-      id: { in: tradePhotoCardCounts.map(t => t.photoCardId) }
+      id: { in: tradePhotoCardCounts.map((t) => t.photoCardId) }
     },
     select: { id: true, gradeId: true, genreId: true }
   });
@@ -541,7 +535,7 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
   const tradeGenreMap = new Map();
 
   for (const card of tradePhotoCards) {
-    const match = tradePhotoCardCounts.find(t => t.photoCardId === card.id);
+    const match = tradePhotoCardCounts.find((t) => t.photoCardId === card.id);
     if (!match) continue;
 
     if (card.gradeId) {
@@ -577,11 +571,10 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
   return {
     grade: Array.from(combinedGradeCounts.entries()).map(([gradeId, count]) => ({ gradeId, count })),
     genre: Array.from(combinedGenreCounts.entries()).map(([genreId, count]) => ({ genreId, count })),
-    sale: saleStatusCounts.map(item => ({ status: item.status, count: item._count._all })),
-    saleType: tradeStatusCounts.map(item => ({ saleType: item.tradeStatus, count: item._count._all })) // 여기서 saleType은 tradeStatus임
+    sale: saleStatusCounts.map((item) => ({ status: item.status, count: item._count._all })),
+    saleType: tradeStatusCounts.map((item) => ({ saleType: item.tradeStatus, count: item._count._all })) // 여기서 saleType은 tradeStatus임
   };
 }
-
 
 //--특정 유저의 포토카드 상세 (우주)
 async function getUserPhotoCardDetail(userId, photoCardId) {

@@ -14,7 +14,7 @@ export default function getSort(model, order = '낮은 가격순') {
 
   const sort = modelType[model];
 
-  if (!sort) throw new Error("'PhotoCard'와 'UserCard' 中 택1");
+  if (!sort) throw new Error("'initialCard'와 'card' 中 택1");
 
   if (!sort[order]) throw new Error("'최신순', '높은 가격순', '낮은 가격순' 中 택1");
 

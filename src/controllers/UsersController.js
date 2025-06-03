@@ -5,7 +5,7 @@ import { validatePostCard } from '../utils/validators.js';
 
 const usersController = express.Router();
 
-// GET: 등급 + 장르 불러오기
+// ✅ GET: 등급 + 장르 불러오기
 usersController.get('/card-meta', async (req, res, next) => {
   try {
     const metaData = await usersService.getCardMetaData();
@@ -15,7 +15,7 @@ usersController.get('/card-meta', async (req, res, next) => {
   }
 });
 
-// GET: 월별 생성 횟수
+// ✅ GET: 월별 생성 횟수
 usersController.get(
   '/monthly-post-count',
   passport.authenticate('access-token', { session: false, failWithError: true }),
@@ -30,7 +30,7 @@ usersController.get(
   }
 );
 
-// GET: 카드 개수 (등급별)
+// ✅ GET: 카드 개수 (등급별)
 usersController.get(
   '/cards-count',
   passport.authenticate('access-token', { session: false, failWithError: true }),
@@ -45,7 +45,7 @@ usersController.get(
   }
 );
 
-// POST: 포토카드 생성 (Cloudinary URL 방식)
+// ✅ POST: 포토카드 생성 (Cloudinary URL 방식)
 usersController.post(
   '/post',
   passport.authenticate('access-token', { session: false, failWithError: true }),
@@ -88,7 +88,7 @@ usersController.post(
   }
 );
 
-// GET: 내 갤러리 조회
+// ✅ GET: 내 갤러리 조회
 usersController.get(
   '/gallery',
   passport.authenticate('access-token', { session: false, failWithError: true }),
@@ -104,7 +104,7 @@ usersController.get(
   }
 );
 
-// GET: 내 판매 카드 조회
+// ✅ GET: 내 판매 카드 조회
 usersController.get(
   '/cards-on-sale',
   passport.authenticate('access-token', { session: false, failWithError: true }),
@@ -120,7 +120,7 @@ usersController.get(
   }
 );
 
-// GET: 사용자 1人 정보 조회
+// ✅ GET: 사용자 1人 정보 조회
 usersController.get(
   '/',
   passport.authenticate('access-token', { session: false, failWithError: true }),
