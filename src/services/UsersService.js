@@ -1,24 +1,24 @@
 import usersRepository from '../repositories/UsersRepository.js';
 import { calculatePaginationDetails, getItemsPerPage } from '../utils/pagination.js';
 
-// 카드 장르와 등급 불러오기
+// ✅ 카드 장르와 등급 불러오기
 async function getCardMetaData() {
   const genres = await usersRepository.findGenre();
   const grades = await usersRepository.findGrade();
   return { genres, grades };
 }
 
-// 카드 생성 횟수 불러오기
+// ✅ 카드 생성 횟수 불러오기
 async function getCardCreationCount(userId) {
   return await usersRepository.getMonthlyCardCount(userId);
 }
 
-// POST
+// ✅ POST
 async function create(query) {
   return await usersRepository.create(query);
 }
 
-// GET: My Gallery
+// ✅ GET: My Gallery
 async function getMyGallery(userId, query) {
   // 1. 쿼리 문자열 검증
   const genre = query.genre ? Number(query.genre) : null;
@@ -83,7 +83,7 @@ async function getMyGallery(userId, query) {
   }
 }
 
-// GET: 내 판매 카드
+// ✅ GET: 내 판매 카드
 async function getMySales(userId, query) {
   // 1. 쿼리 문자열 검증
   const genre = query.genre ? Number(query.genre) : null;
