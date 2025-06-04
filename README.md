@@ -89,31 +89,130 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 
 ### ✨ 김다은
 
+<table>
+	<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<t align="left"h>제목</th>
+		<td>내용</td>
+	</tr>
+</table>
 
 
 ### ✨ 김우주
 
+<table>
+	<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<t align="left"h>제목</th>
+		<td>내용</td>
+	</tr>
+</table>
 
 
 ### ✨ 양성경
 
 <table>
 	<tr>
-		<th>제목</th>
-		<td>내용</td>
+		<th align="left">사용자 조회 api</th>
+		<td>사용자 1인 조회</td>
+	</tr>
+		<tr>
+		<th align="left">마이 갤러리 페이지 api</th>
+		<td>생성한 카드 개수 조회, 페이지 조회</td>
+	</tr>
+		<tr>
+		<th align="left">나의 포토카드 판매 페이지</th>
+		<td>생성한 카드 개수 조회 (위와 같음), 페이지 조회</td>
 	</tr>
 </table>
 
 ### ✨ 이지수
 
+<table>
+	<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<t align="left"h>제목</th>
+		<td>내용</td>
+	</tr>
+</table>
 
 
 ### ✨ 장원빈
 
+<table>
+	<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<t align="left"h>제목</th>
+		<td>내용</td>
+	</tr>
+</table>
 
 
 
 ### ✨ 홍성훈
+
+<table>
+	<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<th align="left">제목</th>
+		<td>내용</td>
+	</tr>
+		<tr>
+		<t align="left"h>제목</th>
+		<td>내용</td>
+	</tr>
+</table>
 
 <br />
 
