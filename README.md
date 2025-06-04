@@ -171,3 +171,56 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 <br />
 
 ## 💣 트러블 슈팅
+<a name="troubleshooting"></a>
+<details>
+<summary>🖼️ 이미지 업로드 방식 변경 (Multer → Cloudinary)</summary>
+
+<br>
+
+### 🔧 문제 상황
+- 기존에는 **Multer**를 사용하여 이미지를 서버의 로컬 디렉토리에 저장함.
+- **Render**에서 서버를 재배포하면 로컬 저장소가 초기화되어 이미지가 모두 삭제되는 문제 발생.
+
+### 📌 원인 파악
+- Render와 같은 PaaS 환경은 **비영구적 파일 시스템 (ephemeral)**을 제공함.
+- Multer는 기본적으로 서버의 `uploads/` 폴더 등에 이미지를 저장 → 서버 재시작 시 삭제됨.
+- 이미지 손실로 인해 서비스 품질에 **심각한 영향** 발생 가능.
+
+### 🛠️ 해결 방법
+- **Cloudinary**와 같은 외부 이미지 호스팅 서비스를 활용하여 문제 해결.
+- 프론트엔드에서 이미지 파일을 **직접 Cloudinary에 업로드**하고, 응답으로 받은 `image URL`을 백엔드에 전달.
+- 백엔드는 해당 `URL`만 DB에 저장하여 이미지 경로를 관리.
+
+### ✅ 전환 결과
+- **재배포나 서버 재시작과 관계없이 이미지가 안정적으로 유지됨.**
+- `gif`, `jpg`, `png` 등 다양한 이미지 포맷 업로드 가능.
+- 이미지 로딩 속도 및 품질 최적화도 **Cloudinary에서 자동 처리**됨.
+
+### 💻 문제 해결 방법 CODE
+
+Cloudinary 이미지 업로드 문제를 해결한 코드입니다:
+
+```ts
+export async function upLoadImage(file) {
+  const url = 'https://api.cloudinary.com/v1_1/[yourId]/image/upload';
+  const data = new FormData();
+  data.append('file', file);
+  data.append('upload_preset', 'primary-key');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: data,
+    });
+
+    if (!res.ok) {
+      throw new Error('Image Upload Failed!');
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
