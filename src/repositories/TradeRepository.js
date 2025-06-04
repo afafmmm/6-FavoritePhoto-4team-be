@@ -106,8 +106,8 @@ async function acceptTradeRequest(tradeRequestId, io = null) {
 
     if (!sale) throw new Error('해당 카드에 대한 판매 정보가 존재하지 않습니다.');
 
-    // 판매 수량 1 감소
-    await tx.sale.update({
+    // 판매 수량 1 감소 & 업데이트된 sale을 받아오기
+    const updatedSale = await tx.sale.update({
       where: { id: sale.id },
       data: {
         saleQuantity: {
@@ -117,7 +117,7 @@ async function acceptTradeRequest(tradeRequestId, io = null) {
     });
 
     // 수량이 0이 되면 상태를 SOLDOUT으로 변경
-    if (updatedSale.saleQuantity - 1 <= 0) {
+    if (updatedSale.saleQuantity === 0) {
       await tx.sale.update({
         where: { id: sale.id },
         data: { status: 'SOLDOUT' }
