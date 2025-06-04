@@ -173,54 +173,71 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 ## 💣 트러블 슈팅
 <a name="troubleshooting"></a>
 <details>
-<summary>🖼️ 이미지 업로드 방식 변경 (Multer → Cloudinary)</summary>
+<summary>🖼️ 판매 수정 : `saleQuantity` 계산</summary>
 
 <br>
 
 ### 🔧 문제 상황
-- 기존에는 **Multer**를 사용하여 이미지를 서버의 로컬 디렉토리에 저장함.
-- **Render**에서 서버를 재배포하면 로컬 저장소가 초기화되어 이미지가 모두 삭제되는 문제 발생.
+- 판매 수정에서 판매 수량을 변경할 때, 기존 판매 수량보다 많을 경우와 반대로 더 적을 경우에 대한 구현이 어려웠음 
+- 각 카드의 상태도 같이 바뀌어야 하고, 동시에 판매 수량과 보유 수량의 숫자가 동시에 바뀌어야 하기 때문에 복잡했음음
 
 ### 📌 원인 파악
-- Render와 같은 PaaS 환경은 **비영구적 파일 시스템 (ephemeral)**을 제공함.
-- Multer는 기본적으로 서버의 `uploads/` 폴더 등에 이미지를 저장 → 서버 재시작 시 삭제됨.
-- 이미지 손실로 인해 서비스 품질에 **심각한 영향** 발생 가능.
-
+- 보유수량 카드 조회 부분에선 실제 유저가 소유한 **보유 카드를 객체로 그 수만큼 나열**하여 구현하기 편했으나,
+- 판매 카드 관련 조회는 객체 나열이 아닌 **숫자로만 계산하는 구조**로 되어 있어 이 둘을 합쳐서 구현하기 쉽지 않았음
+  
 ### 🛠️ 해결 방법
-- **Cloudinary**와 같은 외부 이미지 호스팅 서비스를 활용하여 문제 해결.
-- 프론트엔드에서 이미지 파일을 **직접 Cloudinary에 업로드**하고, 응답으로 받은 `image URL`을 백엔드에 전달.
-- 백엔드는 해당 `URL`만 DB에 저장하여 이미지 경로를 관리.
+- `quantityDiff`로 **변경한 판매수량값과 기존 판매 수량값의 차이를 계산한 변수**를 만들어
+- `quantityDiff`가 0보다 크면, 즉 기존 판매수량보다 큰값으로 변경하면 보유수량 카드에서 `quantityDiff`만큼 가져와 추가
+- `quantityDiff`가 0보다 작으면, 즉 기존 판매수량보다 더 작은값으로 변경하면 판매등록된 카드에서 `quantityDiff`만큼 다시 보유수량 카드로 돌아감
 
 ### ✅ 전환 결과
-- **재배포나 서버 재시작과 관계없이 이미지가 안정적으로 유지됨.**
-- `gif`, `jpg`, `png` 등 다양한 이미지 포맷 업로드 가능.
-- 이미지 로딩 속도 및 품질 최적화도 **Cloudinary에서 자동 처리**됨.
+- `quantityDiff`를 따로 만들어 계산하니 판매수량 수정이 알맞게 작동함
+- 보유수량 카드에서 더 가져와야 하는 경우엔, 보유수량 카드 조회에서 그만큼 객체가 빠져나갔음
+- 판매한 카드를 다시 보유수량 카드로 전환하는 경우엔, 보유수량 카드 조회에서 그만큼 객체가 다시 생성됐음 
 
 ### 💻 문제 해결 방법 CODE
 
-Cloudinary 이미지 업로드 문제를 해결한 코드입니다:
+판매수량값 갱신 문제를 해결한 코드입니다:
 
 ```ts
-export async function upLoadImage(file) {
-  const url = 'https://api.cloudinary.com/v1_1/[yourId]/image/upload';
-  const data = new FormData();
-  data.append('file', file);
-  data.append('upload_preset', 'primary-key');
+if (updatePayload.saleQuantity !== undefined) {
+      const quantityDiff = updatePayload.saleQuantity - sale.saleQuantity;
 
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      body: data,
-    });
+      if (quantityDiff > 0) {
+        const extraCards = await tx.userCard.findMany({
+          where: {
+            ownerId: userId,
+            photoCardId: sale.photoCardId,
+            status: 'ACTIVE'
+          },
+          take: quantityDiff
+        });
 
-    if (!res.ok) {
-      throw new Error('Image Upload Failed!');
-    }
+        await Promise.all(
+          extraCards.map((card) =>
+            tx.saleUserCard.create({
+              data: {
+                saleId,
+                userCardId: card.id
+              }
+            })
+          )
+        );
 
-    const result = await res.json();
-    return result;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
+        await tx.userCard.updateMany({
+          where: { id: { in: extraCards.map((c) => c.id) } },
+          data: { status: 'AVAILABLE' }
+        });
+      } else if (quantityDiff < 0) {
+        const removeCount = -quantityDiff;
+        const removableCards = sale.saleUserCards.slice(-removeCount);
+
+        await tx.saleUserCard.deleteMany({
+          where: { id: { in: removableCards.map((r) => r.id) } }
+        });
+
+        await tx.userCard.updateMany({
+          where: { id: { in: removableCards.map((r) => r.userCardId) } },
+          data: { status: 'ACTIVE' }
+        });
+      }
