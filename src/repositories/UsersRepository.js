@@ -275,7 +275,6 @@ async function findMySales(
 
       totalSalesCards = await prisma.sale.count({ where: salesWhereClause });
 
-      console.log('salesWhereClause: ', salesWhereClause);
       sales = await prisma.sale.findMany({
         select: {
           id: true,
