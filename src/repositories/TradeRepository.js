@@ -116,6 +116,14 @@ async function acceptTradeRequest(tradeRequestId, io = null) {
       }
     });
 
+    // 수량이 0이 되면 상태를 SOLDOUT으로 변경
+    if (updatedSale.saleQuantity - 1 <= 0) {
+      await tx.sale.update({
+        where: { id: sale.id },
+        data: { status: 'SOLDOUT' }
+      });
+    }
+
     // 거래 요청 상태를 ACCEPTED로 변경
     await tx.tradeRequest.update({
       where: { id: tradeRequestId },
