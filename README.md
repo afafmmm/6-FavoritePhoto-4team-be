@@ -39,16 +39,26 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 
 ## 🖥️ 기술 스택
 
-<div align="center">
-<img src="https://img.shields.io/badge/npm-CB3837?style=flat&logo=npm&logoColor=white" alt="npm" />
-<img src="https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white" alt="Node.js" />
-<img src="https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white" alt="Express" />
-<img src="https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-<img src="https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white" alt="Prisma" />
-<img src="https://img.shields.io/badge/REST%20API-25D366?style=flat&logo=api&logoColor=white" alt="REST API" />
-<img src="https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white" alt="Git" />
-<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white" alt="GitHub" />
-</div>
+#### ✔️ 언어
+<span><img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white" alt="javascript" /></span>
+<span><img src="https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" /></span>
+
+#### ✔️ 프레임워크 & 라이브러리
+<span><img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" /></span>
+<span><img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" /></span>
+<br />
+<span><img src="https://img.shields.io/badge/passport-34E27A?style=for-the-badge&logo=passport&logoColor=white" alt="passport" /></span>
+<span><img src="https://img.shields.io/badge/jsonwebtokens-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" alt="jsonwebtokens" /></span>
+<span><img src="https://img.shields.io/badge/socketdotio-010101?style=for-the-badge&logo=socketdotio&logoColor=white" alt="socketdotio" /></span>
+
+#### ✔️ 버전 관리 외
+<span><img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" alt="Git" /></span>
+<span><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></span>
+<span><img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" /></span>
+<span><img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white" alt="npm" /></span>
+
+#### ✔️ 배포
+<span><img src="https://img.shields.io/badge/render-000000?style=for-the-badge&logo=render&logoColor=white" alt="render" /></span>
 
 <br />
 
@@ -87,20 +97,12 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 
 ### ✨ 양성경
 
-- 사용자 조회
-- 카드 생성 페이지 api
-	- 장르/등급 조회
-	- (월별) 카드 생성 횟수 조회
-	- 카드 생성
-- 마이 갤러리 페이지 api
-  - 생성한 카드 개수 조회
-  - 페이지 조회
-- 나의 포토카드 판매 페이지
-  - 생성한 카드 개수 조회 (위와 같음)
-  - 페이지 조회
-
-(표로 바꿀 것임)
-
+<table>
+	<tr>
+		<th>제목</th>
+		<td>내용</td>
+	</tr>
+</table>
 
 ### ✨ 이지수
 
