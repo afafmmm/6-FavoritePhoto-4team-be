@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import authRepository from '../../repositories/AuthRepository.js';
+import PointRepository from '../../repositories/PointRepository.js';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -28,6 +29,8 @@ passport.use(
             password: null,
             profileImage: profile.photos?.[0]?.value || null
           });
+          // 신규 회원가입 시 포인트 500 지급
+          await PointRepository.createUserPoint(user.id, 500, null, 0);
         } else if (!user.googleId) {
           // 기존 회원이지만 googleId가 없으면 업데이트
           await authRepository.update(user.id, { googleId });

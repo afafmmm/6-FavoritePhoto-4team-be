@@ -41,7 +41,7 @@ async function signUpUser({ nickname, email, password, passwordConfirmation }) {
   });
 
   // 회원가입 시 포인트 테이블 생성 및 기본 포인트 10 지급
-  await PointRepository.createUserPoint(newUser.id, 10, null, 0);
+  await PointRepository.createUserPoint(newUser.id, 500, null, 0);
 
   const { password: _, ...userWithoutPassword } = newUser;
   return userWithoutPassword;
