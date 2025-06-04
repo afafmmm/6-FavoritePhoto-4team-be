@@ -87,138 +87,86 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 
 <br />
 
-## 👫 역할 소개
+## 🕹️ 프로젝트 기능
+### 1. 페이지 구성
+#### 👋 랜딩페이지 [`/`]
+<ul>
+  <li>초기 접속 시 진입</li>
+</ul>
 
-### ✨ 김다은
+#### 🏠 홈 [`/home`]
+<ul>
+  <li>판매 등록된 포토카드 목록</li>
+</ul>
 
-<table>
-	<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left"h>제목</th>
-		<td>내용</td>
-	</tr>
-</table>
+#### 📸 포토카드 관리 [`/home/:id`]
+<ul>
+  <li>포토카드 구매, 교환, 수정, 삭제 </li>
+</ul>
 
+#### 🔐 로그인 / 회원가입 [`/login`, `/signup`]
+<ul>
+  <li>소셜 로그인 기능, 소셜 로그인 간편 회원가입</li>
+</ul>
 
-### ✨ 김우주
+#### 🖼️ 마이갤러리 [`/my-gallery`]
+<ul>
+  <li>내가 보유한 포토카드 확인</li>
+</ul>
 
-<table>
-	<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left"h>제목</th>
-		<td>내용</td>
-	</tr>
-</table>
+#### ⬆️ 업로드 [`/my-gallery/post`]
+<ul>
+  <li>나의 최애의 포토카드 업로드</li>
+</ul>
 
+#### 💸 판매 중인 포토카드 [`/for-my-sales`]
+<ul>
+  <li>사용자의 판매중인 포토카드 내역 확인</li>
+</ul>
 
-### ✨ 양성경
+#### 🔔 알림 [`/notification`]
+<ul>
+  <li>이전/신규 알림 확인</li>
+</ul>
 
-<table>
-	<tr>
-		<th align="left">[api] 사용자 조회</th>
-		<td>사용자 1인 조회</td>
-	</tr>
-		<tr>
-		<th align="left">[api] 카드 생성 페이지</th>
-		<td>장르/등급 조회, (월별) 카드 생성 횟수 조회, 카드 생성</td>
-	</tr>
-		<tr>
-		<th align="left">[api] 마이 갤러리 페이지 관련</th>
-		<td>생성한 카드 개수 조회, 페이지 조회</td>
-	</tr>
-		<tr>
-		<th align="left">[api] 나의 포토카드 판매 페이지</th>
-		<td>생성한 카드 개수 조회, 페이지 조회</td>
-	</tr>
-</table>
+<br></br>
 
-### ✨ 이지수
+### 2. 페이지 별 상세 기능
+#### 🏠 홈 [`/home`]
+- 판매 등록된 포토카드 목록 조회
+- 최신순 / 가격순 정렬 기능
+- 검색 및 필터링 (키워드, 장르, 등급, 가격순)
+- 무한 스크롤 로딩
 
-<table>
-	<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left"h>제목</th>
-		<td>내용</td>
-	</tr>
-</table>
+#### 📸 포토카드 상세 관리 [`/home/:id`]
+- 포토카드 상세 정보 확인
+- 구매 요청 / 교환 신청
+- 포토카드 수정, 삭제 기능 (소유자만 가능)
+- 거래 상태 확인 (판매 중 / 거래 완료 등)
 
+#### 🔐 로그인 / 회원가입 [`/login`, `/signup`]
+- 구글 소셜 로그인 기능
+- 최초 로그인 시 자동 회원가입 처리
+- 사용자 정보 로컬 저장 및 JWT 인증 처리
 
-### ✨ 장원빈
+#### 🖼️ 마이갤러리 [`/my-gallery`]
+- 현재 보유한 포토카드 목록 확인
+- 검색 및 정렬 (키워드, 장르, 등급 필터)
 
-<table>
-	<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left"h>제목</th>
-		<td>내용</td>
-	</tr>
-</table>
+#### ⬆️ 포토카드 업로드 [`/my-gallery/post`]
+- 이미지 업로드 (Cloudinary 연동)
+- 등급 / 장르 / 가격 / 설명 입력
+- 업로드 완료 시 마이갤러리에 반영
 
+#### 💸 판매 중인 포토카드 [`/for-my-sales`]
+- 내가 판매 중인 포토카드 목록 확인
+- 교환 제시 대기 중인 포토카드 확인
+- 검색 및 정렬 (키워드, 장르, 등급, 판매 방식, 매진 여부)
+- 거래 완료 처리 및 거래 히스토리 열람
 
-
-### ✨ 홍성훈
-
-<table>
-	<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left">제목</th>
-		<td>내용</td>
-	</tr>
-		<tr>
-		<th align="left"h>제목</th>
-		<td>내용</td>
-	</tr>
-</table>
+#### 🔔 알림 [`/notification`]
+- 구매 관련 알림 및 신규 알림 확인
+- 읽은 / 안 읽은 알림 구분 및 상태 처리
 
 <br />
 
