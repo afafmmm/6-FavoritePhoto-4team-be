@@ -528,7 +528,7 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
   // 2) TradeRequest에서 필터별 카운트
   const tradeStatusCounts = await prisma.tradeRequest.groupBy({
     by: ['tradeStatus'],
-    where: { ownerId: userId },
+    where: tradeWhere, // 이걸로 수정하면 됨!
     _count: { _all: true }
   });
 
