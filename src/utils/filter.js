@@ -1,7 +1,7 @@
 export function getGenreFilter(num) {
   const genreMap = {
-    1: '풍경',
-    2: '여행',
+    1: '여행',
+    2: '풍경',
     3: '인물',
     4: '사물'
   };
@@ -46,7 +46,7 @@ export function getCardFilter(cardStatus) {
   if (!Array.isArray(cardStatus)) {
     cardStatus = [cardStatus];
   }
-  cardStatus.forEach(status => {
+  cardStatus.forEach((status) => {
     if (!cardStatuses.includes(status)) {
       throw new Error(`status는 ${cardStatuses.join(', ')} 중 하나여야 합니다.`);
     }
