@@ -275,7 +275,6 @@ async function findMySales(
 
       totalSalesCards = await prisma.sale.count({ where: salesWhereClause });
 
-      console.log('salesWhereClause: ', salesWhereClause);
       sales = await prisma.sale.findMany({
         select: {
           id: true,
@@ -467,9 +466,7 @@ async function findMySales(
 
 // Mobile 화면 필터
 async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale }) {
-  const filterKeyword = keyword
-    ? { name: { contains: keyword, mode: 'insensitive' } }
-    : {};
+  const filterKeyword = keyword ? { name: { contains: keyword, mode: 'insensitive' } } : {};
 
   // 판매용 조건
   const saleWhere = {
@@ -478,8 +475,8 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
     photoCard: {
       ...(genre ? { genre: { id: Number(genre) } } : {}),
       ...(grade ? { grade: { id: Number(grade) } } : {}),
-      ...filterKeyword,
-    },
+      ...filterKeyword
+    }
   };
 
   // 교환용 조건
@@ -489,8 +486,8 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
     photoCard: {
       ...(genre ? { genre: { id: Number(genre) } } : {}),
       ...(grade ? { grade: { id: Number(grade) } } : {}),
-      ...filterKeyword,
-    },
+      ...filterKeyword
+    }
   };
 
   // 1) Sale에서 필터별 카운트 (photoCard의 genreId, gradeId 기준)
@@ -500,10 +497,10 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
       photoCard: {
         select: {
           genreId: true,
-          gradeId: true,
-        },
-      },
-    },
+          gradeId: true
+        }
+      }
+    }
   });
 
   const gradeMap = new Map();
@@ -525,32 +522,32 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
   const saleStatusCounts = await prisma.sale.groupBy({
     by: ['status'],
     where: { sellerId: userId },
-    _count: { _all: true },
+    _count: { _all: true }
   });
 
   // 2) TradeRequest에서 필터별 카운트
   const tradeStatusCounts = await prisma.tradeRequest.groupBy({
     by: ['tradeStatus'],
     where: { ownerId: userId },
-    _count: { _all: true },
+    _count: { _all: true }
   });
 
   // photoCard 기준 groupBy 후 개수 세기
   const tradePhotoCardCounts = await prisma.tradeRequest.groupBy({
     by: ['photoCardId'],
     where: tradeWhere,
-    _count: { _all: true },
+    _count: { _all: true }
   });
 
   const tradePhotoCards = await prisma.photoCard.findMany({
     where: {
-      id: { in: tradePhotoCardCounts.map((t) => t.photoCardId) },
+      id: { in: tradePhotoCardCounts.map((t) => t.photoCardId) }
     },
     select: {
       id: true,
       gradeId: true,
-      genreId: true,
-    },
+      genreId: true
+    }
   });
 
   const tradeGradeMap = new Map();
@@ -561,16 +558,10 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
     if (!match) continue;
 
     if (card.gradeId) {
-      tradeGradeMap.set(
-        card.gradeId,
-        (tradeGradeMap.get(card.gradeId) || 0) + match._count._all
-      );
+      tradeGradeMap.set(card.gradeId, (tradeGradeMap.get(card.gradeId) || 0) + match._count._all);
     }
     if (card.genreId) {
-      tradeGenreMap.set(
-        card.genreId,
-        (tradeGenreMap.get(card.genreId) || 0) + match._count._all
-      );
+      tradeGenreMap.set(card.genreId, (tradeGenreMap.get(card.genreId) || 0) + match._count._all);
     }
   }
 
@@ -579,38 +570,31 @@ async function countSalesFilters(userId, { genre, grade, keyword, saleType, sale
   const combinedGenreCounts = new Map(genreMap);
 
   for (const [gradeId, count] of tradeGradeMap.entries()) {
-    combinedGradeCounts.set(
-      gradeId,
-      (combinedGradeCounts.get(gradeId) || 0) + count
-    );
+    combinedGradeCounts.set(gradeId, (combinedGradeCounts.get(gradeId) || 0) + count);
   }
   for (const [genreId, count] of tradeGenreMap.entries()) {
-    combinedGenreCounts.set(
-      genreId,
-      (combinedGenreCounts.get(genreId) || 0) + count
-    );
+    combinedGenreCounts.set(genreId, (combinedGenreCounts.get(genreId) || 0) + count);
   }
 
   return {
     grade: Array.from(combinedGradeCounts.entries()).map(([gradeId, count]) => ({
       gradeId,
-      count,
+      count
     })),
     genre: Array.from(combinedGenreCounts.entries()).map(([genreId, count]) => ({
       genreId,
-      count,
+      count
     })),
     sale: saleStatusCounts.map((item) => ({
       status: item.status,
-      count: item._count._all,
+      count: item._count._all
     })),
     saleType: tradeStatusCounts.map((item) => ({
       saleType: item.tradeStatus,
-      count: item._count._all,
-    })),
+      count: item._count._all
+    }))
   };
 }
-
 
 //--특정 유저의 포토카드 상세 (우주)
 async function getUserPhotoCardDetail(userId, photoCardId) {
