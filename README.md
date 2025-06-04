@@ -64,7 +64,9 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 
 ## 💾 시스템 아키텍쳐
 
-(지수 님이 넣어주기로 했음)
+![Web App Reference Architecture (1)](https://github.com/user-attachments/assets/15283051-29b9-4b74-8375-3c4f14f73531)
+
+
 
 <br />
 
@@ -103,7 +105,7 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 		<td>내용</td>
 	</tr>
 		<tr>
-		<t align="left"h>제목</th>
+		<th align="left"h>제목</th>
 		<td>내용</td>
 	</tr>
 </table>
@@ -125,7 +127,7 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 		<td>내용</td>
 	</tr>
 		<tr>
-		<t align="left"h>제목</th>
+		<th align="left"h>제목</th>
 		<td>내용</td>
 	</tr>
 </table>
@@ -135,16 +137,20 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 
 <table>
 	<tr>
-		<th align="left">사용자 조회 api</th>
+		<th align="left">[api] 사용자 조회</th>
 		<td>사용자 1인 조회</td>
 	</tr>
 		<tr>
-		<th align="left">마이 갤러리 페이지 api</th>
+		<th align="left">[api] 카드 생성 페이지</th>
+		<td>장르/등급 조회, (월별) 카드 생성 횟수 조회, 카드 생성</td>
+	</tr>
+		<tr>
+		<th align="left">[api] 마이 갤러리 페이지 관련</th>
 		<td>생성한 카드 개수 조회, 페이지 조회</td>
 	</tr>
 		<tr>
-		<th align="left">나의 포토카드 판매 페이지</th>
-		<td>생성한 카드 개수 조회 (위와 같음), 페이지 조회</td>
+		<th align="left">[api] 나의 포토카드 판매 페이지</th>
+		<td>생성한 카드 개수 조회, 페이지 조회</td>
 	</tr>
 </table>
 
@@ -164,7 +170,7 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 		<td>내용</td>
 	</tr>
 		<tr>
-		<t align="left"h>제목</th>
+		<th align="left"h>제목</th>
 		<td>내용</td>
 	</tr>
 </table>
@@ -186,7 +192,7 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 		<td>내용</td>
 	</tr>
 		<tr>
-		<t align="left"h>제목</th>
+		<th align="left"h>제목</th>
 		<td>내용</td>
 	</tr>
 </table>
@@ -209,7 +215,7 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 		<td>내용</td>
 	</tr>
 		<tr>
-		<t align="left"h>제목</th>
+		<th align="left"h>제목</th>
 		<td>내용</td>
 	</tr>
 </table>
