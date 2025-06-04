@@ -414,7 +414,7 @@ async function findMySales(
     }
 
     const tradeWhereClause = {
-      ownerId: userId,
+      applicantId: userId,
       tradeStatus: 'PENDING',
       AND: tradeConditions.length > 0 ? tradeConditions : undefined
     };
@@ -428,7 +428,7 @@ async function findMySales(
         id: true,
         tradeStatus: true,
 
-        photoCard: {
+        offeredPhotoCard: {
           select: {
             id: true,
             name: true,
@@ -451,8 +451,9 @@ async function findMySales(
     trade = trade.map((item) => ({
       ...item,
       status: item.tradeStatus, // tradeStatus를 status로 변경
-      price: item.photoCard.initialPrice,
-      saleQuantity: 1 // 교환은 1개로 고정
+      price: item.offeredPhotoCard.initialPrice,
+      saleQuantity: 1, // 교환은 1개로 고정
+      photoCard: item.offeredPhotoCard
     }));
   }
 
