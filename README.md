@@ -46,7 +46,6 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 #### ✔️ 프레임워크 & 라이브러리
 <span><img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" /></span>
 <span><img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" /></span>
-<br />
 <span><img src="https://img.shields.io/badge/passport-34E27A?style=for-the-badge&logo=passport&logoColor=white" alt="passport" /></span>
 <span><img src="https://img.shields.io/badge/jsonwebtokens-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" alt="jsonwebtokens" /></span>
 <span><img src="https://img.shields.io/badge/socketdotio-010101?style=for-the-badge&logo=socketdotio&logoColor=white" alt="socketdotio" /></span>
@@ -124,50 +123,14 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 <br />
 
 ## 🕹️ 프로젝트 기능
-### 1. 페이지 구성
-#### 👋 랜딩페이지 [`/`]
-<ul>
-  <li>초기 접속 시 진입</li>
-</ul>
+### 1. ERD
+![image](https://github.com/user-attachments/assets/67b8d924-4f42-40a0-8912-050f2dedc801)
 
-#### 🏠 홈 [`/home`]
-<ul>
-  <li>판매 등록된 포토카드 목록</li>
-</ul>
 
-#### 📸 포토카드 관리 [`/home/:id`]
-<ul>
-  <li>포토카드 구매, 교환, 수정, 삭제 </li>
-</ul>
-
-#### 🔐 로그인 / 회원가입 [`/login`, `/signup`]
-<ul>
-  <li>소셜 로그인 기능, 소셜 로그인 간편 회원가입</li>
-</ul>
-
-#### 🖼️ 마이갤러리 [`/my-gallery`]
-<ul>
-  <li>내가 보유한 포토카드 확인</li>
-</ul>
-
-#### ⬆️ 업로드 [`/my-gallery/post`]
-<ul>
-  <li>나의 최애의 포토카드 업로드</li>
-</ul>
-
-#### 💸 판매 중인 포토카드 [`/for-my-sales`]
-<ul>
-  <li>사용자의 판매중인 포토카드 내역 확인</li>
-</ul>
-
-#### 🔔 알림 [`/notification`]
-<ul>
-  <li>이전/신규 알림 확인</li>
-</ul>
 
 <br></br>
 
-### 2. 페이지 별 상세 기능
+### 2. API 목록
 #### 🏠 홈 [`/home`]
 - 판매 등록된 포토카드 목록 조회
 - 최신순 / 가격순 정렬 기능
