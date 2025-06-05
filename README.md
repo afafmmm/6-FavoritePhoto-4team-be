@@ -288,3 +288,113 @@ if (updatePayload.saleQuantity !== undefined) {
           data: { status: 'ACTIVE' }
         });
       }
+```
+</details>
+
+<details>
+<summary>🔗 판매 상세 정보 + 교환 조건 API 통합 문제</summary>
+
+<br>
+
+### 🔧 문제 상황
+
+기존에는 **포토카드 판매 상세 정보**와 **해당 판매건의 교환 조건 정보(원하는 장르/등급 등)**를  
+**서로 다른 API로 분리할지 여부**에 대한 논의가 있었다.
+
+- 프론트에서는 두 정보가 **한 화면에 함께 필요**
+- 백엔드는 해당 정보를 **서로 다른 모델/서비스에서 관리 중**
+- API를 **분리할지, 통합할지** 결정이 필요했음
+
+---
+
+### 📌 원인 파악
+
+1. **두 개의 API로 분리할 경우**
+   - 프론트에서 **두 번 요청** 필요 → **응답 타이밍 관리 복잡**
+   - 비동기 처리 및 에러 핸들링 부담 증가
+   - 하나의 판매 정보 조회에 대해 **불필요한 DB 호출 중복**
+
+2. **API 통합할 경우**
+   - 백엔드 구조 설계가 다소 복잡
+   - 하지만 호출 횟수 최소화 + 클라이언트 처리 간편
+   - **응답 구조 일관성** 확보 가능
+
+---
+
+### 🛠️ 해결 방법
+
+✅ **API를 하나로 통합하기로 결정**
+
+- 백엔드 담당자에게 **통합형 응답 구조로 구현 요청**
+- 기존 `판매 상세 조회 API`를 수정하여  
+  → **카드 정보 + 교환 조건 정보까지 포함하도록 개선**
+
+---
+
+### 💻 문제 해결 방법 CODE
+#### 📌 API
+GET /api/store/cards/:saleId
+#### 🔹 Controller
+
+```ts
+salesController.get('/cards/:saleId', ..., async (req, res) => {
+  const saleId = Number(req.params.saleId);
+  const result = await SalesService.getSaleDetail(saleId);
+
+  if (sale.sellerId !== req.user.id) {
+    throw new Error('본인의 판매 정보만 열람할 수 있습니다.');
+  }
+
+  res.status(200).json(result);
+});
+🔹 Service
+```ts
+async function getSaleDetail(saleId) {
+  const sale = await SalesRepository.findSaleDetailById(saleId);
+  if (!sale) throw new Error('존재하지 않는 판매 항목입니다.');
+  return sale;
+}
+```
+🔹 Repository
+```ts
+async function findSaleDetailById(saleId) {
+  return prisma.sale.findUnique({
+    where: { id: saleId },
+    include: {
+      photoCard: {
+        include: {
+          grade: true,
+          genre: true,
+          creator: { select: { id: true, nickname: true } },
+          userCards: {
+            where: { status: 'ACTIVE' },
+            include: {
+              owner: { select: { id: true, nickname: true } }
+            }
+          }
+        }
+      },
+      saleUserCards: {
+        include: {
+          userCard: true
+        }
+      },
+      desiredGrade: true,
+      desiredGenre: true
+    }
+  });
+}
+```
+
+### 📦 포함되는 정보
+- photoCard: 카드 정보 (등급, 장르, 제작자, 관련 유저카드 등)
+- saleUserCards: 판매 건에 연결된 실물 카드들
+- desiredGrade, desiredGenre: 교환 조건 정보
+
+### ✅ 결과 및 효과
+- API 한 번 호출로 모든 데이터 수집 가능
+- 클라이언트 렌더링 간소화 + 속도 향상
+- 교환 조건 일치 여부 판단도 동일 API로 처리 가능
+- 전체적으로 사용자 경험(UX) 및 개발 효율 향상
+
+</details>
