@@ -75,13 +75,49 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 <table align="center">
   <tbody>
     <tr>
-      <td align="center"><a href="https://github.com/fs6-kde"><img src= "https://github.com/fs6-kde.png?size=100"width="100px;" alt=""/><br /><sub><b>김다은</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/wooju01"><img src="https://github.com/wooju01.png?size=100" width="100px;" alt=""/><br /><sub><b>김우주</b></sub></a><br /></td>
-     <td align="center"><a href="https://github.com/writing-sky"><img src="https://github.com/writing-sky.png?size=100" width="100px;" alt="해당 팀원의 페이지로 이동"/><br /><sub><b>양성경</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/afafmmm"><img src="https://github.com/afafmmm.png?size=100" width="100px;" alt=""/><br /><sub><b>이지수</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/xdnjs7"><img src="https://github.com/xdnjs7.png?size=100" width="100px;" alt="해당 팀원의 페이지로 이동"/><br /><sub><b>장원빈</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/az0319h"><img src="https://github.com/az0319h.png?size=100" width="100px;" alt="해당 팀원의 페이지로 이동"/><br /><sub><b>홍성훈</b></sub></a><br /></td>
-     <tr/>
+      <td align="center">
+        <a href="https://github.com/afafmmm">
+          <img src="https://github.com/afafmmm.png?size=100" width="100px" alt="이지수 GitHub"/>
+          <br />
+          <sub><b>이지수</b></sub>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/fs6-kde">
+          <img src="https://github.com/fs6-kde.png?size=100" width="100px" alt="김다은 GitHub"/>
+          <br />
+          <sub><b>김다은</b></sub>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/wooju01">
+          <img src="https://github.com/wooju01.png?size=100" width="100px" alt="김우주 GitHub"/>
+          <br />
+          <sub><b>김우주</b></sub>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/writing-sky">
+          <img src="https://github.com/writing-sky.png?size=100" width="100px" alt="양성경 GitHub"/>
+          <br />
+          <sub><b>양성경</b></sub>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/xdnjs7">
+          <img src="https://github.com/xdnjs7.png?size=100" width="100px" alt="장원빈 GitHub"/>
+          <br />
+          <sub><b>장원빈</b></sub>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/az0319h">
+          <img src="https://github.com/az0319h.png?size=100" width="100px" alt="홍성훈 GitHub"/>
+          <br />
+          <sub><b>홍성훈</b></sub>
+        </a>
+      </td>
+    </tr>
   </tbody>
 </table>
 
