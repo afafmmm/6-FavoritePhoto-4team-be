@@ -7,12 +7,12 @@
 
 ## 📑 목차
 
-1. [프로젝트 소개](#프로젝트-소개)
-2. [기술 스택](#기술-스택)
-3. [시스템 아키텍쳐](#시스템-아키텍쳐)
-4. [팀원 소개](#팀원-소개)
-5. [역할 소개](#역할-소개)
-6. [트러블 슈팅](#트러블-슈팅)
+1. 🔹 [프로젝트 소개](#프로젝트-소개)
+2. 🔹 [기술 스택](#기술-스택)
+3. 🔹 [시스템 아키텍쳐](#시스템-아키텍쳐)
+4. 🔹 [팀원 소개](#팀원-소개)
+5. 🔹 [프로젝트 기능](#프로젝트-기능)
+6. 🔹 [트러블 슈팅](#트러블-슈팅)
 
 <br />
 
@@ -33,6 +33,15 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 5️⃣ **알림 기능**: 카드 거래·교환 시 *실시간*으로 알림을 받습니다.
 
 6️⃣ **다양한 필터 기능**: 상황에 따라 검색, 정렬, 필터링 기능을 제공합니다.
+
+<br />
+
+
+## 🔗 팀 문서 보기  
+👉 [Notion 링크 바로가기](https://www.notion.so/4-1f388b3cb86180888609db626a03fb0a)  
+
+➡️ 다음은 프론트엔드 Git 저장소입니다.  
+🔧 [GitHub Repository 보러가기](https://github.com/afafmmm/6-FavoritePhoto-4team-fe)
 
 
 <br />
@@ -62,6 +71,8 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 <br />
 
 ## 💾 시스템 아키텍쳐
+
+(FE 아키텍쳐는 따로 있습니다.)
 
 ![Web App Reference Architecture (1)](https://github.com/user-attachments/assets/15283051-29b9-4b74-8375-3c4f14f73531)
 
@@ -126,46 +137,83 @@ https://github.com/user-attachments/assets/20c3e346-5d42-486d-8de4-a9c2e8f49e68
 ### 1. ERD
 ![image](https://github.com/user-attachments/assets/67b8d924-4f42-40a0-8912-050f2dedc801)
 
-
-
-<br></br>
+<br />
 
 ### 2. API 목록
-#### 🏠 홈 [`/home`]
-- 판매 등록된 포토카드 목록 조회
-- 최신순 / 가격순 정렬 기능
-- 검색 및 필터링 (키워드, 장르, 등급, 가격순)
-- 무한 스크롤 로딩
+#### 👤 사용자 [`User`]
+| Method | Endpoint                    | 설명               |
+| ------ | --------------------------- | ---------------- |
+| GET    | `/users`                    | 로그인한 사용자 정보 조회   |
+| GET    | `/users/card-meta`          | 장르 + 등급 메타 정보 조회 |
+| GET    | `/users/monthly-post-count` | 월별 카드 생성 횟수 조회   |
+| GET    | `/users/cards-count`        | 사용자 카드 수량 (등급별)  |
+| POST   | `/users/post`               | 포토카드 등록          |
+| GET    | `/users/gallery`            | 내 카드 갤러리 조회      |
+| GET    | `/users/gallery/:id`        | 특정 포토카드 상세 조회    |
+| GET    | `/users/cards-on-sale`      | 판매/교환 중인 카드 조회   |
 
-#### 📸 포토카드 상세 관리 [`/home/:id`]
-- 포토카드 상세 정보 확인
-- 구매 요청 / 교환 신청
-- 포토카드 수정, 삭제 기능 (소유자만 가능)
-- 거래 상태 확인 (판매 중 / 거래 완료 등)
 
-#### 🔐 로그인 / 회원가입 [`/login`, `/signup`]
-- 구글 소셜 로그인 기능
-- 최초 로그인 시 자동 회원가입 처리
-- 사용자 정보 로컬 저장 및 JWT 인증 처리
+#### 🆔 인증 [`Auth`]
+| Method | Endpoint                | 설명              |
+| ------ | ----------------------- | --------------- |
+| POST   | `/auth/signup`          | 회원가입            |
+| POST   | `/auth/login`           | 로그인             |
+| POST   | `/auth/logout`          | 로그아웃            |
+| POST   | `/auth/refresh-token`   | 액세스 토큰 재발급      |
+| GET    | `/auth/google`          | 구글 OAuth 로그인 시작 |
+| GET    | `/auth/google/callback` | 구글 로그인 콜백       |
+| GET    | `/auth/google/fail`     | 구글 로그인 실패       |
 
-#### 🖼️ 마이갤러리 [`/my-gallery`]
-- 현재 보유한 포토카드 목록 확인
-- 검색 및 정렬 (키워드, 장르, 등급 필터)
 
-#### ⬆️ 포토카드 업로드 [`/my-gallery/post`]
-- 이미지 업로드 (Cloudinary 연동)
-- 등급 / 장르 / 가격 / 설명 입력
-- 업로드 완료 시 마이갤러리에 반영
 
-#### 💸 판매 중인 포토카드 [`/for-my-sales`]
-- 내가 판매 중인 포토카드 목록 확인
-- 교환 제시 대기 중인 포토카드 확인
-- 검색 및 정렬 (키워드, 장르, 등급, 판매 방식, 매진 여부)
-- 거래 완료 처리 및 거래 히스토리 열람
+#### 💳 판매 [`Sale`]
+| Method | Endpoint               | 설명       |
+| ------ | ---------------------- | -------- |
+| POST   | `/sales/cards`         | 카드 판매 등록 |
+| GET    | `/sales/cards/:saleId` | 판매 상세 조회 |
+| PATCH  | `/sales/cards/:saleId` | 판매 수정    |
+| DELETE | `/sales/cards/:saleId` | 판매 취소    |
+
+
+#### 🛍️ 구매 [`Purchase`]
+| Method | Endpoint                       | 설명       |
+| ------ | ------------------------------ | -------- |
+| POST   | `/purchase/cards/:id/purchase` | 카드 구매 요청 |
+
+
+#### 🔄 교환 [`Trade`]
+| Method | Endpoint                        | 설명                |
+| ------ | ------------------------------- | ----------------- |
+| GET    | `/cards/:saleId/trade-requests` | 특정 판매카드의 교환 요청 목록 |
+| PATCH  | `/trade/:id/accept`             | 교환 요청 수락          |
+| PATCH  | `/trade/:id/reject`             | 교환 요청 거절          |
+
+
+##### 🔄 교환 요청 [`TradeRequest`]
+| Method | Endpoint                                               | 설명               |
+| ------ | ------------------------------------------------------ | ---------------- |
+| POST   | `/cards/:saleId/exchange`                              | 교환 요청 생성         |
+| PATCH  | `/cards/:listedCardId/exchange/:tradeRequestId/cancel` | 교환 요청 취소         |
+| GET    | `/cards/:saleId/exchange`                              | 신청자의 교환 요청 목록 조회 |
+
+
+#### 💰 포인트 [`Point`]
+| Method | Endpoint             | 설명           |
+| ------ | -------------------- | ------------ |
+| POST   | `/points/random-box` | 랜덤 포인트 상자 뽑기 |
+| GET    | `/points/me`         | 내 포인트 조회     |
+| POST   | `/points/update`     | 포인트 증감 처리    |
+
 
 #### 🔔 알림 [`/notification`]
-- 구매 관련 알림 및 신규 알림 확인
-- 읽은 / 안 읽은 알림 구분 및 상태 처리
+| Method | Endpoint                  | 설명           |
+| ------ | ------------------------- | ------------ |
+| POST   | `/notifications`          | 알림 생성        |
+| GET    | `/notifications`          | 사용자 알림 목록 조회 |
+| GET    | `/notifications/:id`      | 알림 상세 조회     |
+| PATCH  | `/notifications/:id/read` | 알림 읽음 처리     |
+| DELETE | `/notifications/:id`      | 알림 삭제        |
+
 
 <br />
 
